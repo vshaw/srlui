@@ -14,8 +14,8 @@ let app = express();
 
 // User authentication stuff
 const cors = require('cors');
-const jwt = require('./_helpers/jwt');
-const errorHandler = require('./_helpers/error-handler');
+const jwt = require('./jwt');
+const errorHandler = require('./error-handler');
 
 // Import routes
 let apiRoutes = require("./api-routes");
