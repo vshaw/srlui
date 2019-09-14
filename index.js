@@ -11,6 +11,12 @@ let mongoose = require('mongoose');
 // Initialise the app
 let app = express();
 
+
+// User authentication stuff
+const cors = require('cors');
+const jwt = require('_helpers/jwt');
+const errorHandler = require('_helpers/error-handler');
+
 // Import routes
 let apiRoutes = require("./api-routes");
 
@@ -20,6 +26,11 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.use(bodyParser.json());
+
+app.use(cors());
+
+// use JWT auth to secure the api
+app.use(jwt());
 
 // Connect to Mongoose and set connection variable
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true});
@@ -39,6 +50,13 @@ app.get('/', (req, res) => res.send('Hello World with Express'));
 
 // Use Api routes in the App
 app.use('/api', apiRoutes);
+
+// User authentication api routes
+app.use('/users', require('./users/users.controller'));
+
+// global error handler
+app.use(errorHandler);
+
 // Launch app to listen to specified port
 app.listen(port, function () {
     console.log("Running RestHub on port " + port);
