@@ -1,0 +1,87 @@
+<head>
+
+    <style type="text/css">
+
+        #header {
+            font-style: italic;
+            font-weight: bold;
+            display: flex;
+            font-size: 240%;
+            margin-bottom: 0;
+            justify-content: center;
+        }
+
+        p.header1 {
+            display: flex;
+            justify-content: center;
+            size: 40px;
+        }
+
+    </style>
+  
+    <script>
+
+        function loadScript(url, callback)
+        {
+            // Adding the script tag to the head as suggested before
+            var head = document.head;
+            var script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.src = url;
+
+            // Then bind the event to the callback function.
+            // There are several events for cross browser compatibility.
+            script.onreadystatechange = callback;
+            script.onload = callback;
+
+            // Fire the loading
+            head.appendChild(script);
+        }
+
+        var getGoals = function () {
+
+            var goals = {}; 
+
+            var url = window.location.href;
+            var split = url.split("/");
+            var week = split[6];
+
+            // Read goals from mapped.js static file
+            for (var i=0; i < mapped.length; i++) {
+                if(mapped[i][0] == week) {
+                    goals = mapped[i][3];
+                }
+            }
+
+            // Add html text element per goal
+            for (var j=0; j < goals.length; j++) {
+                var goal = goals[j];
+                var textNode = document.createElement("P");
+                textNode.innerHTML = goal;
+                textNode.className = "header1";
+                document.getElementById("goalsText").appendChild(textNode);
+            }
+
+
+        };
+
+    </script>
+
+</head>
+
+<!-- HTML Content for the quality applet -->
+<body>
+    <div id="staticGoals">
+
+        <div id="weeklyGoals">
+            <p id="header">This Week's Goals</p>
+            <br>
+            <br>
+            <div id="goalsText">
+                <script>
+                    loadScript("/static/mapped.js", getGoals);
+                </script>
+            </div>
+        </div>
+    </div>
+</body>
