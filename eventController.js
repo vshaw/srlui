@@ -56,7 +56,7 @@ exports.update = function (req, res) {
 // Handle view event info per user for one week
 exports.view = function (req, res) {
 
-    var query = {'userId': req.params.userId, 'courseId': req.params.courseId, 'weekId': req.params.weekId}
+    var query = {'userId': req.body.userId, 'courseId': req.body.courseId, 'weekId': req.body.weekId}
 
     Event.findOne(query, function (err, event) {
         if (err)
@@ -71,7 +71,7 @@ exports.view = function (req, res) {
 // Handle view event info for user all weeks
 exports.viewUserProgress = function (req, res) {
 
-    var query = {'userId': req.params.userId, 'courseId': req.params.courseId}
+    var query = {'userId': req.body.userId, 'courseId': req.body.courseId}
 
     Event.findOne(query, function (err, event) {
         if (err)
@@ -85,7 +85,7 @@ exports.viewUserProgress = function (req, res) {
 
 // Handle delete contact
 exports.delete = function (req, res) {
-    var query = {'userId': req.params.userId, 'courseId': req.params.courseId}
+    var query = {'userId': req.body.userId, 'courseId': req.body.courseId}
     Event.deleteMany(query, function (err) {
         if (err) 
             res.send(err); 
