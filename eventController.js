@@ -69,7 +69,7 @@ exports.view = function (req, res) {
 // Handle delete contact
 exports.delete = function (req, res) {
     var query = {'userId': req.params.userId, 'courseId': req.params.courseId}
-    Event.deleteMany(query function (err) {
+    Event.deleteMany(query, function (err) {
         if (err) 
             res.send(err); 
         res.json({
