@@ -73,7 +73,7 @@ exports.viewUserProgress = function (req, res) {
 
     var query = {'userId': req.body.userId, 'courseId': req.body.courseId}
 
-    Event.findOne(query, function (err, event) {
+    Event.find(query, function (err, event) {
         if (err)
             res.send(err);
         res.json({

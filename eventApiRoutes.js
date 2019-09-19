@@ -14,10 +14,10 @@ var eventController = require('./eventController');
 // Contact routes
 router.route('/events')
     .post(eventController.update)
-router.route('/events/:userid/course/:courseId')
+router.route('/events/viewCourse')
     .get(eventController.viewUserProgress)
     .delete(eventController.delete)
-router.route('/events/:userid/course/:courseId/week/:weekId')
+router.route('/events/viewWeek')
     .get(eventController.view)
 // Export API routes
 module.exports = router;
