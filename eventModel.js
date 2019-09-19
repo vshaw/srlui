@@ -19,22 +19,22 @@ var eventSchema = mongoose.Schema({
         required: true
     },
     videosWatched: {
-        type: type:Number, 
+        type: Number, 
         default:0,
         required: true     
     },
     questionsAnswered: {
-        type: type:Number, 
+        type: Number, 
         default:0,
         required: true     
     },
     postsViewed: {
-        type: type:Number, 
+        type: Number, 
         default:0,
         required: true     
     },
     postsCreated: {
-        type: type:Number, 
+        type: Number, 
         default:0,
         required: true     
     },
