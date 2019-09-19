@@ -9,7 +9,7 @@ var eventSchema = mongoose.Schema({
     group: {
         type: String, 
         required: true
-    }
+    },
     courseId: {
         type: String,
         required: true
