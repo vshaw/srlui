@@ -2,27 +2,10 @@
 // Import event model
 Event = require('./eventModel');
 
-/*exports.new = function (req, res) {
-    var event = new Event();
-    event.userId = req.body.name ? req.body.name : contact.name;
-    contact.gender = req.body.gender;
-    contact.email = req.body.email;
-    contact.phone = req.body.phone;
-// save the contact and check for errors
-    contact.save(function (err) {
-        // if (err)
-        //     res.json(err);
-res.json({
-            message: 'New contact created!',
-            data: contact
-        });
-    });
-}; */
-
 // Handle update event info
 exports.update = function (req, res) {
     var update; 
-    var query = {'userId': req.body.userId, 'courseId': req.body.courseId, 'weekId': req.body.weekId, 'group': req.body.group}
+    var query = {'userId': req.body.userId, 'courseId': req.body.courseId, 'week': req.body.week, 'group': req.body.group}
     
     if (req.body.type == "videosWatched")
     {
@@ -56,7 +39,7 @@ exports.update = function (req, res) {
 // Handle view event info per user for one week
 exports.view = function (req, res) {
 
-    var query = {'userId': req.body.userId, 'courseId': req.body.courseId, 'weekId': req.body.weekId}
+    var query = {'userId': req.body.userId, 'courseId': req.body.courseId, 'week': req.body.week}
 
     Event.findOne(query, function (err, event) {
         if (err)

@@ -14,8 +14,8 @@ var eventSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    weekId: {
-        type: String,
+    week: {
+        type: Number,
         required: true
     },
     videosWatched: {
@@ -37,10 +37,6 @@ var eventSchema = mongoose.Schema({
         type: Number, 
         default:0,
         required: true     
-    },
-    create_date: {
-        type: Date,
-        default: Date.now
     }
 });
 // Export event model
