@@ -14,6 +14,8 @@ let app = express();
 // Import routes
 let apiRoutes = require("./api-routes");
 
+let apiEventRoutes = require("./eventApiRoutes");
+
 // Configure bodyparser to handle post requests
 app.use(bodyParser.urlencoded({
     extended: true
@@ -46,6 +48,8 @@ app.get('/', (req, res) => res.send('Hello World with Express'));
 
 // Use Api routes in the App
 app.use('/api', apiRoutes);
+
+app.use('/api', apiEventRoutes);
 
 // Launch app to listen to specified port
 app.listen(port, function () {
