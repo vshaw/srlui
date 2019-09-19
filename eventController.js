@@ -52,7 +52,7 @@ exports.view = function (req, res) {
 };
 
 // Handle view event info for user all weeks
-exports.view = function (req, res) {
+exports.viewUserProgress = function (req, res) {
 
     var query = {'userId': req.params.userId, 'courseId': req.params.courseId}
 
