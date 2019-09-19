@@ -2,28 +2,45 @@
 // Import event model
 Event = require('./eventModel');
 
+/*exports.new = function (req, res) {
+    var event = new Event();
+    event.userId = req.body.name ? req.body.name : contact.name;
+    contact.gender = req.body.gender;
+    contact.email = req.body.email;
+    contact.phone = req.body.phone;
+// save the contact and check for errors
+    contact.save(function (err) {
+        // if (err)
+        //     res.json(err);
+res.json({
+            message: 'New contact created!',
+            data: contact
+        });
+    });
+}; */
+
 // Handle update event info
 exports.update = function (req, res) {
     var update; 
-    var query = {'userId': req.params.userId, 'courseId': req.params.courseId, 'weekId': req.params.weekId, 'group': req.params.group}
+    var query = {'userId': req.body.userId, 'courseId': req.body.courseId, 'weekId': req.body.weekId, 'group': req.body.group}
     
-    if (req.params.type == "videosWatched")
+    if (req.body.type == "videosWatched")
     {
-        var amount = req.params.amount ? req.params.amount : 1; 
+        var amount = req.body.amount ? req.body.amount : 1; 
         update = { $inc: {videosWatched: amount}};
     }
-    else if (req.params.type == "questionsAnswered")
+    else if (req.body.type == "questionsAnswered")
     {
-        var amount = req.params.amount ? req.params.amount : 1; 
+        var amount = req.body.amount ? req.body.amount : 1; 
         update = { $inc: {questionsAnswered: amount}};
     }
-    else if (req.params.type == "postsViewed")
+    else if (req.body.type == "postsViewed")
     {
-        update = { postsViewed: req.params.amount};
+        update = { postsViewed: req.body.amount};
     }
-    else if (req.params.type == "postsCreated")
+    else if (req.body.type == "postsCreated")
     {
-        update = { postsCreated: req.params.amount};
+        update = { postsCreated: req.body.amount};
     }
 
     Event.findOneAndUpdate(query, update, {upsert:true}, function (err, event) {
