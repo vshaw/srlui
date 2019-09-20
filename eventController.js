@@ -5,6 +5,21 @@ Event = require('./eventModel');
 // Handle update event info
 exports.update = function (req, res) {
     var update; 
+
+    if (((req.body.type == "postsViewed") || (req.body.type == "postsCreated")) && req.body.week != 1)
+    {
+        var postsQuery = {'userId': req.body.userId, 'courseId': req.body.courseId, 'week': req.body.week - 1, 'group': req.body.group}
+        Event.findOne(postsQuery).exec(, function(err, event) {
+            if (err)
+                res.send(err);
+            res.json({
+                message: 'Event details updated',
+                data: event
+            });
+
+        });
+    }
+
     var query = {'userId': req.body.userId, 'courseId': req.body.courseId, 'week': req.body.week, 'group': req.body.group}
     
     if (req.body.type == "videosWatched")
@@ -25,6 +40,8 @@ exports.update = function (req, res) {
     {
         update = { postsCreated: req.body.amount};
     }
+
+    var postsQuery = 
 
     Event.findOneAndUpdate(query, update, {upsert:true}, function (err, event) {
         if (err)
