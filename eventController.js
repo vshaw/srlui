@@ -6,7 +6,7 @@ Event = require('./eventModel');
 exports.update = function (req, res) {
     var update; 
 
-    if (((req.body.type == "postsViewed") || (req.body.type == "postsCreated")) && req.body.week != 1)
+    /* if (((req.body.type == "postsViewed") || (req.body.type == "postsCreated")) && req.body.week != 1)
     {
         var postsQuery = {'userId': req.body.userId, 'courseId': req.body.courseId, 'week': req.body.week - 1, 'group': req.body.group}
         Event.findOne(postsQuery).exec(, function(err, event) {
@@ -18,7 +18,7 @@ exports.update = function (req, res) {
             });
 
         });
-    }
+    } */
 
     var query = {'userId': req.body.userId, 'courseId': req.body.courseId, 'week': req.body.week, 'group': req.body.group}
     
