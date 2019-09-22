@@ -1,4 +1,7 @@
-// eventController.js
+// reminderController.js
+
+const mailgun = require("mailgun-js");
+
 // Import event model
 Reminder = require('./reminderModel');
 
@@ -14,6 +17,19 @@ exports.new = function (req, res) {
     reminder.task = req.body.task;
     reminder.date = req.body.date;
     reminder.time = req.body.time; 
+
+
+    const mg = mailgun({apiKey: process.env.MAILGUN_API_KEY, domain: process.env.MAILGUN_DOMAIN});
+    const data = {
+        from: 'Excited User <me@samples.mailgun.org>',
+        to: 'shaw.vivienne@gmail.com',
+        subject: 'Hello',
+        text: 'Testing some Mailgun awesomness!'
+    };
+    mg.messages().send(data, function (error, body) {
+        console.log(body);
+    });
+
 
     // save the reminder and check for errors
     reminder.save(function (err) {
