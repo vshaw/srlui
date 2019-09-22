@@ -18,22 +18,21 @@ var reminderSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    week: {
+    weekId: {
         type: Number,
         required: true
     },
     task: {
-        type: Number, 
-        default:0,
+        type: String, 
         required: true     
     },
     date: {
-        type: Number, 
+        type: String, 
         default:0,
         required: true     
     },
     time: {
-        type: Number, 
+        type: String, 
         default:0,
         required: true     
     }
