@@ -30,8 +30,11 @@ exports.new = function (req, res) {
     };
 
 
-    var date = new Date();
-    scheduler.scheduleJob(date, function() {
+var now = new Date();
+now.setMinutes(now.getMinutes() + 2); // timestamp
+now = new Date(now); // Date object
+
+    scheduler.scheduleJob(now, function() {
 
         console.log("scheudled");
         mg.messages().send(data, function (error, body) {
