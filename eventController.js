@@ -41,8 +41,6 @@ exports.update = function (req, res) {
         update = { postsCreated: req.body.amount};
     }
 
-    var postsQuery = 
-
     Event.findOneAndUpdate(query, update, {upsert:true}, function (err, event) {
         if (err)
             res.send(err);
