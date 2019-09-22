@@ -1,7 +1,7 @@
-// eventModel.js
+// reminderModel.js
 var mongoose = require('mongoose');
 // Setup schema
-var eventSchema = mongoose.Schema({
+var reminderSchema = mongoose.Schema({
     userId: {
         type: String,
         required: true
@@ -39,7 +39,7 @@ var eventSchema = mongoose.Schema({
     }
 });
 // Export event model
-var Event = module.exports = mongoose.model('event', eventSchema);
+var Reminder = module.exports = mongoose.model('reminder', reminderSchema);
 module.exports.get = function (callback, limit) {
-    Event.find(callback).limit(limit);
+    Reminder.find(callback).limit(limit);
 }
