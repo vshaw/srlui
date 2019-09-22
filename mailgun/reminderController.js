@@ -1,6 +1,10 @@
 // reminderController.js
 
 const mailgun = require("mailgun-js");
+const scheduler = require('node-schedule');
+
+const mg = mailgun({apiKey: process.env.MAILGUN_API_KEY, domain: process.env.MAILGUN_DOMAIN});
+
 
 // Import event model
 Reminder = require('./reminderModel');
@@ -18,16 +22,22 @@ exports.new = function (req, res) {
     reminder.date = req.body.date;
     reminder.time = req.body.time; 
 
-
-    const mg = mailgun({apiKey: process.env.MAILGUN_API_KEY, domain: process.env.MAILGUN_DOMAIN});
     const data = {
         from: 'Excited User <me@samples.mailgun.org>',
         to: 'shaw.vivienne@gmail.com',
-        subject: 'Hello',
+        subject: 'Hello, scheduled',
         text: 'Testing some Mailgun awesomness!'
     };
-    mg.messages().send(data, function (error, body) {
-        console.log(body);
+
+
+    var date = new Date();
+    scheduler.scheduleJob(date, function() {
+
+        console.log("scheudled");
+        mg.messages().send(data, function (error, body) {
+            console.log(body);
+        });   
+
     });
 
 
