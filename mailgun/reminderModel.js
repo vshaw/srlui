@@ -18,10 +18,6 @@ var reminderSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    weekId: {
-        type: Number,
-        required: true
-    },
     task: {
         type: String, 
         required: true     
@@ -35,6 +31,10 @@ var reminderSchema = mongoose.Schema({
         type: String, 
         default:0,
         required: true     
+    },
+    create_date: {
+        type: Date,
+        default: Date.now
     }
 });
 // Export event model
