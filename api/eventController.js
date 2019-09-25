@@ -13,7 +13,7 @@ exports.createOrUpdate = function (req, res) {
         'userId': req.body.userId, 
         'email': req.body.email, 
         'courseId': req.body.courseId, 
-        'weekNumber': req.body.week, 
+        'weekNumber': req.body.weekNumber, 
         'group': req.body.group};
 
     // If no update type is specified, create a new record with amounts specified. 
