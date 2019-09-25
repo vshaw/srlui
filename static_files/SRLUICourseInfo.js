@@ -9,7 +9,6 @@ var mappedInfo = [
       "3. You should post on the forum 15 times."
     ],
     "This is an inspirational quote about studying.",
-    "01_take goodnotes.png"
   ],
   [
     "bfb4c9eb7c3c4971854e4430ecf5ab51",
@@ -19,7 +18,6 @@ var mappedInfo = [
       "3. You should post on the forum 15 times."
     ],
     "This is an inspirational quote about studying.",
-    "04_distraction.png"
   ],
   [
     "71dc0cb2d3444b9cbaeb54d35e829666",
@@ -29,7 +27,6 @@ var mappedInfo = [
       "3. You should post on the forum 15 times."
     ],
     "This is an inspirational quote about studying.",
-    "02_takeabreak.png"
   ],
   [
     "dd78fa75ef48431184829ac8c19dee1b",
@@ -39,7 +36,6 @@ var mappedInfo = [
       "3. You should post on the forum 15 times."
     ],
     "This is an inspirational quote about studying.",
-    "02_takeabreak.png"
   ],
   [
     "1093a31dc6ef4b6bb598380a9803db8a",
@@ -49,7 +45,6 @@ var mappedInfo = [
       "3. You should post on the forum 15 times."
     ],
     "This is an inspirational quote about studying.",
-    "02_takeabreak.png"
   ],
   [
     "16f63289a3594779805d5e9dfd0b6d0d",
@@ -59,7 +54,6 @@ var mappedInfo = [
       "3. You should post on the forum 15 times."
     ],
     "This is an inspirational quote about studying.",
-    "02_takeabreak.png"
   ]
 ];
 
