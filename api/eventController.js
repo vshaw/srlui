@@ -54,7 +54,7 @@ exports.createOrUpdate = function (req, res) {
 };
 
 // Handle view event info per user for one week
-exports.view = function (req, res) {
+exports.viewWeek = function (req, res) {
 
     var query = {'userId': req.body.userId, 'courseId': req.body.courseId, 'week': req.body.week}
 
@@ -69,7 +69,7 @@ exports.view = function (req, res) {
 };
 
 // Handle view event info for user all weeks
-exports.viewUserProgress = function (req, res) {
+exports.viewCourse = function (req, res) {
 
     var query = {'userId': req.body.userId, 'courseId': req.body.courseId}
 

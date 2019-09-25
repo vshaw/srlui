@@ -20,8 +20,10 @@ router.get('/', function (req, res) {
 // Routes
 router.route('/events')
     .post(eventController.createOrUpdate)
-    .get(eventController.viewUserProgress)
+    .get(eventController.viewCourse)
     .delete(eventController.delete)
+router.route('/events/week')
+	.get(eventController.viewWeek)
 
 router.route('/tasks')
     .post(reminderController.new)
