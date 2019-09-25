@@ -2,32 +2,87 @@
 
     <style type="text/css">
 
-        #header {
+        #controlHeader {
             font-style: italic;
             font-weight: bold;
             display: flex;
             font-size: 240%;
             margin-bottom: 0;
-            justify-content: center;
+            justify-content: left;
+        }
+
+        #treatmentHeader {
+            font-style: italic;
+            font-weight: bold;
+            display: flex;
+            font-size: 180%;
+            margin-bottom: 0;
+            justify-content: left;
+        }
+
+        #controlWeeklyGoals {
+            display: none;
+            width: 60%;
+            margin: auto;
+        }
+
+        #treatmentWeeklyGoals {
+            display: none;
+            width: 60%;
+            margin: auto;
+        }
+
+        #treatmentSubtitle {
+            font-style: italic;
+            display: flex;
+            font-size: 100%;
+            margin-bottom: 0;
+            justify-content: left;        
         }
 
         p.header1 {
             display: flex;
-            justify-content: center;
+            justify-content: left;
             size: 40px;
         }
 
-    </style>
-  
-    <script>
+        #qlPlan {
+          text-align:left;
+      }
 
-        function loadScript(url, callback)
-        {
+      #button {
+          text-align:center;
+      }
+
+      #responseText {
+        display:none;
+        text-align:center;
+    }
+
+    textarea.textRow {
+        width: 700px;
+        height: 50px;
+        border: 5px solid #cccccc;
+        padding: 5px;
+        margin-bottom: 20px;
+        resize: none;
+    }
+
+</style>
+
+<script>
+
+    function loadScript(url, callback)
+    {
             // Adding the script tag to the head as suggested before
             var head = document.head;
             var script = document.createElement('script');
             script.type = 'text/javascript';
-            script.src = url;
+
+            if (url != "")
+            {
+                script.src = url;
+            }
 
             // Then bind the event to the callback function.
             // There are several events for cross browser compatibility.
@@ -38,18 +93,21 @@
             head.appendChild(script);
         }
 
-        var getGoals = function () {
-
+        var getGoals = function () 
+        {
             var goals = {}; 
 
             var url = window.location.href;
             var split = url.split("/");
             var week = split[6];
 
-            // Read goals from mapped.js static file
-            for (var i=0; i < mapped.length; i++) {
-                if(mapped[i][0] == week) {
-                    goals = mapped[i][3];
+            var userId = analytics.user()._getId();
+            console.log("userID here: " + userId); 
+
+            // Read goals from QuotesAndGoals.js static file
+            for (var i=0; i < mappedInfo.length; i++) {
+                if(mappedInfo[i][0] == week) {
+                    goals = mappedInfo[i][1];
                 }
             }
 
@@ -59,29 +117,132 @@
                 var textNode = document.createElement("P");
                 textNode.innerHTML = goal;
                 textNode.className = "header1";
-                document.getElementById("goalsText").appendChild(textNode);
+                document.getElementById("controlGoals").appendChild(textNode);
             }
 
-
+            toggleGroupDisplay(); 
         };
 
-    </script>
 
+        function toggleGroupDisplay()
+        {
+            var group; 
+
+            var userId = 1; //analytics.user()._getId();
+            var controlElement = document.getElementById("controlWeeklyGoals");
+            var treatmentElement = document.getElementById("treatmentWeeklyGoals"); 
+
+            if (userId % 2 == 0)
+            {
+              console.log("control"); 
+              group = "Control"; 
+              controlElement.style.display = "block"; 
+              treatmentElement.style.display = "none"; 
+          }
+          else
+          {
+              console.log("treatment"); 
+              group = "Treatment";
+              controlElement.style.display = "none"; 
+              treatmentElement.style.display = "block"; 
+          }
+      }
+
+      function saveGoals() {
+        var url = window.location.href;
+        var split = url.split("/");
+
+        var userId = analytics.user()._getId();
+        var courseId = split[4].split(":")[1];
+        var week;
+
+        var currentDate = new Date();
+
+        for(var key in courseDates) {
+
+            var tempDate = new Date(key);
+
+            if (currentDate > tempDate )
+            {
+                week = courseDates[key];
+            }
+        }
+
+        var goal1 = document.getElementById("goal1").value;
+        var goal2 = document.getElementById("goal2").value;
+        var goal3 = document.getElementById("goal3").value;
+        var goal4 = document.getElementById("goal4").value;
+
+        console.log(goal1 + goal2 + goal3 + goal4);
+        console.log("week" + week);
+
+    /*    var responseText = document.getElementById("responseText");
+
+        var settings = {
+            "async": true,
+            "crossDomain": true,
+            "url": SERVER_URL + "/api/goals",
+            "method": "POST",
+            "data": {
+                "userId": userId,
+                "courseId": courseId, 
+                "weekId": weekId, 
+                "weekNumber": week, 
+                "goal1": goal1, 
+                "goal2": goal2, 
+                "goal3": goal3, 
+                "goal4": goal4
+            }
+        };
+
+        $.ajax(settings).done(function (response) {
+          responseText.style.display="block"; 
+      });          */
+  }
+
+</script>
 </head>
 
 <!-- HTML Content for the quality applet -->
 <body>
-    <div id="staticGoals">
 
-        <div id="weeklyGoals">
-            <p id="header">This Week's Goals</p>
-            <br>
-            <br>
-            <div id="goalsText">
-                <script>
-                    loadScript("/static/mapped.js", getGoals);
-                </script>
-            </div>
+    <script>
+        loadScript("/static/SRLUICourseInfo.js", getGoals);
+    </script>
+
+    <div id="controlWeeklyGoals">
+        <p id="controlHeader">This Week's Learning Topics</p>
+        <br>
+        <br>
+        <div id="controlGoals">
         </div>
     </div>
+
+    <div id="treatmentWeeklyGoals">
+        <p id="treatmentHeader">What are your study goals for next week?</p>
+        <br>
+        <p id="treatmentSubtitle">Having specific learning can help with motivation. Define goals here to track your progress from week to week. Try to define actionable items.</p>
+        <br>
+        <form id="goalsPlan">
+            <div>
+                <textarea form="replace" id="goal1" class="textRow" placeholder="Example: Watch week 1 videos"></textarea>
+            </div>
+            <div>
+                <textarea form="replace" id="goal2" class="textRow" placeholder="Example: Complete prerequisite knowledge assignment"></textarea>
+            </div>
+            <div>
+                <textarea form="replace" id="goal3" class="textRow" placeholder="Example: review linear algebra and probability"></textarea>
+            </div>
+            <div>
+                <textarea form="replace" id="goal4" class="textRow"></textarea>
+            </div>
+            <br>
+            <p style="text-align:center">
+                <button type="button" id="saveGoalsButton" onclick="saveGoals()">Submit</button>
+            </p>
+        </form>
+        <p id= "responseText">Response saved!</p>
+    </div>
+
+</div>
 </body>

@@ -14,7 +14,7 @@ let app = express();
 // Import routes
 let apiEventRoutes = require("./eventApiRoutes");
 
-let apiReminderRoutes = require("./mailgun/reminderApiRoutes");
+let apiReminderRoutes = require("./api/routes");
 
 // Configure bodyparser to handle post requests
 app.use(bodyParser.urlencoded({

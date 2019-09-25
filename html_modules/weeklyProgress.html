@@ -25,8 +25,10 @@
         }
     </style>
 
-    <script> 
+    <script>
 
+        var views; 
+        var posts; 
 
         function loadScript(url, callback)
         {
@@ -44,6 +46,34 @@
             // Fire the loading
             head.appendChild(script);
         }
+
+        var generateNumbers = function() {
+
+            var userEmail = analytics._user._getTraits().email;
+
+            var discussionData = JSON.parse(discussionMapping);
+
+          
+            for (var i = 0; i < discussionData.length; i++) {
+              
+              
+                if (discussionData[i].Email == userEmail)
+                {
+                    views = discussionData[i].Views; 
+                    posts = discussionData[i].Posts; 
+                }
+            }
+
+            console.log("views" + views);
+            console.log("posts" + posts);
+
+
+            document.getElementById("numViews").innerHTML = views; 
+            document.getElementById("numPosts").innerHTML = posts; 
+        }
+
+
+        /**** LOAD THE CHART ***/ 
 
         var generateLineChart = function () {
 
@@ -172,11 +202,11 @@
             <div class="quizFeedback titel">Tried Problems</div>
         </div>
         <div id="col3">
-            <div id="timeIntended" class="text">1</div>
+            <div id="numViews" class="text">1</div>
             <div class="timeFeedback titel">View Posts</div>
         </div>
         <div id="col4">
-            <div id="timeIntended" class="text">4</div>
+            <div id="numPosts" class="text">4</div>
             <div class="timeFeedback titel">Post Times</div>
         </div>
     </div>
@@ -188,6 +218,7 @@
 
     <div id="chartContainer" style="height: 300px; width: 100%;"> 
         <script> 
+            loadScript("/static/DiscussionMapping.js", generateNumbers);
             loadScript("https://canvasjs.com/assets/script/canvasjs.min.js", generateLineChart);
         </script>
 
