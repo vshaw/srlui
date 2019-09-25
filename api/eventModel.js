@@ -1,9 +1,14 @@
 // eventModel.js
 var mongoose = require('mongoose');
+
 // Setup schema
 var eventSchema = mongoose.Schema({
     userId: {
         type: String,
+        required: true
+    },
+    email: {
+        type: String, 
         required: true
     },
     group: {
@@ -14,8 +19,8 @@ var eventSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    week: {
-        type: Number,
+    weekNumber: {
+        type: Number, 
         required: true
     },
     videosWatched: {

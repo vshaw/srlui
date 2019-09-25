@@ -4,17 +4,31 @@
 let router = require('express').Router();
 
 
-// Import event controller
+// Import controllers
 var reminderController = require('./reminderController');
 var goalController = require('./goalController');
+var eventController = require('./eventController');
 
-// Task routes
-router.route('/scheduleTask')
+// Basic display for /api page 
+router.get('/', function (req, res) {
+    res.json({
+        status: 'API Its Working',
+        message: 'This is the SRLUI API',
+    });
+});
+
+// Routes
+router.route('/events')
+    .post(eventController.createOrUpdate)
+    .get(eventController.viewUserProgress)
+    .delete(eventController.delete)
+
+router.route('/tasks')
     .post(reminderController.new)
     .get(reminderController.index)
     .delete(reminderController.delete)
 
-router.route('/setGoal')
+router.route('/goals')
 	.post(goalController.new)
 	.get(goalController.index)
 	.delete(goalController.delete)

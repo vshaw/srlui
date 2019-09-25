@@ -1,46 +1,48 @@
 // eventController.js
+
 // Import event model
 Event = require('./eventModel');
 
-// Handle update event info
-exports.update = function (req, res) {
-    var update; 
+// Handle update event info, create if no match found 
+exports.createOrUpdate = function (req, res) {
 
-    /* if (((req.body.type == "postsViewed") || (req.body.type == "postsCreated")) && req.body.week != 1)
+    var updateType = req.body.type; 
+    var updateAmount; 
+
+    var query = {
+        'userId': req.body.userId, 
+        'email': req.body.email, 
+        'courseId': req.body.courseId, 
+        'weekNumber': req.body.week, 
+        'group': req.body.group};
+
+    // If no update type is specified, create a new record with amounts specified. 
+    // Typically this request would be a manual update by an admin.     
+    if (updateType == null)
     {
-        var postsQuery = {'userId': req.body.userId, 'courseId': req.body.courseId, 'week': req.body.week - 1, 'group': req.body.group}
-        Event.findOne(postsQuery).exec(, function(err, event) {
-            if (err)
-                res.send(err);
-            res.json({
-                message: 'Event details updated',
-                data: event
-            });
-
-        });
-    } */
-
-    var query = {'userId': req.body.userId, 'courseId': req.body.courseId, 'week': req.body.week, 'group': req.body.group}
-    
-    if (req.body.type == "videosWatched")
-    {
-        var amount = req.body.amount ? req.body.amount : 1; 
-        update = { $inc: {videosWatched: amount}};
+        update = 
+        {
+            videosWatched: req.body.videosWatched ? req.body.videosWatched : 0, 
+            questionsAnswered: req.body.questionsAnswered ? req.body.questionsAnswered : 0,
+            postsViewed: req.body.postsViewed ? req.body.postsViewed : 0,
+            postsCreated: req.body.postsCreated ? req.body.postsCreated : 0
+        }
     }
-    else if (req.body.type == "questionsAnswered")
+    else if (updateType == "videosWatched")
+    {
+        // Increment by one unless another amount is specified
+        var amount = req.body.amount ? req.body.amount : 1; 
+        update = { $inc: {videosWatched: amount}};   
+    }
+    else if (updateType == "questionsAnswered")
     {
         var amount = req.body.amount ? req.body.amount : 1; 
         update = { $inc: {questionsAnswered: amount}};
     }
-    else if (req.body.type == "postsViewed")
-    {
-        update = { postsViewed: req.body.amount};
-    }
-    else if (req.body.type == "postsCreated")
-    {
-        update = { postsCreated: req.body.amount};
-    }
 
+    // Discussion posts are handled via the discussion stats python crawler. 
+
+    // If no record matches the user/course/week info, create a new record (upsert:true)
     Event.findOneAndUpdate(query, update, {upsert:true}, function (err, event) {
         if (err)
             res.send(err);

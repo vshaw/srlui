@@ -12,9 +12,7 @@ let mongoose = require('mongoose');
 let app = express();
 
 // Import routes
-let apiEventRoutes = require("./eventApiRoutes");
-
-let apiReminderRoutes = require("./api/routes");
+let apiRoutes = require("./api/routes");
 
 // Configure bodyparser to handle post requests
 app.use(bodyParser.urlencoded({
@@ -46,9 +44,7 @@ app.use(function(req, res, next) {
 // Send message for default URL
 app.get('/', (req, res) => res.send('SRLUI Hello World'));
 
-app.use('/api', apiEventRoutes);
-
-app.use('/api', apiReminderRoutes);
+app.use('/api', apiRoutes);
 
 // Launch app to listen to specified port
 app.listen(port, function () {
