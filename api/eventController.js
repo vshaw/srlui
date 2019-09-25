@@ -56,7 +56,7 @@ exports.createOrUpdate = function (req, res) {
 // Handle view event info per user for one week
 exports.viewWeek = function (req, res) {
 
-    var query = {'userId': req.body.userId, 'courseId': req.body.courseId, 'weekNumber': req.body.week}
+    var query = {'userId': req.body.userId, 'courseId': req.body.courseId, 'weekNumber': req.body.weekNumber}
 
     Event.findOne(query, function (err, event) {
         if (err)
