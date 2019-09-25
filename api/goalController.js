@@ -9,7 +9,7 @@ exports.new = function (req, res) {
     goal.email = req.body.email;
     goal.courseId = req.body.courseId; 
     goal.weekId = req.body.weekId;
-    goal.weekId = req.body.weekNumber;
+    goal.weekNumber = req.body.weekNumber;
     goal.goal1 = req.body.goal1;
     goal.goal2 = req.body.goal2;
     goal.goal3 = req.body.goal3;
@@ -21,13 +21,13 @@ exports.new = function (req, res) {
             res.json(err);
         res.json({
             message: 'New goal created!',
-            data: reminder
+            data: goal
         });
     });
 };
 
 exports.index = function (req, res) {
-    Goal.get(function (err, reminders) {
+    Goal.get(function (err, goals) {
         if (err) {
             res.json({
                 status: "error",
@@ -36,8 +36,8 @@ exports.index = function (req, res) {
         }
         res.json({
             status: "success",
-            message: "Reminders retrieved successfully",
-            data: reminders
+            message: "Goals retrieved successfully",
+            data: goals
         });
     });
 };
@@ -51,7 +51,7 @@ exports.delete = function (req, res) {
             res.send(err); 
         res.json({
             status: "success",
-            message: 'Reminder deleted'
+            message: 'Goal deleted'
         });
     });
 };
