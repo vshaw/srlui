@@ -72,17 +72,15 @@
 
 <script>
 
+    var SERVER_URL = "https://guarded-mesa-27479.herokuapp.com";
+
     function loadScript(url, callback)
     {
             // Adding the script tag to the head as suggested before
             var head = document.head;
             var script = document.createElement('script');
             script.type = 'text/javascript';
-
-            if (url != "")
-            {
-                script.src = url;
-            }
+            script.src = url;
 
             // Then bind the event to the callback function.
             // There are several events for cross browser compatibility.
@@ -100,9 +98,6 @@
             var url = window.location.href;
             var split = url.split("/");
             var week = split[6];
-
-            var userId = analytics.user()._getId();
-            console.log("userID here: " + userId); 
 
             // Read goals from QuotesAndGoals.js static file
             for (var i=0; i < mappedInfo.length; i++) {
@@ -128,20 +123,18 @@
         {
             var group; 
 
-            var userId = 1; //analytics.user()._getId();
+            var userId = analytics.user()._getId();
             var controlElement = document.getElementById("controlWeeklyGoals");
             var treatmentElement = document.getElementById("treatmentWeeklyGoals"); 
 
             if (userId % 2 == 0)
             {
-              console.log("control"); 
               group = "Control"; 
               controlElement.style.display = "block"; 
               treatmentElement.style.display = "none"; 
           }
           else
           {
-              console.log("treatment"); 
               group = "Treatment";
               controlElement.style.display = "none"; 
               treatmentElement.style.display = "block"; 
@@ -151,10 +144,13 @@
       function saveGoals() {
         var url = window.location.href;
         var split = url.split("/");
+        var weekId = split[6];
+        var courseId = split[4].split(":")[1];
 
         var userId = analytics.user()._getId();
-        var courseId = split[4].split(":")[1];
-        var week;
+        var email = analytics._user._getTraits().email;
+        
+        var weekNumber;
 
         var currentDate = new Date();
 
@@ -164,7 +160,7 @@
 
             if (currentDate > tempDate )
             {
-                week = courseDates[key];
+                weekNumber = courseDates[key];
             }
         }
 
@@ -172,22 +168,20 @@
         var goal2 = document.getElementById("goal2").value;
         var goal3 = document.getElementById("goal3").value;
         var goal4 = document.getElementById("goal4").value;
-
-        console.log(goal1 + goal2 + goal3 + goal4);
-        console.log("week" + week);
-
-    /*    var responseText = document.getElementById("responseText");
+        
+        var responseText = document.getElementById("responseText");
 
         var settings = {
             "async": true,
             "crossDomain": true,
-            "url": SERVER_URL + "/api/goals",
+            "url": SERVER_URL + "/api/setGoal",
             "method": "POST",
             "data": {
                 "userId": userId,
+                "email": email,
                 "courseId": courseId, 
                 "weekId": weekId, 
-                "weekNumber": week, 
+                "weekNumber": weekNumber, 
                 "goal1": goal1, 
                 "goal2": goal2, 
                 "goal3": goal3, 
@@ -197,13 +191,12 @@
 
         $.ajax(settings).done(function (response) {
           responseText.style.display="block"; 
-      });          */
+      });          
   }
 
 </script>
 </head>
 
-<!-- HTML Content for the quality applet -->
 <body>
 
     <script>
