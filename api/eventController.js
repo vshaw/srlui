@@ -58,11 +58,11 @@ exports.createOrUpdate = function (req, res) {
 exports.viewWeek = function (req, res) {
 
     console.log("view week");
-    var query = {'userId': req.body.userId, 'courseId': req.body.courseId, 'weekNumber': req.body.weekNumber};
+    var query = {'userId': req.query.userId, 'courseId': req.query.courseId, 'weekNumber': req.query.weekNumber};
 
-    console.log("userId: " + req.body.userId);
-    console.log("courseId: " + req.body.courseId);
-    console.log("weekNumber: " + req.body.weekNumber);
+    console.log("userId: " + req.query.userId);
+    console.log("courseId: " + req.query.courseId);
+    console.log("weekNumber: " + req.query.weekNumber);
 
     Event.findOne(query, function (err, event) {
         if (err)
