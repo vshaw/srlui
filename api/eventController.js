@@ -58,6 +58,10 @@ exports.viewWeek = function (req, res) {
 
     var query = {'userId': req.body.userId, 'courseId': req.body.courseId, 'weekNumber': req.body.weekNumber}
 
+    console.log("userId: " + req.body.userId);
+    console.log("courseId: " + req.body.courseId);
+    console.log("weekNumber: " + req.body.weekNumber);
+
     Event.findOne(query, function (err, event) {
         if (err)
             res.send(err);
