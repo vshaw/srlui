@@ -38,7 +38,7 @@ var sliderPercentageSchema = mongoose.Schema({
     }
 });
 // Export event model
-var SliderPercentage = module.exports = mongoose.model('sliderPercentage', eventSchema);
+var SliderPercentage = module.exports = mongoose.model('sliderPercentage', sliderPercentageSchema);
 module.exports.get = function (callback, limit) {
     SliderPercentage.find(callback).limit(limit);
 }
