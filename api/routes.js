@@ -8,6 +8,7 @@ let router = require('express').Router();
 var reminderController = require('./reminderController');
 var goalController = require('./goalController');
 var eventController = require('./eventController');
+var sliderController = require('./SliderPercentageController');
 
 // Basic display for /api page 
 router.get('/', function (req, res) {
@@ -36,6 +37,11 @@ router.route('/goals')
 	.delete(goalController.delete)
 router.route('/goals/week')
 	.get(goalController.viewWeek)
+
+router.route('/slider')
+    .post(sliderController.createOrUpdate)
+    .get(sliderController.viewWeek)
+    .delete(sliderController.delete)
 	
 // Export API 
 module.exports = router;
