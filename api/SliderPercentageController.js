@@ -1,13 +1,10 @@
 // eventController.js
 
 // Import event model
-SliderPercentage = require('./SliderPercentageModel');
+SliderPercentage = require('./sliderPercentageModel');
 
 // Handle update event info, create if no match found 
 exports.createOrUpdate = function (req, res) {
-
-    var updateType = req.body.type; 
-    var updateAmount; 
 
     var query = {
         'userId': req.body.userId, 
@@ -21,12 +18,10 @@ exports.createOrUpdate = function (req, res) {
     {
         sliderPercentage: req.body.sliderPercentage
     }
-    
 
-    // Discussion posts are handled via the discussion stats python crawler. 
 
     // If no record matches the user/course/week info, create a new record (upsert:true)
-    Event.findOneAndUpdate(query, update, {upsert:true}, function (err, event) {
+    SliderPercentage.findOneAndUpdate(query, update, {upsert:true}, function (err, event) {
         if (err)
             res.send(err);
         res.json({
@@ -41,7 +36,7 @@ exports.viewWeek = function (req, res) {
 
     var query = {'userId': req.query.userId, 'courseId': req.query.courseId, 'weekNumber': req.query.weekNumber};
 
-    Event.findOne(query, function (err, event) {
+    SliderPercentage.findOne(query, function (err, event) {
         if (err)
             res.send(err);
         res.json({
@@ -55,7 +50,7 @@ exports.viewWeek = function (req, res) {
 // Handle delete contact
 exports.delete = function (req, res) {
     var query = {'userId': req.body.userId, 'courseId': req.body.courseId}
-    Event.deleteMany(query, function (err) {
+    SliderPercentage.deleteMany(query, function (err) {
         if (err) 
             res.send(err); 
         res.json({

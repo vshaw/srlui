@@ -8,7 +8,7 @@ let router = require('express').Router();
 var reminderController = require('./reminderController');
 var goalController = require('./goalController');
 var eventController = require('./eventController');
-var sliderController = require('./SliderPercentageController');
+var sliderController = require('./sliderPercentageController');
 
 // Basic display for /api page 
 router.get('/', function (req, res) {
