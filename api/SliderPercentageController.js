@@ -1,7 +1,7 @@
 // eventController.js
 
 // Import event model
-SliderPercentage = require('./sliderPercentageModel');
+SliderPercentage = require('./SliderPercentageModel');
 
 // Handle update event info, create if no match found 
 exports.createOrUpdate = function (req, res) {
