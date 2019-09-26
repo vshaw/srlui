@@ -24,22 +24,18 @@ var goalSchema = mongoose.Schema({
     },
     goal1: {
         type: String, 
-        required: true,
         default: ''     
     },
     goal2: {
         type: String, 
-        required: true,
         default: ''          
     },
     goal3: {
         type: String, 
-        required: true,
         default: ''          
     },
     goal4: {
         type: String, 
-        required: true,
         default: ''          
     },
     createDate: {
