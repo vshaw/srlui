@@ -11,10 +11,6 @@ var sliderPercentageSchema = mongoose.Schema({
         type: String, 
         required: true
     },
-    group: {
-        type: String, 
-        required: true
-    },
     courseId: {
         type: String,
         required: true

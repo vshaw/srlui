@@ -17,11 +17,11 @@ exports.createOrUpdate = function (req, res) {
         'weekNumber': req.body.weekNumber, 
     };
 
-        var update = 
-        {
-            sliderPercentage: req.body.sliderPercentage
-        }
-   
+    var update = 
+    {
+        sliderPercentage: req.body.sliderPercentage
+    }
+    
 
     // Discussion posts are handled via the discussion stats python crawler. 
 
