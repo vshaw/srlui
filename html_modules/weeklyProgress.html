@@ -6,7 +6,18 @@
             justify-content: space-around;
         }
 
-        #header {
+        #pastWeekHeader {
+            font-style: italic;
+            font-size: 150%;
+        }
+        
+        #footer {
+            font-style: italic;
+            font-weight: bold;
+            font-size: 100%;
+        }
+        
+        #overallProgressHeader {
             font-style: italic;
             font-size: 150%;
         }
@@ -27,8 +38,7 @@
 
     <script>
 
-        var views; 
-        var posts; 
+        var SERVER_URL = "https://guarded-mesa-27479.herokuapp.com";
 
         function loadScript(url, callback)
         {
@@ -49,126 +59,196 @@
 
         var generateNumbers = function() {
 
-            var userEmail = analytics._user._getTraits().email;
+            var userId = analytics.user()._getId();
 
-            var discussionData = JSON.parse(discussionMapping);
+            var url = window.location.href;
+            var split = url.split("/");
+            var courseId = split[4].split(":")[1];
 
-          
-            for (var i = 0; i < discussionData.length; i++) {
-              
-              
-                if (discussionData[i].Email == userEmail)
+            // Get the week number based on the current date and the start date of each week recorded in SRLUICourseInfo.js
+            var weekNumber;
+
+            var currentDate = new Date();
+            var courseStartDate; 
+
+            for(var key in courseDates) 
+            {
+                var tempDate = new Date(key);
+
+                if (currentDate > tempDate )
                 {
-                    views = discussionData[i].Views; 
-                    posts = discussionData[i].Posts; 
+                    weekNumber = courseDates[key];
+                    courseStartDate = new Date(key);
                 }
             }
 
-            console.log("views" + views);
-            console.log("posts" + posts);
+            // Set date string for past week      
+            var startString = convertDateToString(courseStartDate); 
+            var endString = convertDateToString(currentDate);
+            var dateString = "In the past week of the course (" + startString + " - " + endString + ") you have:";
+            document.getElementById("pastWeekHeader").innerHTML = dateString; 
 
+            // Send GET request for to get activity for specific user/course/week number. 
+            var settings = {
+                "async": true,
+                "crossDomain": true,
+                "url": SERVER_URL + "/api/events/week",
+                "method": "GET",
+                "data": {
+                    "userId": userId,
+                    "courseId": courseId, 
+                    "weekNumber": weekNumber
+                }
+            };
 
-            document.getElementById("numViews").innerHTML = views; 
-            document.getElementById("numPosts").innerHTML = posts; 
+            $.ajax(settings).done(function (response) {
+                var weekResult = response.data; 
+
+                // Set past week results
+                document.getElementById("videosWatched").innerHTML = weekResult.videosWatched; 
+                document.getElementById("questionsAnswered").innerHTML = weekResult.questionsAnswered; 
+                document.getElementById("postsViewed").innerHTML = weekResult.postsViewed; 
+                document.getElementById("postsCreated").innerHTML = weekResult.postsCreated; 
+            });          
+        }
+        
+        function getKeyByValue(object, value) {
+            return Object.keys(object).find(key => object[key] === value);
         }
 
+        function convertDateToString(d)
+        {
+            var dd = d.getDate(); 
+            var mm = d.getMonth()+1; 
+            var yyyy = d.getFullYear();
+
+            if(dd<10) 
+            {
+                dd='0'+dd;
+            } 
+
+            if(mm<10) 
+            {
+                mm='0'+mm;
+            } 
+
+            return mm +'/'+ dd +'/'+ yyyy;
+        }
+
+        // Sort events by week number
+        function sortByWeekNumber(record1, record2)
+        {
+            if (record1.weekNumber > record2.weekNumber)
+            {
+                return 1; 
+            }
+
+            if (record1.weekNumber < record2.weekNumber)
+            {
+                return -1; 
+            }
+
+            return 0; 
+        } 
 
         /**** LOAD THE CHART ***/ 
-
         var generateLineChart = function () {
+            var userId = analytics.user()._getId();
 
-            var chart = new CanvasJS.Chart("chartContainer", {
-                theme:"light2",
-                animationEnabled: true,
-                title:{
-                    text: "Class Progress"
-                },
-                axisY :{
-                    includeZero: true,
-                    title: "Number of Actions",
-                    suffix: ""
-                },
-                toolTip: {
-                    shared: "true"
-                },
-                legend:{
-                    cursor:"pointer",
-                    itemclick : toggleDataSeries
-                },
-                data: [{
-                    type: "spline", 
-                    showInLegend: true,
-                    yValueFormatString: "",
-                    name: "Videos Watched",
-                    dataPoints: [
-                    { label: "Week 1", y: 2 },
-                    { label: "Week 2", y: 2 },
-                    { label: "Week 3", y: 2 },
-                    { label: "Week 4", y: 2 },
-                    { label: "Week 5", y: 2 },
-                    { label: "Week 6", y: 2 },
-                    { label: "Week 7", y: 2 },
-                    { label: "Week 8", y: 2 },
-                    { label: "Week 9", y: 2 },
-                    { label: "Week 10", y: 2 }
-                    ]
-                },
+            var url = window.location.href;
+            var split = url.split("/");
+            var courseId = split[4].split(":")[1];
+            
+            // Send GET request for to get activity for specific user/course. 
+            var settings = {
+                "async": true,
+                "crossDomain": true,
+                "url": SERVER_URL + "/api/events",
+                "method": "GET",
+                "data": {
+                    "userId": userId,
+                    "courseId": courseId 
+                }
+            };
+
+            $.ajax(settings).done(function (response) {
+                var aggVideosWatched = []; 
+                var aggQuestionsAnswered = []; 
+                var aggPostsCreated = []; 
+                var aggPostsViewed = []; 
+                
+                var result = response.data; 
+                console.log(result); 
+                result.sort(sortByWeekNumber);
+
+                // Set data points for line chart
+                for (var i = 0; i < result.length; i++)
                 {
-                    type: "spline", 
-                    showInLegend: true,
-                    yValueFormatString: "",
-                    name: "Posts Viewed",
-                    dataPoints: [
-                    { label: "Week 1", y: 8 },
-                    { label: "Week 2", y: 6.81 },
-                    { label: "Week 3", y: 6.71 },
-                    { label: "Week 4", y: 6.82 },
-                    { label: "Week 5", y: 6.56 },
-                    { label: "Week 6", y: 6.24 },
-                    { label: "Week 7", y: 5.40 },
-                    { label: "Week 8", y: 7.01 },
-                    { label: "Week 9", y: 7.14 },
-                    { label: "Week 10", y: 8.11 }
-                    ]
-                },
-                {
-                    type: "spline", 
-                    showInLegend: true,
-                    yValueFormatString: "",
-                    name: "Posts Replied",
-                    dataPoints: [
-                    { label: "Week 1", y: 7.94 },
-                    { label: "Week 2", y: 7.29 },
-                    { label: "Week 3", y: 7.28 },
-                    { label: "Week 4", y: 7.82 },
-                    { label: "Week 5", y: 7.89 },
-                    { label: "Week 6", y: 6.71 },
-                    { label: "Week 7", y: 7.80 },
-                    { label: "Week 8", y: 7.60 },
-                    { label: "Week 9", y: 7.66 },
-                    { label: "Week 10", y: 8.89 }
-                    ]
-                },
-                {
-                    type: "spline", 
-                    showInLegend: true,
-                    yValueFormatString: "",
-                    name: "Assignments Completed",
-                    dataPoints: [
-                    { label: "Week 1", y: 10.11 },
-                    { label: "Week 2", y: 9.27 },
-                    { label: "Week 3", y: 9.25 },
-                    { label: "Week 4", y: 10.17 },
-                    { label: "Week 5", y: 10.72 },
-                    { label: "Week 6", y: 10.24 },
-                    { label: "Week 7", y: 12.07 },
-                    { label: "Week 8", y: 0},
-                    { label: "Week 9", y: 0},
-                    { label: "Week 10", y: 0},
-                    ]
-                }]
-            });
-            chart.render();
+                    // Get the actual start date of the week and attach it to the chart label
+                    var startDate = getKeyByValue(courseDates, result[i].weekNumber); 
+
+                    var dates = startDate.split("-");
+
+                    var weekString = "Week " + result[i].weekNumber + " (" + dates[1] + "/" + dates[2] + ")"; 
+                    
+                    aggVideosWatched.push({label: weekString, y: result[i].videosWatched});
+                    aggQuestionsAnswered.push({label: weekString, y: result[i].questionsAnswered});
+                    aggPostsCreated.push({label: weekString, y: result[i].postsViewed});
+                    aggPostsViewed.push({label: weekString, y: result[i].postsCreated});
+                }
+
+
+                var chart = new CanvasJS.Chart("chartContainer", {
+                    theme:"light2",
+                    animationEnabled: true,
+                    title:{
+                        text: "Class Progress"
+                    },
+                    axisY :{
+                        includeZero: true,
+                        title: "Number of Actions",
+                        suffix: ""
+                    },
+                    toolTip: {
+                        shared: "true"
+                    },
+                    legend:{
+                        cursor:"pointer",
+                        itemclick : toggleDataSeries
+                    },
+                    data: [{
+                        type: "spline", 
+                        showInLegend: true,
+                        yValueFormatString: "",
+                        name: "Videos Watched",
+                        dataPoints: aggVideosWatched
+                    },
+                    {
+                        type: "spline", 
+                        showInLegend: true,
+                        yValueFormatString: "",
+                        name: "Posts Viewed",
+                        dataPoints: aggPostsViewed
+                    },
+                    {
+                        type: "spline", 
+                        showInLegend: true,
+                        yValueFormatString: "",
+                        name: "Posts Created",
+                        dataPoints: aggPostsCreated
+                    },
+                    {
+                        type: "spline", 
+                        showInLegend: true,
+                        yValueFormatString: "",
+                        name: "Questions Answered",
+                        dataPoints: aggQuestionsAnswered
+                    }]
+                });
+                chart.render();
+
+                
+            });          
 
             function toggleDataSeries(e) {
                 if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible ){
@@ -188,41 +268,45 @@
 <body>
     <div id="startPlan">
 
-      <p id="header">In the past week of the course (9/15/22 - 9/22/2019) you have:</p>
+      <p id="pastWeekHeader"></p>
 
       <br>
 
       <div id="three">
         <div id="col1">
-            <div id="vidIntended" class="text">3</div>
-            <div class="vidFeedback titel">Watched Videos</div>
+            <div id="videosWatched" class="text"></div>
+            <div class="vidFeedback titel">Videos Watched</div>
         </div>
         <div id="col2">
-            <div id="questionIntended" class="text">2</div>
-            <div class="quizFeedback titel">Tried Problems</div>
+            <div id="questionsAnswered" class="text"></div>
+            <div class="quizFeedback titel">Problems Tried</div>
         </div>
         <div id="col3">
-            <div id="numViews" class="text">1</div>
-            <div class="timeFeedback titel">View Posts</div>
+            <div id="postsCreated" class="text"></div>
+            <div class="timeFeedback titel">Times Posted</div>
         </div>
         <div id="col4">
-            <div id="numPosts" class="text">4</div>
-            <div class="timeFeedback titel">Post Times</div>
+            <div id="postsViewed" class="text"></div>
+            <div class="timeFeedback titel">Posts Viewed</div>
         </div>
     </div>
 
     <br>
     <br>
 
-    <p id="header">Your overall course progress:</p>
+    <p id="overallProgressHeader">Your overall course progress:</p>
 
     <div id="chartContainer" style="height: 300px; width: 100%;"> 
         <script> 
-            loadScript("/static/DiscussionMapping.js", generateNumbers);
+            loadScript("/static/SRLUICourseInfo.js", generateNumbers);
             loadScript("https://canvasjs.com/assets/script/canvasjs.min.js", generateLineChart);
         </script>
 
     </div>
+    
+    <br>
+    <br>
+    <p id="footer">*Note edX course weeks start on Mondays</p>
 
 </div>
 
