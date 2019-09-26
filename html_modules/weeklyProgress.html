@@ -10,7 +10,7 @@
             font-style: italic;
             font-size: 150%;
         }
-        
+
         #goalsHeaderText {
             font-style: italic;
             font-size: 150%;
@@ -36,35 +36,56 @@
             text-align: center;
         }
 
-        p.goalText
-        {
+        #sliderSubtitle{
+            font-style: italic;
+            font-weight: bold;
+            font-size: 100%;
+            text-align: center;
+        }
+        p.goalText {
             font-style: italic;
             font-size: 120%;
             text-align: center;
         }
 
-        .titel {
-            font-style: italic;
-            text-align: center;
+        #sliderElements {
+            justify-content:center;
         }
 
-        .text {
-            font-style: italic;
-            text-align: center;
-            font-weight: bold;
-            font-size: 300%;
-            color: #C84B4B;
+        #responseText {
+            display:none;
+            text-align:center;
         }
-    </style>
+        #rangeInput {
+            width: 45%;
+        }
 
-    <script>
+        #textInput {
+           font-weight:bold;
+       }
 
-        var SERVER_URL = "https://guarded-mesa-27479.herokuapp.com";
+       .titel {
+        font-style: italic;
+        text-align: center;
+    }
+
+    .text {
+        font-style: italic;
+        text-align: center;
+        font-weight: bold;
+        font-size: 300%;
+        color: #C84B4B;
+    }
+</style>
+
+<script>
+
+    var SERVER_URL = "https://guarded-mesa-27479.herokuapp.com";
 
 
-        /**** LOAD EXTERNAL SCRIPTS ***/ 
-        function loadScript(url, callback)
-        {
+    /**** LOAD EXTERNAL SCRIPTS ***/ 
+    function loadScript(url, callback)
+    {
             // Adding the script tag to the head as suggested before
             var head = document.head;
             var script = document.createElement('script');
@@ -256,11 +277,12 @@
           var userId = analytics.user()._getId();
 
             // Only do any of this if the user is in the treatment group
-            if (userId % 2 != 0)
+            if (userId % 2 == 0)
             {
                 var goalsElement = document.getElementById("weekGoals");
+                var goalsContainer = document.getElementById("goalsContainer"); 
                 var weekNumber = getWeekNumber() - 1;
-                
+
                 var settings = {
                     "async": true,
                     "crossDomain": true,
@@ -272,7 +294,7 @@
                         "weekNumber": weekNumber 
                     }
                 };
-                
+
                 console.log(settings); 
 
                 $.ajax(settings).done(function (response) {
@@ -284,28 +306,28 @@
                         if (weekResult.goal1 != null)
                         {
                             var textNode = createGoalTextNode(weekResult.goal1); 
-                            goalsElement.appendChild(textNode);
+                            goalsContainer.appendChild(textNode);
                         }
                         if (weekResult.goal2 != null)
                         {
                             var textNode = createGoalTextNode(weekResult.goal2); 
-                            goalsElement.appendChild(textNode);
+                            goalsContainer.appendChild(textNode);
                         }
                         if (weekResult.goal3 != null)
                         {
                             var textNode = createGoalTextNode(weekResult.goal3); 
-                            goalsElement.appendChild(textNode);
+                            goalsContainer.appendChild(textNode);
                         }
                         if (weekResult.goal4 != null)
                         {
                             var textNode = createGoalTextNode(weekResult.goal4); 
-                            goalsElement.appendChild(textNode);
+                            goalsContainer.appendChild(textNode);
                         }
                     }
                     else
                     {
                         var textNode = createGoalTextNode("You didn't set any goals last week."); 
-                        goalsElement.appendChild(textNode);
+                        goalsContainer.appendChild(textNode);
                     }
 
                     goalsElement.style.display = "block"; 
@@ -314,7 +336,43 @@
             }
         }
 
-        /*** HELPER FUNCTIONS ***/
+        function saveSlider() {
+            var url = window.location.href;
+            var split = url.split("/");
+            var weekId = split[6];
+            var courseId = split[4].split(":")[1];
+
+            var userId = analytics.user()._getId();
+            var email = analytics._user._getTraits().email;
+
+            var weekNumber = getWeekNumber();
+
+            var responseText = document.getElementById("responseText");
+
+            var percentage = document.getElementById('textInput').innerHTML; 
+            var number = percentage.substring(percentage.length - 1);
+            console.log(number); 
+
+            var settings = {
+                "async": true,
+                "crossDomain": true,
+                "url": SERVER_URL + "/api/slider",
+                "method": "POST",
+                "data": {
+                    "userId": userId,
+                    "email": email,
+                    "courseId": courseId, 
+                    "weekId": weekId, 
+                    "weekNumber": weekNumber, 
+                    "sliderPercentage": number 
+                }
+            };
+
+            $.ajax(settings).done(function (response) {
+              responseText.style.display="block"; 
+          });
+
+            /*** HELPER FUNCTIONS ***/
 
         // Search dictionary for value and return key (e.g. week num to start date)
         function getKeyByValue(object, value) {
@@ -384,8 +442,12 @@
             textNode.className = "goalText";
             return textNode; 
         }
-        
-    </script>
+
+        function updateTextInput(val) {
+          document.getElementById('textInput').innerHTML=val + "%"; 
+      }
+
+  </script>
 
 
 </head>
@@ -434,16 +496,29 @@
     <br>
     <br>
     <p id="footer">*Note edX course weeks start on Mondays</p>
-    
+
     <script>
-     loadScript("/static/SRLUICourseInfo.js", toggleGroupDisplay);
- </script>
- 
- <br>
+       loadScript("/static/SRLUICourseInfo.js", toggleGroupDisplay);
+   </script>
 
- <div id= "weekGoals">
+   <br>
+
+   <div id= "weekGoals">
     <p id="goalsHeaderText">As a reminder, these were the goals you set for yourself last week:</p>
+    <div id="goalsContainer"></div>
+    <div id="slider">
+      <p id="sliderSubtitle">Based on your progress this week, how would you rate the completion of your study plan?</p>
+      
+      <div id="sliderElements">
+          <input type="range" id="rangeInput" min="0" max="100" onchange="updateTextInput(this.value);">
+          <p id="textInput">50%</p>
+          <p style="text-align:center">
+            <button type="button" id="saveGoalsButton" onclick="saveGoals()">Submit</button>
+        </p>
+        <p id= "responseText">Response saved!</p>
 
+    </div>
+</div>
 </div>
 
 
