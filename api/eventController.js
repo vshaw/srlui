@@ -14,7 +14,8 @@ exports.createOrUpdate = function (req, res) {
         'email': req.body.email, 
         'courseId': req.body.courseId, 
         'weekNumber': req.body.weekNumber, 
-        'group': req.body.group};
+        'group': req.body.group
+    };
 
     // If no update type is specified, create a new record with amounts specified. 
     // Typically this request would be a manual update by an admin.     
@@ -56,11 +57,11 @@ exports.createOrUpdate = function (req, res) {
 // Handle view event info per user for one week
 exports.viewWeek = function (req, res) {
 
-    var query = {'userId': req.body.userId, 'courseId': req.body.courseId, 'weekNumber': req.body.weekNumber}
+    var query = {'userId': req.params.userId, 'courseId': req.params.courseId, 'weekNumber': req.params.weekNumber}
 
-    console.log("userId: " + req.body.userId);
-    console.log("courseId: " + req.body.courseId);
-    console.log("weekNumber: " + req.body.weekNumber);
+    console.log("userId: " + req.params.userId);
+    console.log("courseId: " + req.params.courseId);
+    console.log("weekNumber: " + req.params.weekNumber);
 
     Event.findOne(query, function (err, event) {
         if (err)
