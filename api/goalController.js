@@ -42,6 +42,24 @@ exports.index = function (req, res) {
     });
 };
 
+exports.viewWeek = function (req, res) {
+
+    var query = {'userId': req.query.userId, 'courseId': req.query.courseId, 'weekNumber': req.query.weekNumber};
+
+    Goal.findOne(query, function (err, goals) {
+        if (err) {
+            res.json({
+                status: "error",
+                message: err,
+            });
+        }
+        res.json({
+            status: "success",
+            message: "Goals retrieved successfully",
+            data: goals
+        });
+    });
+};
 
 // Handle delete reminder
 exports.delete = function (req, res) {

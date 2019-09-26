@@ -34,6 +34,8 @@ router.route('/goals')
 	.post(goalController.new)
 	.get(goalController.index)
 	.delete(goalController.delete)
+router.route('/goals/week')
+	.get(goalController.viewWeek)
 	
 // Export API 
 module.exports = router;
