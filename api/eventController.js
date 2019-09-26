@@ -57,8 +57,10 @@ exports.createOrUpdate = function (req, res) {
 // Handle view event info per user for one week
 exports.viewWeek = function (req, res) {
 
-    var query = {'userId': req.params.userId, 'courseId': req.params.courseId, 'weekNumber': req.params.weekNumber}
+    console.log("view week");
+    var query = {'userId': req.params.userId, 'courseId': req.params.courseId, 'weekNumber': req.params.weekNumber};
 
+    console.log(req.params); 
     console.log("userId: " + req.params.userId);
     console.log("courseId: " + req.params.courseId);
     console.log("weekNumber: " + req.params.weekNumber);
