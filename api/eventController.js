@@ -77,7 +77,7 @@ exports.viewWeek = function (req, res) {
 // Handle view event info for user all weeks
 exports.viewCourse = function (req, res) {
 
-    var query = {'userId': req.body.userId, 'courseId': req.body.courseId}
+    var query = {'userId': req.query.userId, 'courseId': req.query.courseId}
 
     Event.find(query, function (err, event) {
         if (err)
