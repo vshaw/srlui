@@ -30,7 +30,8 @@ var sliderPercentageSchema = mongoose.Schema({
     },
     createDate: {
         type: Date,
-        default: Date.now
+        default: Date.now,
+        required: true
     }
 });
 // Export event model
