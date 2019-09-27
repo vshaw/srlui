@@ -56,7 +56,7 @@ exports.viewWeek = function (req, res) {
         'email': req.query.email, 
         'courseId': req.query.courseId, 
         'weekNumber': req.query.weekNumber, 
-        'weekId': req.query.weekId;
+        'weekId': req.query.weekId
     };
 
     Goal.findOne(query, function (err, goals) {
