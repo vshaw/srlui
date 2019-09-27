@@ -4,23 +4,30 @@ Goal = require('./goalModel');
 
 // Handle create contact actions
 exports.new = function (req, res) {
-    var goal = new Goal();
-    goal.userId = req.body.userId;
-    goal.email = req.body.email;
-    goal.courseId = req.body.courseId; 
-    goal.weekId = req.body.weekId;
-    goal.weekNumber = req.body.weekNumber;
-    goal.goal1 = req.body.goal1;
-    goal.goal2 = req.body.goal2;
-    goal.goal3 = req.body.goal3;
-    goal.goal4 = req.body.goal4;
 
-    // save the goal and check for errors
-    goal.save(function (err) {
+    var query = {
+        'userId': req.body.userId, 
+        'email': req.body.email, 
+        'courseId': req.body.courseId, 
+        'weekNumber': req.body.weekNumber, 
+        'weekId': req.body.weekId;
+    };
+
+    update = 
+    {
+        goal1: req.body.goal1, 
+        goal2: req.body.goal2,
+        goal3: req.body.goal3,
+        goal4: req.body.goal4
+    }
+
+
+    // save or update the goal and check for errors
+    Goal.findOneAndUpdate(query, update, {upsert:true}, function (err, goal) {
         if (err)
-            res.json(err);
+            res.send(err);
         res.json({
-            message: 'New goal created!',
+            message: 'Event details updated',
             data: goal
         });
     });
@@ -44,8 +51,14 @@ exports.index = function (req, res) {
 
 exports.viewWeek = function (req, res) {
 
-    var query = {'userId': req.query.userId, 'courseId': req.query.courseId, 'weekNumber': req.query.weekNumber};
-
+    var query = {
+        'userId': req.body.userId, 
+        'email': req.body.email, 
+        'courseId': req.body.courseId, 
+        'weekNumber': req.body.weekNumber, 
+        'weekId': req.body.weekId;
+    };
+    
     Goal.findOne(query, function (err, goals) {
         if (err) {
             res.json({
