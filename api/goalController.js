@@ -52,13 +52,13 @@ exports.index = function (req, res) {
 exports.viewWeek = function (req, res) {
 
     var query = {
-        'userId': req.body.userId, 
-        'email': req.body.email, 
-        'courseId': req.body.courseId, 
-        'weekNumber': req.body.weekNumber, 
-        'weekId': req.body.weekId;
+        'userId': req.query.userId, 
+        'email': req.query.email, 
+        'courseId': req.query.courseId, 
+        'weekNumber': req.query.weekNumber, 
+        'weekId': req.query.weekId;
     };
-    
+
     Goal.findOne(query, function (err, goals) {
         if (err) {
             res.json({
