@@ -17,7 +17,7 @@ var reminderSchema = mongoose.Schema({
     weekNumber: {
         type: Number,
         required: true
-    }
+    },
     email: {
         type: String,
         required: true
