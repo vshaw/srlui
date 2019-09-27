@@ -10,7 +10,7 @@ exports.new = function (req, res) {
         'email': req.body.email, 
         'courseId': req.body.courseId, 
         'weekNumber': req.body.weekNumber, 
-        'weekId': req.body.weekId;
+        'weekId': req.body.weekId
     };
 
     update = 
