@@ -16,33 +16,71 @@ exports.new = function (req, res) {
     reminder.userId = req.body.userId;
     reminder.courseId = req.body.courseId; 
     reminder.email = req.body.email;
-    reminder.group = req.body.group; 
+    reminder.weekNumber = req.body.weekNumber;
     reminder.weekId = req.body.weekId;
-    reminder.task = req.body.task;
-    reminder.date = req.body.date;
-    reminder.time = req.body.time; 
+    reminder.task1 = req.body.task1;
+    reminder.date1 = req.body.date1;
+    reminder.task2 = req.body.task2;
+    reminder.date2 = req.body.date2;    
+    reminder.task3 = req.body.task3;
+    reminder.date3 = req.body.date3;
 
-    const data = {
-        from: 'Excited User <me@samples.mailgun.org>',
-        to: 'shaw.vivienne@gmail.com',
-        subject: 'Hello, scheduled',
-        text: 'Testing some Mailgun awesomness!'
-    };
+    if (reminder.task1 != null && reminder.date1 != null)
+    {
+        var data = {
+            from: 'EdX Study Planning <columbiaxcvn@gmail.com>',
+            to: reminder.email,
+            subject: 'Your EdX Study Planning Reminder',
+            text: reminder.task1
+        };
+
+        var date = new Date(reminder.date1);
+
+        scheduler.scheduleJob(date, function() {
+            mg.messages().send(data, function (error, body) {
+                console.log(body);
+            });   
+        });
+    }
+
+    if (reminder.task2 != null && reminder.date2 != null)
+    {
+        var data = {
+            from: 'EdX Study Planning <columbiaxcvn@gmail.com>',
+            to: reminder.email,
+            subject: 'Your EdX Study Planning Reminder',
+            text: reminder.task2
+        };
 
 
-var now = new Date();
-now.setMinutes(now.getMinutes() + 2); // timestamp
-now = new Date(now); // Date object
+        var date = new Date(reminder.date2);
 
-    scheduler.scheduleJob(now, function() {
+        scheduler.scheduleJob(date, function() {
+            mg.messages().send(data, function (error, body) {
+                console.log(body);
+            });   
+        });
+    }
 
-        console.log("scheudled");
-        mg.messages().send(data, function (error, body) {
-            console.log(body);
-        });   
+    if (reminder.task3 != null && reminder.date3 != null)
+    {
+        var data = {
+            from: 'EdX Study Planning <columbiaxcvn@gmail.com>',
+            to: reminder.email,
+            subject: 'Your EdX Study Planning Reminder',
+            text: reminder.task3
+        };
 
-    });
 
+        var date = new Date(reminder.date3);
+
+        scheduler.scheduleJob(date, function() {
+            console.log("scheduled");
+            mg.messages().send(data, function (error, body) {
+                console.log(body);
+            });   
+        });
+    }
 
     // save the reminder and check for errors
     reminder.save(function (err) {

@@ -10,26 +10,44 @@ var reminderSchema = mongoose.Schema({
         type: String, 
         required: true
     },
+    weekId: {
+        type: String, 
+        required: true
+    },
+    weekNumber: {
+        type: Number,
+        required: true
+    }
     email: {
         type: String,
         required: true
     },
-    group: {
-        type: String,
-        required: true
-    },
-    task: {
+    task1: {
         type: String, 
         required: true     
     },
-    date: {
+    date1: {
         type: String, 
-        default:0,
         required: true     
     },
-    time: {
+    task2: {
         type: String, 
-        default:0,
+        required: true     
+    },
+    date2: {
+        type: String, 
+        required: true     
+    },
+    time2: {
+        type: String, 
+        required: true     
+    },
+    task3: {
+        type: String, 
+        required: true     
+    },
+    date3: {
+        type: String, 
         required: true     
     },
     create_date: {
