@@ -21,7 +21,7 @@ exports.createOrUpdate = function (req, res) {
 
 
     // If no record matches the user/course/week info, create a new record (upsert:true)
-    SliderPercentage.findOneAndUpdate(query, update, {upsert:true}, function (err, event) {
+    SliderPercentage.findOneAndUpdate(query, update, {upsert:true, setDefaultsOnInsert:true}, function (err, event) {
         if (err)
             res.send(err);
         res.json({

@@ -23,7 +23,7 @@ exports.new = function (req, res) {
 
 
     // save or update the goal and check for errors
-    Goal.findOneAndUpdate(query, update, {upsert:true}, function (err, goal) {
+    Goal.findOneAndUpdate(query, update, {upsert:true, setDefaultsOnInsert:true}, function (err, goal) {
         if (err)
             res.send(err);
         res.json({
