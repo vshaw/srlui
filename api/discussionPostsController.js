@@ -14,28 +14,14 @@ exports.getWeek = function (req, res) {
         }
     };
 
-        DiscussionPost.get(function (err, posts) {
-        if (err) {
-            res.json({
-                status: "error",
-                message: err,
-            });
-        }
-        res.json({
-            status: "success",
-            message: "Goals retrieved successfully",
-            data: posts
-        });
-    });
-
-/*    DiscussionPost.find(queryParams, function (err, event) {
+    DiscussionPost.find(queryParams, function (err, event) {
         if (err)
             res.send(err);
         res.json({
             message: 'Discussion post details loading..',
             data: event
         });
-    }); */
+    }); 
 }
 
 
