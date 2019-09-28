@@ -59,7 +59,7 @@ var discussionPostSchema = mongoose.Schema({
         type: String, 
         required: true
     },
-    Aggregated post: {
+    'Aggregated post': {
         type: Number, 
         required: true
     },
@@ -77,7 +77,7 @@ var discussionPostSchema = mongoose.Schema({
     },
 });
 // Export event model
-var DiscussionPost = module.exports = mongoose.model('discussionPost', discussionPostSchema);
+var DiscussionPost = module.exports = mongoose.model('activity', discussionPostSchema);
 module.exports.get = function (callback, limit) {
     DiscussionPost.find(callback).limit(limit);
 }
