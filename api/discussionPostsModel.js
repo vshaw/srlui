@@ -1,6 +1,12 @@
 // discussionPostsModel.js
 var mongoose = require('mongoose');
 
+var schema = mongoose.Schema; 
+
+var User = mongoose.model("", new Schema({}), "activity"); 
+
+User.find({}, function(err, doc){ console.log((doc)) })
+
 // Setup schema
 var discussionPostSchema = mongoose.Schema({
     Name: {
@@ -77,7 +83,7 @@ var discussionPostSchema = mongoose.Schema({
     },
 });
 // Export event model
-var DiscussionPost = module.exports = mongoose.model('activity', discussionPostSchema);
+var DiscussionPost = module.exports = mongoose.model('activity', discussionPostSchema, 'activity');
 module.exports.get = function (callback, limit) {
     DiscussionPost.find(callback).limit(limit);
 }
