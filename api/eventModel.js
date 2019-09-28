@@ -19,6 +19,10 @@ var eventSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    weekId: {
+        type: String, 
+        required: true
+    },
     weekNumber: {
         type: Number, 
         required: true

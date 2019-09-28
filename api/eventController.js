@@ -14,6 +14,7 @@ exports.createOrUpdate = function (req, res) {
         'email': req.body.email, 
         'courseId': req.body.courseId, 
         'weekNumber': req.body.weekNumber, 
+        'weekId' : req.body.weekId,
         'group': req.body.group
     };
 

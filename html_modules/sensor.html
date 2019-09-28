@@ -1,0 +1,210 @@
+<script src="/static/SRLUICourseInfo.js" onloadeddata=""></script> 
+
+<script>
+    //////////////////////////////////////////////
+    //               Logging User Data           //
+    //////////////////////////////////////////////
+    var userId;
+    var courseId;
+    var group; 
+    var weekNumber;
+    var weekId;  
+
+    var SERVER_URL = "https://guarded-mesa-27479.herokuapp.com";
+
+    function getUserInfo()
+    {
+        var url = window.location.href;
+        var split = url.split("/");
+
+        userId = analytics.user()._getId();
+        courseId = split[4].split(":")[1];
+        weekId = split[6]; 
+
+        if (userId % 4 == 0 || userId % 4 == 2) 
+        {
+            group = "Control";
+        }
+        else
+        {
+            group = "Treatment"; 
+        }
+
+        var currentDate = new Date();
+
+        for(var key in courseDates) 
+        {
+            var tempDate = new Date(key);
+
+            if (currentDate > tempDate)
+            {
+                weekNumber = courseDates[key];
+            }
+        } 
+    }
+
+    window.onload = function initSensor() {
+        getUserInfo();
+    };
+  
+        
+      function logEvent(eventType, amount) {
+        var email = analytics._user._getTraits().email; 
+
+        var settings = {
+            "async": true,
+            "crossDomain": true,
+            "url": SERVER_URL + "/api/events",
+            "method": "POST",
+            "data": {
+                "userId": userId,
+                "email": email,
+                "group": group,
+                "courseId": courseId,
+                "weekNumber": weekNumber,
+                "weekId": weekId, 
+                "type": eventType, 
+                "amount": amount
+            }
+        }; 
+        
+        $.ajax(settings).done(function (response) {
+            console.log("log");
+        }); 
+    }
+ </script>
+
+<script>
+  
+    // Function takes a string to be sent via xhr and turns it back into an object to make it easier
+    // to read on the console
+    function splitParamString(input) {
+        if(input == null){
+            return {};
+        }
+        var params = input.split("&");
+        var paramObject = {};
+        params.forEach(function(element) {
+            var keyValue = element.split("=");
+            paramObject[keyValue[0]]=keyValue[1];
+        });
+        return paramObject;
+    }
+  
+      //Goal: log all data that is sent in xhr post requests to console before they are sent
+    //Code snippet inspired by: http://stackoverflow.com/questions/25335648/how-to-intercept-all-ajax-requests-made-by-different-js-libraries
+    var vidlog;
+    var answeredQuestionIds = []; 
+    var plays = [];
+    var pauses = [];
+    var durVid;
+    var vidSum = [];
+    var url = document.URL;
+  
+  // This will break studio if it runs inside of it, so this IF statement make it so the XHR intercept only fires if not in studio
+    if (intercepted == undefined)
+    {
+        var intercepted = false
+    }
+
+    if (url.includes('studio') === false && intercepted == false) 
+    {
+        intercepted = true;
+        var origSend = XMLHttpRequest.prototype.send;
+
+        XMLHttpRequest.prototype.send = function(data) 
+        {
+            vidlog = splitParamString(data);
+            vidlog.time = new Date();
+            var listening = true;
+                
+          console.log(vidlog); 
+          
+            if (listening && vidlog.event_type === "play_video") 
+            {
+                listening = false;
+                setTimeout(function () {
+                    listening = true
+                }, 2000);
+
+                plays.push(vidlog.time);
+                addUp();
+            } 
+            else if (listening && vidlog.event_type === "pause_video") 
+            {
+                listening = false;
+                setTimeout(function () {
+                    listening = true
+                }, 2000);
+
+                pauses.push(vidlog.time);
+                addUp();
+            } 
+            else if (vidlog.event_type === "problem_check") 
+            {
+                // We need to look up how many questions are in each problem set, so we'll take the problem ID and match it to the html elements within the problem. 
+
+                // Get the problem ID
+                var problemSetId = vidlog.event.split("_")[1];
+              
+                if (!answeredQuestionIds.includes(problemSetId))
+                {
+                    // Get the array of problem set HTML elements
+                    var problemSets = document.getElementsByClassName("problem");
+                    
+                    var numProblems = 0;
+
+                    // Loop through problem sets and look for child element with the problem id. Then we can count the number of problems that were answered. 
+                    for (var i = 0; i < problemSets.length; i++)
+                    {
+                        var problems = problemSets[i].getElementsByClassName("wrapper-problem-response");
+                      
+                      // We only need to look at the first problem, since all problems share the same id
+                      var problemHTML = problems[0].outerHTML;
+
+
+                      if (problemHTML.includes(problemSetId))
+                      {
+                           numProblems = problems.length; 
+                            break;
+                      }
+  
+                    }
+                  
+                    logEvent("questionsAnswered", numProblems);
+
+                    answeredQuestionIds.push(problemSetId); 
+                }
+              
+            }
+
+            origSend.call(this,data);
+        };
+    }
+        
+     // Takes the Pauses and Plays arrays and finds total duration between play and pause events
+    function addUp() 
+    {
+        for (i=0; i<= pauses.length-1; i++) 
+        {
+            vidSum[i] = pauses[i] - plays[i];
+        }
+
+        durVid = vidSum.reduce(add, 0) / 1000;
+
+        console.log(durVid); 
+
+        if (durVid >= 30 ) 
+        {
+            datas.vidID = vidlog.event.split("%")[5];
+            logEvent("videosWatched", 1);
+        }
+    }
+
+    // Returns the Sum of an Array
+    function add(a, b) 
+    {
+        return a + b;
+    }
+  
+</script>
