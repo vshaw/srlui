@@ -24,7 +24,6 @@ exports.getWeek = function (req, res) {
     }); 
 }
 
-
 // Handle delete contact
 exports.delete = function (req, res) {
     var query = {'userId': req.body.email, 'courseId': req.body.courseId}
@@ -33,7 +32,7 @@ exports.delete = function (req, res) {
             res.send(err); 
         res.json({
             status: "success",
-            message: 'Contact deleted'
+            message: 'Activity deleted'
         });
     });
 };

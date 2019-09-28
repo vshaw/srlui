@@ -41,15 +41,9 @@ exports.createOrUpdate = function (req, res) {
         var amount = req.body.amount ? req.body.amount : 1; 
         update = { $inc: {questionsAnswered: amount}};
     }
-    else if (updateType == "postsViewed")
+    else if (updateType == "posts")
     {
-        var amount = req.body.amount; 
-        update = { postsViewed: amount};
-    }
-    else if (updateType == "postsCreated")
-    {
-        var amount = req.body.amount; 
-        update = { postsCreated: amount};
+        update = { postsViewed: req.body.postsViewed, postsCreated: req.body.postsCreated };
     }
 
     // If no record matches the user/course/week info, create a new record (upsert:true)
