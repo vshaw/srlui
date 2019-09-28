@@ -61,8 +61,8 @@ exports.createOrUpdate = async function (req, res) {
 
             await Event.findOne(query).then(res => 
             {
-                prevViews = res.Views; 
-                prevPosts = req.Posts; 
+                prevViews = res.postsViewed; 
+                prevPosts = res.postsCreated; 
             });
 
             var updatePosts = req.body.postsCreated - prevPosts; 
