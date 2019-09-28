@@ -14,7 +14,7 @@ exports.getWeek = function (req, res) {
         }
     };
 
-    DiscussionPost.find(query, function (err, event) {
+    DiscussionPost.find(queryParams, function (err, event) {
         if (err)
             res.send(err);
         res.json({
