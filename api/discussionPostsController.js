@@ -10,7 +10,7 @@ exports.getWeek = function (req, res) {
         'Course ID': req.body.courseId,
         'Timestamp': {
             $gte: req.body.startTime,
-            $lte.req.body.endTime
+            $lte: req.body.endTime
         }
     };
 
