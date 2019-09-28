@@ -8,10 +8,6 @@ exports.getWeek = function (req, res) {
     var queryParams = {
         'Email': req.body.email, 
         'Course ID': req.body.courseId,
-        'Timestamp': {
-            $gte: req.body.startTime,
-            $lte: req.body.endTime
-        }
     };
 
     DiscussionPost.find(queryParams, function (err, event) {
