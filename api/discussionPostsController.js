@@ -6,11 +6,11 @@ DiscussionPost = require('./discussionPostsModel');
 exports.getWeek = function (req, res) {
 
     var queryParams = {
-        'Email': req.body.email, 
-        'Course ID': req.body.courseId,
+        'Email': req.query.email, 
+        'Course ID': req.query.courseId,
         'Timestamp': {
-            $gte: req.body.startTime,
-            $lte: req.body.endTime
+            $gte: req.query.startTime,
+            $lte: req.query.endTime
         }
     };
 
