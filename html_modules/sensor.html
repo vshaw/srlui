@@ -46,9 +46,9 @@
     window.onload = function initSensor() {
         getUserInfo();
     };
-  
-        
-      function logEvent(eventType, amount) {
+
+
+    function logEvent(eventType, amount) {
         var email = analytics._user._getTraits().email; 
 
         var settings = {
@@ -72,10 +72,10 @@
             console.log("log");
         }); 
     }
- </script>
+</script>
 
 <script>
-  
+
     // Function takes a string to be sent via xhr and turns it back into an object to make it easier
     // to read on the console
     function splitParamString(input) {
@@ -90,64 +90,62 @@
         });
         return paramObject;
     }
-  
+
       //Goal: log all data that is sent in xhr post requests to console before they are sent
     //Code snippet inspired by: http://stackoverflow.com/questions/25335648/how-to-intercept-all-ajax-requests-made-by-different-js-libraries
     var vidlog;
-    var answeredQuestionIds = []; 
+    var finishedContentIds = []; 
     var plays = [];
     var pauses = [];
     var durVid;
     var vidSum = [];
     var url = document.URL;
-  
+
   // This will break studio if it runs inside of it, so this IF statement make it so the XHR intercept only fires if not in studio
-    if (intercepted == undefined)
-    {
-        var intercepted = false
-    }
+  if (intercepted == undefined)
+  {
+    var intercepted = false
+}
 
-    if (url.includes('studio') === false && intercepted == false) 
-    {
-        intercepted = true;
-        var origSend = XMLHttpRequest.prototype.send;
+if (url.includes('studio') === false && intercepted == false) 
+{
+    intercepted = true;
+    var origSend = XMLHttpRequest.prototype.send;
 
-        XMLHttpRequest.prototype.send = function(data) 
+    XMLHttpRequest.prototype.send = function(data) 
+    {
+        vidlog = splitParamString(data);
+        vidlog.time = new Date();
+        var listening = true;
+
+        if (listening && vidlog.event_type === "play_video") 
         {
-            vidlog = splitParamString(data);
-            vidlog.time = new Date();
-            var listening = true;
-                
-          console.log(vidlog); 
-          
-            if (listening && vidlog.event_type === "play_video") 
-            {
-                listening = false;
-                setTimeout(function () {
-                    listening = true
-                }, 2000);
+            listening = false;
+            setTimeout(function () {
+                listening = true
+            }, 2000);
 
-                plays.push(vidlog.time);
-                addUp();
-            } 
-            else if (listening && vidlog.event_type === "pause_video") 
-            {
-                listening = false;
-                setTimeout(function () {
-                    listening = true
-                }, 2000);
+            plays.push(vidlog.time);
+            addUp();
+        } 
+        else if (listening && vidlog.event_type === "pause_video") 
+        {
+            listening = false;
+            setTimeout(function () {
+                listening = true
+            }, 2000);
 
-                pauses.push(vidlog.time);
-                addUp();
-            } 
-            else if (vidlog.event_type === "problem_check") 
-            {
+            pauses.push(vidlog.time);
+            addUp();
+        } 
+        else if (vidlog.event_type === "problem_check") 
+        {
                 // We need to look up how many questions are in each problem set, so we'll take the problem ID and match it to the html elements within the problem. 
 
                 // Get the problem ID
                 var problemSetId = vidlog.event.split("_")[1];
-              
-                if (!answeredQuestionIds.includes(problemSetId))
+
+                if (!finishedContentIds.includes(problemSetId))
                 {
                     // Get the array of problem set HTML elements
                     var problemSets = document.getElementsByClassName("problem");
@@ -158,33 +156,33 @@
                     for (var i = 0; i < problemSets.length; i++)
                     {
                         var problems = problemSets[i].getElementsByClassName("wrapper-problem-response");
-                      
+
                       // We only need to look at the first problem, since all problems share the same id
                       var problemHTML = problems[0].outerHTML;
 
 
                       if (problemHTML.includes(problemSetId))
                       {
-                           numProblems = problems.length; 
-                            break;
-                      }
-  
-                    }
-                  
-                    logEvent("questionsAnswered", numProblems);
+                         numProblems = problems.length; 
+                         break;
+                     }
 
-                    answeredQuestionIds.push(problemSetId); 
-                }
-              
-            }
+                 }
 
-            origSend.call(this,data);
-        };
-    }
-        
+                 logEvent("questionsAnswered", numProblems);
+
+                 finishedContentIds.push(problemSetId); 
+             }
+
+         }
+
+         origSend.call(this,data);
+     };
+ }
+
      // Takes the Pauses and Plays arrays and finds total duration between play and pause events
-    function addUp() 
-    {
+     function addUp() 
+     {
         for (i=0; i<= pauses.length-1; i++) 
         {
             vidSum[i] = pauses[i] - plays[i];
@@ -196,8 +194,13 @@
 
         if (durVid >= 30 ) 
         {
-            datas.vidID = vidlog.event.split("%")[5];
-            logEvent("videosWatched", 1);
+            var vidId = vidlog.event.split("%")[5];
+
+            if (!finishedContentIds.includes(vidId))
+            {
+                logEvent("videosWatched", 1);
+                finishedContentIds.push(vidId)
+            }
         }
     }
 
@@ -206,5 +209,5 @@
     {
         return a + b;
     }
-  
+
 </script>
