@@ -52,15 +52,18 @@ exports.createOrUpdate = async function (req, res) {
                 'email': req.body.email, 
                 'courseId': req.body.courseId, 
                 'weekNumber': req.body.weekNumber - 1, 
-                'weekId' : req.body.weekId,
                 'group': req.body.group
             };
 
             var prevViews = 0; 
             var prevPosts = 0; 
 
+            console.log(query); 
+            console.log(req.body.weekNumber - 1);
+
             await Event.findOne(query).then(res => 
             {
+                console.log(res); 
                 prevViews = res.postsViewed; 
                 prevPosts = res.postsCreated; 
             });
