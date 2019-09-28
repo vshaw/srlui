@@ -1,14 +1,10 @@
 // discussionPostsController.js
 
 // Import event model
-DiscussionPost = require('mongoose').model('activity').schema;
-
+DiscussionPost = require('./discussionPostsModel');
 
 exports.getWeek = function (req, res) {
 
-
-    console.log(DiscussionPost.schema);
-    
     var queryParams = {
         'Email': req.body.email, 
         'Course ID': req.body.courseId,
