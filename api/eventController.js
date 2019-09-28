@@ -4,7 +4,7 @@
 Event = require('./eventModel');
 
 // Handle update event info, create if no match found 
-exports.createOrUpdate = function (req, res) {
+exports.createOrUpdate = async function (req, res) {
 
     var updateType = req.body.type; 
     var updateAmount; 
