@@ -9,6 +9,7 @@ var reminderController = require('./reminderController');
 var goalController = require('./goalController');
 var eventController = require('./eventController');
 var sliderController = require('./SliderPercentageController');
+var discussionPostsController = require('./discussionPostsController');
 
 // Basic display for /api page 
 router.get('/', function (req, res) {
@@ -42,6 +43,10 @@ router.route('/slider')
     .post(sliderController.createOrUpdate)
     .get(sliderController.viewWeek)
     .delete(sliderController.delete)
+
+router.route('/posts')
+    .get(discussionPostsController.getWeek)
+    .delete(discussionPostsController.delete)
 	
 // Export API 
 module.exports = router;

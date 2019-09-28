@@ -41,8 +41,16 @@ exports.createOrUpdate = function (req, res) {
         var amount = req.body.amount ? req.body.amount : 1; 
         update = { $inc: {questionsAnswered: amount}};
     }
-
-    // Discussion posts are handled via the discussion stats python crawler. 
+    else if (updateType == "postsViewed")
+    {
+        var amount = req.body.amount; 
+        update = { postsViewed: amount};
+    }
+    else if (updateType == "postsCreated")
+    {
+        var amount = req.body.amount; 
+        update = { postsCreated: amount};
+    }
 
     // If no record matches the user/course/week info, create a new record (upsert:true)
     Event.findOneAndUpdate(query, update, {upsert:true, setDefaultsOnInsert:true}, function (err, event) {
