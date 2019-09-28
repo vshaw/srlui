@@ -72,7 +72,7 @@ var discussionPostSchema = mongoose.Schema({
         required: true
     },
     Timestamp: {
-        type: Number, 
+        type: Date, 
         required: true
     },
 });
