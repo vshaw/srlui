@@ -68,7 +68,7 @@ var discussionPostSchema = mongoose.Schema({
         required: true
     },
     'Course ID': {
-        type: string, 
+        type: String, 
         required: true
     },
     Timestamp: {
