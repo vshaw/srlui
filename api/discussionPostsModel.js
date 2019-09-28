@@ -46,35 +46,7 @@ var discussionPostSchema = mongoose.Schema({
     Endorsements: {
         type: String, 
         required: true
-    },
-    Days Active: {
-        type: String, 
-        required: true
-    },
-    Last Active: {
-        type: String, 
-        required: true
-    },
-    Enrolled: {
-        type: String, 
-        required: true
-    },
-    Aggregated post: {
-        type: Number, 
-        required: true
-    },
-    Course Number: {
-        type: Number, 
-        required: true
-    },
-    Course ID: {
-        type: string, 
-        required: true
-    },
-    Timestamp: {
-        type: Number, 
-        required: true
-    },
+    }
 });
 // Export event model
 var DiscussionPost = module.exports = mongoose.model('discussionPost', discussionPostSchema);
