@@ -97,12 +97,10 @@
         var currentDate = new Date(); 
         var currentDateTimestamp = currentDate.getTime() / 1000; 
 
+        // Get unix timestamp of week start date
         var start = getKeyByValue(courseDates, weekNumber); 
         var startDate = new Date(start); 
-
-        // The scraping script runs every 24 hours, so we want to get the record of the last day before this week. 
         var startDateTimestamp = (startDate.getTime() / 1000) 
-        var oneDayBeforeStartDate = startDateTimestamp - (24 * 3600); 
 
         var settings = {
             "async": true,
@@ -110,9 +108,9 @@
             "url": SERVER_URL + "/api/posts",
             "method": "GET",
             "data": {
-                "email": "tuanbank249@gmail.com",
-                "courseId": "BAMM101",
-                "startTime": oneDayBeforeStartDate,
+                "email": email,
+                "courseId": finalCourseId,
+                "startTime": startDateTimestamp,
                 "endTime": currentDateTimestamp
             }
         }; 
@@ -127,20 +125,7 @@
                 var views = result[0].Views; 
                 var posts = result[0]['Aggregated post'];
 
-                if (result[result.length - 1].Timestamp < startDateTimestamp)
-                {
-                    var viewsLastWeek = result[result.length - 1].Views; 
-                    var postsLastWeek = result[result.length - 1]['Aggregated post']; 
-
-                    // Safety check, but if this is not true there is a bug. 
-                    if (views > viewsLastWeek && posts > postsLastWeek)
-                    {
-                        views = views - viewsLastWeek; 
-                        posts = posts - postsLastWeek;
-                    }
-                }
-
-            logWeekPosts(views, posts); 
+                logWeekPosts(views, posts); 
             }
         });  
     }

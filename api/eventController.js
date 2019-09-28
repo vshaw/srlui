@@ -58,14 +58,13 @@ exports.createOrUpdate = async function (req, res) {
             var prevViews = 0; 
             var prevPosts = 0; 
 
-            console.log(query); 
-            console.log(req.body.weekNumber - 1);
-
             await Event.findOne(postsQuery).then(res => 
             {
-                console.log(res); 
-                prevViews = res.postsViewed; 
-                prevPosts = res.postsCreated; 
+                if (res != null)
+                {
+                    prevViews = res.postsViewed; 
+                    prevPosts = res.postsCreated; 
+                }
             });
 
             var updatePosts = req.body.postsCreated - prevPosts; 
