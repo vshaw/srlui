@@ -14,14 +14,12 @@ exports.getWeek = function (req, res) {
         }
     };
 
-    console.log("start time " + req.body.startTime);
-
-    DiscussionPost.find(queryParams, function (err, event) {
+    DiscussionPost.find(queryParams, function (err, activity) {
         if (err)
             res.send(err);
         res.json({
             message: 'Discussion post details loading..',
-            data: event
+            data: activity
         });
     }); 
 }
