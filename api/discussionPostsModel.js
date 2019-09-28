@@ -1,12 +1,6 @@
 // discussionPostsModel.js
 var mongoose = require('mongoose');
 
-var schema = mongoose.Schema; 
-
-var User = mongoose.model("", new Schema({}), "activity"); 
-
-User.find({}, function(err, doc){ console.log((doc)) })
-
 // Setup schema
 var discussionPostSchema = mongoose.Schema({
     Name: {
