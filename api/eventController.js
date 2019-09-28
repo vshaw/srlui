@@ -43,7 +43,37 @@ exports.createOrUpdate = function (req, res) {
     }
     else if (updateType == "posts")
     {
-        update = { postsViewed: req.body.postsViewed, postsCreated: req.body.postsCreated };
+        // Post info always comes in as an aggreated amount. 
+        // So we will check to see if a record exists for the previous week and save the difference. 
+        if (req.body.weekNumber > 1)
+        {
+            var query = {
+                'userId': req.body.userId, 
+                'email': req.body.email, 
+                'courseId': req.body.courseId, 
+                'weekNumber': req.body.weekNumber - 1, 
+                'weekId' : req.body.weekId,
+                'group': req.body.group
+            };
+
+            var prevViews = 0; 
+            var prevPosts = 0; 
+
+            await Event.findOne(query).then(res => 
+            {
+                prevViews = res.Views; 
+                prevPosts = req.Posts; 
+            });
+
+            var updatePosts = req.body.postsCreated - prevPosts; 
+            var updateViews = req.body.postsViewed - prevViews; 
+
+            update = { postsViewed: updateViews, postsCreated: updatePosts };
+        }
+        else
+        {
+            update = { postsViewed: req.body.postsViewed, postsCreated: req.body.postsCreated };
+        }
     }
 
     // If no record matches the user/course/week info, create a new record (upsert:true)
