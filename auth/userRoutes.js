@@ -21,15 +21,15 @@ router.post("/", async (req, res) => {
 
   user = new User({
     username: req.body.username,
-    password: req.body.password,
-     _id: user._id,
+    password: req.body.password
   });
   user.password = await bcrypt.hash(user.password, 10);
   await user.save();
 
   const token = user.generateAuthToken();
   res.header("x-auth-token", token).send({
-    name: user.username
+    _id: user._id,
+    username: user.username
   });
 });
 
