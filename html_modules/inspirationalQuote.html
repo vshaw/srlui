@@ -21,17 +21,6 @@
 
   <script>
 
-        // This is for REFERENCE ONLY and should be replaced by course-specific image paths. 
-        // This is needed because the edX html module will only replace the relative path correctly if it is hardcoded like this.
-        var imgPaths = {
-          "4226af85638946898c44e76c1ec646f5" : "/static/01_take goodnotes.png",
-          "bfb4c9eb7c3c4971854e4430ecf5ab51" : "/static/04_distraction.png",
-          "71dc0cb2d3444b9cbaeb54d35e829666" : "/static/01_take goodnotes.png",
-          "dd78fa75ef48431184829ac8c19dee1b" : "/static/01_take goodnotes.png",
-          "1093a31dc6ef4b6bb598380a9803db8a" : "/static/01_take goodnotes.png",
-          "16f63289a3594779805d5e9dfd0b6d0d" : "/static/01_take goodnotes.png",
-        };
-
         function loadScript(url, callback)
         {
                 // Adding the script tag to the head as suggested before
@@ -58,11 +47,14 @@
             var split = url.split("/");
             var week = split[6];
 
+          
+            console.log(week); 
+            console.log(mappedInfo); 
             // Read goals from mapped.js static file
             for (var i=0; i < mappedInfo.length; i++) {
                 if(mappedInfo[i][0] == week) {
                     fullQuote = mappedInfo[i][2];
-                    imgPath = imgPaths[week];
+                    imgPath = mappedInfo[i][3];
                 }
             }
 
