@@ -1,15 +1,12 @@
 // reminderController.js
-
-const mailgun = require("mailgun-js");
-const scheduler = require('node-schedule');
-
-const mg = mailgun({apiKey: process.env.MAILGUN_API_KEY, domain: process.env.MAILGUN_DOMAIN});
+let agenda = require('../jobs/agenda');
 
 // Import event model
 Reminder = require('./reminderModel');
 
 // Handle create contact actions
-exports.new = function (req, res) {
+exports.new = async function (req, res) {
+
     var reminder = new Reminder();
     reminder.userId = req.body.userId;
     reminder.courseId = req.body.courseId; 
@@ -17,20 +14,19 @@ exports.new = function (req, res) {
     reminder.weekNumber = req.body.weekNumber;
     reminder.weekId = req.body.weekId;
 
-    reminder.task1 = req.body.task1 ? req.body.task1 : null;
-    reminder.date1 = req.body.date1 ? req.body.date1 : null;
-    reminder.offset1 = req.body.offset1 ? req.body.offset1 : null;
+    reminder.task1 = req.body.task1;
+    reminder.date1 = req.body.date1;
+    reminder.offset1 = req.body.offset1;
 
-    reminder.task2 = req.body.task2 ? req.body.task2 : null;
-    reminder.date2 = req.body.date2 ? req.body.date2 : null;    
-    reminder.offset2 = req.body.offset2 ? req.body.offset2 : null;
-
-    reminder.task3 = req.body.task3 ? req.body.task3 : null;
-    reminder.date3 = req.body.date3 ? req.body.date3 : null;
-    reminder.offset3 = req.body.offset3 ? req.body.offset3 : null;
-
+    var data = {
+        from: 'EdX Study Planning <columbiaxcvn@gmail.com>',
+        to: reminder.email,
+        subject: 'Your EdX Study Planning Reminder',
+        text: "Hello, here is your reminder to begin the following task in " + reminder.offset3 + " minutes: \n\n" + reminder.task3
+    };
+        
     // save the reminder and check for errors
-    reminder.save(function (err) {
+    await reminder.save(function (err) {
         if (err)
             res.json(err);
         res.json({
@@ -38,6 +34,10 @@ exports.new = function (req, res) {
             data: reminder
         });
     }); 
+
+    var date = new Date(reminder.date1);
+
+    agenda.schedule(date, 'email task', data);
 };
 
 exports.index = function (req, res) {

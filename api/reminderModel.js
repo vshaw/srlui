@@ -24,30 +24,15 @@ var reminderSchema = mongoose.Schema({
     },
     task1: {
         type: String, 
+        required: true
     },
     date1: {
         type: Number, 
+        required: true
     },
     offset1: {
         type: Number, 
-    },
-    task2: {
-        type: String, 
-    },
-    date2: {
-        type: Number, 
-    },
-    offset2: {
-        type: Number, 
-    },
-    task3: {
-        type: String, 
-    },
-    date3: {
-        type: Number, 
-    },
-    offset3: {
-        type: Number, 
+        required: true
     },
     create_date: {
         type: Date,
