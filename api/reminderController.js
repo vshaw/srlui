@@ -29,9 +29,9 @@ exports.new = async function (req, res) {
     console.log(reminder); 
         
     var data = {
-        from: 'EdX Study Planning <columbiaxcvn@gmail.com>',
+        from: 'ColumbiaX Study Planning <columbiaxcvn@gmail.com>',
         to: reminder.email,
-        subject: 'Your EdX Study Planning Reminder',
+        subject: 'Your ColumbiaX Study Planning Reminder',
     };
 
     var emailText1 = "Hello, here is your reminder to begin the following task in ";
