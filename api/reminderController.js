@@ -31,7 +31,7 @@ exports.new = function (req, res) {
 
     console.log(reminder); 
 
-    if (reminder.task1 != null && reminder.date1 != null)
+   /* if (reminder.task1 != null && reminder.date1 != null)
     {
         var data = {
             from: 'EdX Study Planning <columbiaxcvn@gmail.com>',
@@ -47,7 +47,7 @@ exports.new = function (req, res) {
                 console.log(body);
             });   
         });
-    }
+    } */
 
    /* if (reminder.task2 != null && reminder.date2 != null)
     {
