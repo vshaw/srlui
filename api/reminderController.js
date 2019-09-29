@@ -29,6 +29,8 @@ exports.new = function (req, res) {
     reminder.date3 = req.body.date3 ? req.body.date3 : null;
     reminder.offset3 = req.body.offset3 ? req.body.offset3 : null;
 
+    console.log(reminder); 
+
     if (reminder.task1 != null && reminder.date1 != null)
     {
         var data = {
@@ -37,6 +39,8 @@ exports.new = function (req, res) {
             subject: 'Your EdX Study Planning Reminder',
             text: "Hello, here is your reminder to begin the following task in " + reminder.offset1 + " minutes: \n\n" + reminder.task1
         };
+
+        console.log(data); 
 
         var date = new Date(reminder.date1);
 
@@ -50,7 +54,7 @@ exports.new = function (req, res) {
         });
     }
 
-    if (reminder.task2 != null && reminder.date2 != null)
+   /* if (reminder.task2 != null && reminder.date2 != null)
     {
         var data = {
             from: 'EdX Study Planning <columbiaxcvn@gmail.com>',
@@ -90,7 +94,7 @@ exports.new = function (req, res) {
                 console.log(body); 
             });   
         });
-    } 
+    } */
 
     // save the reminder and check for errors
     reminder.save(function (err) {
