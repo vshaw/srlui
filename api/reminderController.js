@@ -16,17 +16,18 @@ exports.new = function (req, res) {
     reminder.email = req.body.email;
     reminder.weekNumber = req.body.weekNumber;
     reminder.weekId = req.body.weekId;
-    reminder.task1 = req.body.task1;
-    reminder.date1 = req.body.date1;
-    reminder.offset1 = req.body.offset1;
 
-    reminder.task2 = req.body.task2;
-    reminder.date2 = req.body.date2;    
-    reminder.offset2 = req.body.offset2;
+    reminder.task1 = req.body.task1 ? req.body.task1 : null;
+    reminder.date1 = req.body.date1 ? req.body.date1 : null;
+    reminder.offset1 = req.body.offset1 ? req.body.offset1 : null;
 
-    reminder.task3 = req.body.task3;
-    reminder.date3 = req.body.date3;
-    reminder.offset3 = req.body.offset3;
+    reminder.task2 = req.body.task2 ? req.body.task2 : null;
+    reminder.date2 = req.body.date2 ? req.body.date2 : null;    
+    reminder.offset2 = req.body.offset2 ? req.body.offset2 : null;
+
+    reminder.task3 = req.body.task3 ? req.body.task3 : null;
+    reminder.date3 = req.body.date3 ? req.body.date3 : null;
+    reminder.offset3 = req.body.offset3 ? req.body.offset3 : null;
 
     if (reminder.task1 != null && reminder.date1 != null)
     {
