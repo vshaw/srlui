@@ -6,7 +6,7 @@ const mongoConnectionString = process.env.MONGODB_URI;
 // or override the default collection name:
 let agenda = new Agenda({
 	db: {address: mongoConnectionString, collection: 'jobs'},
-	processEvery: '10 minutes'
+	processEvery: '30 seconds'
 });
 
 let jobTypes = process.env.JOB_TYPES ? process.env.JOB_TYPES.split(',') : [];
