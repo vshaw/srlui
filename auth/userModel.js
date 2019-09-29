@@ -1,4 +1,3 @@
-
 const jwt = require('jsonwebtoken');
 const Joi = require('joi');
 const mongoose = require('mongoose');
@@ -24,7 +23,7 @@ const UserSchema = new mongoose.Schema({
 
 //custom method to generate authToken 
 UserSchema.methods.generateAuthToken = function() { 
-  const token = jwt.sign({ _id: this._id, isAdmin: this.isAdmin }, process.env.secret); 
+  const token = jwt.sign({ _id: this._id, isAdmin: this.isAdmin }, process.env.secret); //get the private key from the config file -> environment variable
   return token;
 }
 
@@ -42,4 +41,3 @@ function validateUser(user) {
 
 exports.User = User; 
 exports.validate = validateUser;
-

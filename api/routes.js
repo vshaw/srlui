@@ -3,6 +3,8 @@
 // Initialize express router
 let router = require('express').Router();
 
+const auth = require("../auth/middleware");
+
 // Import controllers
 var reminderController = require('./reminderController');
 var goalController = require('./goalController');
@@ -11,7 +13,7 @@ var sliderController = require('./SliderPercentageController');
 var discussionPostsController = require('./discussionPostsController');
 
 // Basic display for /api page 
-router.get('/', function (req, res) {
+router.get('/', auth, function (req, res) {
     res.json({
         status: 'API Its Working',
         message: 'This is the SRLUI API',
