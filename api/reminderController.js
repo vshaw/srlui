@@ -44,7 +44,7 @@ exports.new = function (req, res) {
 
         scheduler.scheduleJob(date, function() {
             mg.messages().send(data, function (error, body) {
-                console.log(body);
+                console.log("Task scheduled");
             });   
         });
     }
@@ -63,12 +63,12 @@ exports.new = function (req, res) {
 
         scheduler.scheduleJob(date, function() {
             mg.messages().send(data, function (error, body) {
-                console.log(body);
+                console.log("Task scheduled");
             });   
         });
     }
 
-  /*  if (reminder.task3 != null && reminder.date3 != null)
+    if (reminder.task3 != null && reminder.date3 != null)
     {
         var data = {
             from: 'EdX Study Planning <columbiaxcvn@gmail.com>',
@@ -81,10 +81,10 @@ exports.new = function (req, res) {
 
         scheduler.scheduleJob(date, function() {
             mg.messages().send(data, function (error, body) {
-                console.log(body);
+                console.log("Task scheduled");
             });   
         });
-    } */
+    } 
 
     // save the reminder and check for errors
     reminder.save(function (err) {
