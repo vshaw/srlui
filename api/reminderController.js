@@ -22,7 +22,7 @@ exports.new = async function (req, res) {
         from: 'EdX Study Planning <columbiaxcvn@gmail.com>',
         to: reminder.email,
         subject: 'Your EdX Study Planning Reminder',
-        text: "Hello, here is your reminder to begin the following task in " + reminder.offset3 + " minutes: \n\n" + reminder.task3
+        text: "Hello, here is your reminder to begin the following task in " + reminder.offset1 + " minutes: \n\n" + reminder.task1
     };
         
     // save the reminder and check for errors
