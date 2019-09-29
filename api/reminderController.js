@@ -41,7 +41,7 @@ exports.new = function (req, res) {
 
         scheduler.scheduleJob(date, function() {
 
-            console.log("Task scheduled for user " reminder.userId);
+            console.log("Task scheduled for user " + reminder.userId);
 
             mg.messages().send(data, function (error, body) {
                 console.log(body); 
@@ -62,7 +62,7 @@ exports.new = function (req, res) {
 
         scheduler.scheduleJob(date, function() {
 
-            console.log("Task scheduled for user " reminder.userId);
+            console.log("Task scheduled for user " + reminder.userId);
 
             mg.messages().send(data, function (error, body) {
                 console.log(body); 
@@ -83,7 +83,7 @@ exports.new = function (req, res) {
 
         scheduler.scheduleJob(date, function() {
 
-            console.log("Task scheduled for user " reminder.userId);
+            console.log("Task scheduled for user " + reminder.userId);
 
             mg.messages().send(data, function (error, body) {
                 console.log(body); 
