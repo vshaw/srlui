@@ -37,19 +37,14 @@ exports.new = function (req, res) {
             from: 'EdX Study Planning <columbiaxcvn@gmail.com>',
             to: reminder.email,
             subject: 'Your EdX Study Planning Reminder',
-            text: "Hello, here is your reminder to begin the following task in " + reminder.offset1 + " minutes: \n\n" + reminder.task1
+            text: reminder.task1
         };
-
-        console.log(data); 
 
         var date = new Date(reminder.date1);
 
         scheduler.scheduleJob(date, function() {
-
-            console.log("Task scheduled for user " + reminder.userId);
-
             mg.messages().send(data, function (error, body) {
-                console.log(body); 
+                console.log(body);
             });   
         });
     }
