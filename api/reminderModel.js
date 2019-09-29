@@ -54,7 +54,7 @@ var reminderSchema = mongoose.Schema({
         type: Number, 
         required: true
     },
-    offset3 {
+    offset3: {
         type: Number, 
         required: true
     },
