@@ -1,16 +1,13 @@
 <head>
     <style type="text/css">
-
         #three {
             display: flex;
             justify-content: space-around;
         }
-
         #pastWeekHeader {
             font-style: italic;
             font-size: 150%;
         }
-
         #goalsHeaderText {
             font-style: italic;
             font-size: 150%;
@@ -22,12 +19,10 @@
             font-weight: bold;
             font-size: 100%;
         }
-
         #overallProgressHeader {
             font-style: italic;
             font-size: 150%;
         }
-
         #weekGoals
         {
             display: none;
@@ -35,7 +30,86 @@
             padding: 10px;
             text-align: center;
         }
+      
+        body {
+        height: 100vh;
+        margin: 0;
+        display: flex;
+       }
 
+        input[type="range"] { 
+         margin: auto;
+        -webkit-appearance: none;
+        position: relative;
+         overflow: hidden;
+            height: 40px;
+            width: 200px;
+            cursor: pointer;
+            border-radius: 0; /* iOS */
+        }
+
+        ::-webkit-slider-runnable-track {
+            background: #ddd;
+        }
+
+        /*
+         * 1. Set to 0 width and remove border for a slider without a thumb
+         */
+        ::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px; /* 1 */
+            height: 40px;
+            background: #fff;
+            box-shadow: -100vw 0 0 100vw dodgerblue;
+            border: 2px solid #999; /* 1 */
+        }
+
+        ::-moz-range-track {
+            height: 40px;
+            background: #ddd;
+        }
+
+        ::-moz-range-thumb {
+            background: #fff;
+            height: 40px;
+            width: 20px;
+            border: 3px solid #999;
+            border-radius: 0 !important;
+            box-shadow: -100vw 0 0 100vw dodgerblue;
+            box-sizing: border-box;
+        }
+
+        ::-ms-fill-lower { 
+            background: dodgerblue;
+        }
+
+        ::-ms-thumb { 
+            background: #fff;
+            border: 2px solid #999;
+            height: 40px;
+            width: 20px;
+            box-sizing: border-box;
+        }
+
+        ::-ms-ticks-after { 
+            display: none; 
+        }
+
+        ::-ms-ticks-before { 
+            display: none; 
+        }
+
+        ::-ms-track { 
+            background: #ddd;
+            color: transparent;
+            height: 40px;
+            border: none;
+        }
+
+        ::-ms-tooltip { 
+            display: none;
+        }            
+        
         #sliderSubtitle{
             font-style: italic;
             font-weight: bold;
@@ -51,7 +125,6 @@
         #sliderElements {
             justify-content:center;
         }
-
         #responseText {
             display:none;
             text-align:center;
@@ -70,12 +143,10 @@
             font-weight:bold;
             color:red;
         }
-
         .titel {
             font-style: italic;
             text-align: center;
         }
-
         .text {
             font-style: italic;
             text-align: center;
@@ -83,7 +154,6 @@
             font-size: 300%;
             color: #C84B4B;
         }
-
     </style>
 
     <script>
@@ -92,7 +162,7 @@
         var courseId; 
         var weekNumber; 
         var weekId; 
-        var devShowTreatment = false; 
+        var devShowTreatment = true; 
 
         var SERVER_URL = "https://guarded-mesa-27479.herokuapp.com";
 
@@ -574,6 +644,7 @@
 
         <div id="slider">
             <p id="sliderSubtitle">Based on your progress this week, how would you rate the completion of your study plan?</p>
+            <p id="sliderWarning">IMPORTANT: You must complete this survey to move to the next module.</p>
 
             <div id="sliderElements">
 
@@ -585,7 +656,6 @@
                     <button type="button" id="saveGoalsButton" onclick="saveSlider()">Submit</button>
                 </p>
 
-                <p id="sliderWarning">IMPORTANT: You must complete this survey to move forward.</p>
                 <p id= "responseText">Response saved!</p>
             </div>
         </div>
