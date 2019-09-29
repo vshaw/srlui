@@ -64,6 +64,9 @@
             "crossDomain": true,
             "url": SERVER_URL + "/api/events",
             "method": "POST",
+            "headers": {
+                'x-access-token': accessToken
+            },
             "data": {
                 "userId": userId,
                 "email": email,
@@ -140,6 +143,9 @@
             "crossDomain": true,
             "url": SERVER_URL + "/api/events",
             "method": "POST",
+            "headers": {
+                'x-access-token': accessToken
+            },
             "data": {
                 "userId": userId,
                 "email": email,
