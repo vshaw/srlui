@@ -1,541 +1,598 @@
-<!-- WeeklyGoals.html
-    On this page users in the control group can see weekly goals loaded from a static file. 
-    Users in the treatment will be able to set their own goals, and setup email reminders for study plans --> 
-
 <head>
-
     <style type="text/css">
 
-      #header {
-        font-weight: bold;
-        font-style:italic;
-        display: flex;
-        font-size: 180%;
-        margin-bottom: 0;
-    }
+        #three {
+            display: flex;
+            justify-content: space-around;
+        }
 
-    #controlHeader {
-        font-style: italic;
-        font-weight: bold;
-        display: flex;
-        font-size: 240%;
-        margin-bottom: 0;
-        justify-content: left;
-    }
+        #pastWeekHeader {
+            font-style: italic;
+            font-size: 150%;
+        }
 
-    #treatmentHeader {
-        font-style: italic;
-        font-weight: bold;
-        display: flex;
-        font-size: 180%;
-        margin-bottom: 0;
-        justify-content: left;
-    }
+        #goalsHeaderText {
+            font-style: italic;
+            font-size: 150%;
+            text-align:center;
+        }
+        
+        #footer {
+            font-style: italic;
+            font-weight: bold;
+            font-size: 100%;
+        }
 
-    #controlWeeklyGoals {
-        display: none;
-        width: 60%;
-        margin: auto;
-    }
+        #overallProgressHeader {
+            font-style: italic;
+            font-size: 150%;
+        }
 
-    #treatmentWeeklyGoals {
-        display: none;
-        width: 60%;
-        margin: auto;
-    }
-
-    #scheduleGoals {
-        width: 75%; 
-        margin: auto; 
-        display:none;
-    }
-
-    #savedGoalsHeader {
-        font-weight: bold;
-        display: flex;
-        font-size: 180%;
-        margin-bottom: 0;
-        font-style:italic;
-    }
-
-    #treatmentSubtitle {
-        font-style: italic;
-        display: flex;
-        font-size: 100%;
-        margin-bottom: 0;
-        justify-content: left;        
-    }
-
-    #instruction {
-        font-style: italic; 
-        font-weight: bold;
-    }
-
-    p.header1 {
-        display: flex;
-        justify-content: left;
-        size: 40px;
-    }
-
-    p.savedGoalText {
-        font-style: italic; 
-    }
-
-    #qlPlan {
-        text-align:left;
-    }
-
-    #button {
-        text-align:center;
-    }
-
-    #responseText {
-        display:none;
-        text-align:center;
-    }
-
-    #descriptionText {
-        font-style:italic; 
-    }
-      
-    #buttons
-    {
-        justify-content: center;
-    }
-      
-    textarea.textRow {
-        width: 700px;
-        height: 50px;
-        border: 5px solid #cccccc;
-        padding: 5px;
-        margin-bottom: 20px;
-        resize: none;
-    }
-
-</style>
-
-<script>
-
-    var userId; 
-    var email;
-    var weekId;
-    var weekNumber;
-
-    var SERVER_URL = "https://guarded-mesa-27479.herokuapp.com";
-
-
-    //////////////////////////////////////////////
-    //            PAGE LOAD FUNCTIONS           //
-    //////////////////////////////////////////////
-
-    // Load external scripts, ie SRLUICourseInfo.js
-    function loadScript(url, callback)
-    {
-        // Adding the script tag to the head as suggested before
-        var head = document.head;
-        var script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = url;
-
-        // Then bind the event to the callback function.
-        // There are several events for cross browser compatibility.
-        script.onreadystatechange = callback;
-        script.onload = callback;
-
-        // Fire the loading
-        head.appendChild(script);
-    }
-
-    // Toggle display between treatment/control experiences
-    var toggleGroupDisplay = function()
-    {
-        getUserInfo();
-      
-        var controlElement = document.getElementById("controlWeeklyGoals");
-        var treatmentElement = document.getElementById("treatmentWeeklyGoals"); 
-
-        if (userId % 2 != 0)
+        #weekGoals
         {
-            getControlGoals(); 
-            controlElement.style.display = "block"; 
-            treatmentElement.style.display = "none"; 
+            display: none;
+            border: 5px solid #cccccc;
+            padding: 10px;
+            text-align: center;
         }
-        else
+
+        #sliderSubtitle{
+            font-style: italic;
+            font-weight: bold;
+            font-size: 100%;
+            text-align: center;
+        }
+        p.goalText {
+            font-style: italic;
+            font-size: 120%;
+            text-align: center;
+        }
+        
+        #sliderElements {
+            justify-content:center;
+        }
+
+        #responseText {
+            display:none;
+            text-align:center;
+        }
+        #rangeInput {
+            width: 45%;
+        }
+        
+        #textInput {
+            text-align:center;
+            font-weight:bold;
+        }
+      
+        #sliderWarning {
+            text-align:center;
+            font-weight:bold;
+            color:red;
+        }
+
+        .titel {
+            font-style: italic;
+            text-align: center;
+        }
+
+        .text {
+            font-style: italic;
+            text-align: center;
+            font-weight: bold;
+            font-size: 300%;
+            color: #C84B4B;
+        }
+
+    </style>
+
+    <script>
+
+        var userId; 
+        var courseId; 
+        var weekNumber; 
+        var weekId; 
+
+        var SERVER_URL = "https://guarded-mesa-27479.herokuapp.com";
+
+        //////////////////////////////////////////////
+        //            PAGE LOAD FUNCTIONS           //
+        //////////////////////////////////////////////
+
+        // Callback to load external scripts
+        function loadScript(url, callback)
         {
-            getTreatementGoals(); 
-        }
-    };
+            // Adding the script tag to the head as suggested before
+            var head = document.head;
+            var script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.src = url;
 
-    // Get user info and set global variables
-    function getUserInfo()
-    {
-        var url = window.location.href;
-        var split = url.split("/");
-        weekId = split[6];
-        courseId = split[4].split(":")[1];
+            // Then bind the event to the callback function.
+            // There are several events for cross browser compatibility.
+            script.onreadystatechange = callback;
+            script.onload = callback;
 
-        userId = analytics.user()._getId();
-        email = analytics._user._getTraits().email;
-
-        var currentDate = new Date();
-
-        for(var key in courseDates) {
-
-            var tempDate = new Date(key);
-
-            if (currentDate > tempDate )
-            {
-                weekNumber = courseDates[key];
-            }
-        }
-    }
-
-    //////////////////////////////////////////////
-    //       CONTROL GROUP FUNCTIONS            //
-    //////////////////////////////////////////////
-
-    // Show control experience with static goals 
-    function getControlGoals() 
-    {
-        var goals = {}; 
-
-        var url = window.location.href;
-        var split = url.split("/");
-        var week = split[6];
-
-        // Read goals from SRLUICourseInfo.js static file
-        for (var i=0; i < mappedInfo.length; i++) {
-            if(mappedInfo[i][0] == week) {
-                goals = mappedInfo[i][1];
-            }
+            // Fire the loading
+            head.appendChild(script);
         }
 
-        // Add html text element per goal
-        for (var j=0; j < goals.length; j++) {
-            var goal = goals[j];
-            var textNode = document.createElement("P");
-            textNode.innerHTML = goal;
-            textNode.className = "header1";
-            document.getElementById("controlGoals").appendChild(textNode);
+        // Set user info global variables
+        function getUserInfo()
+        {
+          var url = window.location.href;
+          var split = url.split("/");
+          courseId = split[4].split(":")[1];
+
+          userId = analytics.user()._getId();
+
+          weekNumber = getWeekNumber(); 
         }
-    };
 
-    //////////////////////////////////////////////
-    //       TREATMENT GROUP FUNCTIONS          //
-    //////////////////////////////////////////////
 
-    // Retrieve user defined goals from the database
-    function getTreatementGoals()
-    {
-        var scheduleGoals = document.getElementById("scheduleGoals");
-        var treatmentElement = document.getElementById("treatmentWeeklyGoals"); 
-
-        var settings = {
-            "async": true,
-            "crossDomain": true,
-            "url": SERVER_URL + "/api/goals/week",
-            "method": "GET",
-            "data": {
-                "userId": userId,
-                "email": email,
-                "courseId": courseId, 
-                "weekId": weekId, 
-                "weekNumber": weekNumber, 
-            }
-        };
-
-        $.ajax(settings).done(function (response) {
-
-            var result = response.data; 
-
-            // If we found goals already set, redirect to the calendar/goal view. Otherwise, show them 
-            // the set goal page. 
-            if (result != null)
-            {
-                var goal1 = result.goal1 ? "1. " + result.goal1 : ""; 
-                var goal2 = result.goal2 ? "2. " + result.goal2 : ""; 
-                var goal3 = result.goal3 ? "3. " + result.goal3 : ""; 
-                var goal4 = result.goal4 ? "4. " + result.goal4 : ""; 
-
-                document.getElementById("savedGoal1").innerHTML = goal1;     
-                document.getElementById("savedGoal2").innerHTML = goal2; 
-                document.getElementById("savedGoal3").innerHTML = goal3; 
-                document.getElementById("savedGoal4").innerHTML = goal4; 
-
-                treatmentWeeklyGoals.style.display="none";
-                scheduleGoals.style.display="block"; 
-            } 
-            else
-            {
-                treatmentWeeklyGoals.style.display="block";
-                scheduleGoals.style.display="none"; 
-            }              
-        }); 
-    }
-
-    // Save set goals
-    function saveGoals() {
-
-        var goal1 = document.getElementById("goal1").value;
-        var goal2 = document.getElementById("goal2").value;
-        var goal3 = document.getElementById("goal3").value;
-        var goal4 = document.getElementById("goal4").value;
-
-        var responseText = document.getElementById("responseText");
-
-        var settings = {
-            "async": true,
-            "crossDomain": true,
-            "url": SERVER_URL + "/api/goals",
-            "method": "POST",
-            "data": {
-                "userId": userId,
-                "email": email,
-                "courseId": courseId, 
-                "weekId": weekId, 
-                "weekNumber": weekNumber, 
-                "goal1": goal1, 
-                "goal2": goal2, 
-                "goal3": goal3, 
-                "goal4": goal4
-            }
-        };
-
-        // Save the goal and switch to calendar view
-        $.ajax(settings).done(function (response) {
-          responseText.style.display="block"; 
-          document.getElementById("savedGoal1").innerHTML = goal1;     
-          document.getElementById("savedGoal2").innerHTML = goal2; 
-          document.getElementById("savedGoal3").innerHTML = goal3; 
-          document.getElementById("savedGoal4").innerHTML = goal4; 
+        // Toggle between control/treatment displays
+        function toggleGroupDisplay()
+        {
+            getUserInfo(); 
           
-          treatmentWeeklyGoals.style.display="none";
-          scheduleGoals.style.display="block"; 
-      });          
-    }
+            // Only do any of this if the user is in the treatment group
+            if (userId % 2 != 0)
+            {
+                var goalsElement = document.getElementById("weekGoals");
+                var goalsContainer = document.getElementById("goalsContainer"); 
+                var weekNumber = getWeekNumber() - 1;
 
-    // Allow the user to return to the set goals page and edit goals. 
-    function editGoals()
-    {
-        var scheduleGoalsElement = document.getElementById("scheduleGoals");
-        var treatmentElement = document.getElementById("treatmentWeeklyGoals"); 
-        
-        scheduleGoalsElement.style.display ="none"; 
-        treatmentElement.style.display = "block"; 
-    }
+                var settings = {
+                    "async": true,
+                    "crossDomain": true,
+                    "url": SERVER_URL + "/api/goals/week",
+                    "method": "GET",
+                    "data": {
+                        "userId": userId,
+                        "courseId": courseId,
+                        "weekNumber": weekNumber 
+                    }
+                };
 
-    // Save calendar email reminders
-    function saveReminders()
-    {      
-        var date1 = document.getElementById("date1").value;
-        var time1 = document.getElementById("time1").value;
-        var task1 = document.getElementById("task1").value;
-        var offset1 = getCheckedBox("reminder1", "reminder2", "reminder3");
-        
-        var finalDate1 = getFinalSendDate(date1, time1, offset1);
+                $.ajax(settings).done(function (response) {
+                    var weekResult = response.data; 
+                    
+                    if (weekResult != null)
+                    {
 
-        var date2 = document.getElementById("date2").value;
-        var time2 = document.getElementById("time2").value;
-        var task2 = document.getElementById("task2").value;
-        var offset2 = getCheckedBox("reminder4", "reminder5", "reminder6");
-        
-        var finalDate2 = getFinalSendDate(date2, time2, offset2);
+                        if (weekResult.goal1 != null)
+                        {
+                            var textNode = createGoalTextNode(weekResult.goal1); 
+                            goalsContainer.appendChild(textNode);
+                        }
+                        if (weekResult.goal2 != null)
+                        {
+                            var textNode = createGoalTextNode(weekResult.goal2); 
+                            goalsContainer.appendChild(textNode);
+                        }
+                        if (weekResult.goal3 != null)
+                        {
+                            var textNode = createGoalTextNode(weekResult.goal3); 
+                            goalsContainer.appendChild(textNode);
+                        }
+                        if (weekResult.goal4 != null)
+                        {
+                            var textNode = createGoalTextNode(weekResult.goal4); 
+                            goalsContainer.appendChild(textNode);
+                        }
+                    }
+                    else
+                    {
+                        var textNode = createGoalTextNode("You didn't set any goals last week."); 
+                        goalsContainer.appendChild(textNode);
+                    }
 
-        var date3 = document.getElementById("date3").value;
-        var time3 = document.getElementById("time3").value;
-        var task3 = document.getElementById("task3").value;
-        var offset3 = getCheckedBox("reminder7", "reminder8", "reminder9");
+                    goalsElement.style.display = "block"; 
+                });
 
-        var finalDate3 = getFinalSendDate(date3, time3, offset3);
-
-        var settings = {
-            "async": true,
-            "crossDomain": true,
-            "url": SERVER_URL + "/api/tasks",
-            "method": "POST",
-            "data": {
-                "userId": userId,
-                "email": email,
-                "courseId": courseId, 
-                "weekId": weekId, 
-                "weekNumber": weekNumber, 
-                "task1": task1, 
-                "date1": finalDate1, 
-                "offset1": offset1,
-                "task2": task2, 
-                "date2": finalDate2,
-                "offset2": offset2,
-                "task3": task3, 
-                "date3": finalDate3,
-                "offset3": offset3 
+                getSliderValue(); 
             }
+        }
+
+        //////////////////////////////////////////////
+        //         GET ACTIVITY DATA                //
+        //////////////////////////////////////////////
+
+        // Get past week's numbers 
+        var generateNumbers = function() {
+            getUserInfo();
+            var courseStartDate = new Date(getKeyByValue(courseDates, weekNumber)); 
+            var currentDate = new Date();
+
+            // Set date string for past week      
+            var startString = convertDateToString(courseStartDate); 
+
+            var endString = convertDateToString(currentDate);
+            var dateString = "In the past week of the course (" + startString + " - " + endString + ") you have:";
+            document.getElementById("pastWeekHeader").innerHTML = dateString; 
+
+            // Send GET request for to get activity for specific user/course/week number. 
+            var settings = {
+                "async": true,
+                "crossDomain": true,
+                "url": SERVER_URL + "/api/events/week",
+                "method": "GET",
+                "data": {
+                    "userId": userId,
+                    "courseId": courseId, 
+                    "weekNumber": weekNumber
+                }
+            };
+
+            $.ajax(settings).done(function (response) {
+                var weekResult = response.data; 
+                
+                var videos = 0;
+                var questions = 0; 
+                var views = 0; 
+                var posts = 0; 
+              
+                if (weekResult != null)
+                {
+                    videos = weekResult.videosWatched; 
+                    questions = weekResult.questionsAnswered; 
+                    views = weekResult.postsViewed; 
+                    posts = weekResult.postsCreated; 
+                }
+                           
+                // Set past week results
+                document.getElementById("videosWatched").innerHTML = videos; 
+                document.getElementById("questionsAnswered").innerHTML = questions; 
+                document.getElementById("postsViewed").innerHTML = views; 
+                document.getElementById("postsCreated").innerHTML = posts; 
+            });          
         };
 
-        $.ajax(settings).done(function (response) {
-            responseText.style.display="block";
-        });          
-    }
+        // Generate the line chart 
+        var generateLineChart = function () {
+            getUserInfo();
+            // Send GET request for to get activity for specific user/course. 
+            var settings = {
+                "async": true,
+                "crossDomain": true,
+                "url": SERVER_URL + "/api/events",
+                "method": "GET",
+                "data": {
+                    "userId": userId,
+                    "courseId": courseId 
+                }
+            };
 
-    // Get value of the checked box for time offset
-    function getCheckedBox(id1, id2, id3)
-    {
-        var cb1 = document.getElementById(id1);
-        var cb2 = document.getElementById(id2);
-        var cb3 = document.getElementById(id3);
+            $.ajax(settings).done(function (response) {
+                var aggVideosWatched = []; 
+                var aggQuestionsAnswered = []; 
+                var aggPostsCreated = []; 
+                var aggPostsViewed = []; 
+                
+                var result = response.data; 
+                result.sort(sortByWeekNumber);
 
-        if (cb1.checked)
-        {
-            return cb1.value;
-        }
-        else if (cb2.checked)
-        {
-            return cb2.value; 
-        }
-        else
-        {
-            return cb3.value; 
-        }
-    }
-
-    // Checks email send date
-    function getFinalSendDate(date, time, offset)
-    {
-        var msPerMin = 60000;
-        var currentDate = new Date().getTime(); 
-
-        var finalDate = null; 
-
-        if (date != "" && time != "")
-        {
-            var tempDate = new Date(date + " " + time);
-
-            if (isValidDate(tempDate))
-            {
-                var dateWithOffset = tempDate.getTime() - (offset * msPerMin);
-
-                if (dateWithOffset > currentDate)
+                // Set data points for line chart
+                for (var i = 0; i < result.length; i++)
                 {
-                    finalDate = dateWithOffset;    
+                    if (result[i] != null)
+                    {
+                        // Get the actual start date of the week and attach it to the chart label
+                        var startDate = getKeyByValue(courseDates, result[i].weekNumber); 
+
+                        var dates = startDate.split("-");
+
+                        var weekString = "Week " + result[i].weekNumber + " (" + dates[1] + "/" + dates[2] + ")"; 
+                    
+                        aggVideosWatched.push({label: weekString, y: result[i].videosWatched});
+                        aggQuestionsAnswered.push({label: weekString, y: result[i].questionsAnswered});
+                        aggPostsCreated.push({label: weekString, y: result[i].postsViewed});
+                        aggPostsViewed.push({label: weekString, y: result[i].postsCreated});
+                    }
+                }
+
+                // Create chart 
+                var chart = new CanvasJS.Chart("chartContainer", {
+                    theme:"light2",
+                    animationEnabled: true,
+                    title:{
+                        text: "Class Progress"
+                    },
+                    axisY :{
+                        includeZero: true,
+                        title: "Number of Actions",
+                        suffix: ""
+                    },
+                    toolTip: {
+                        shared: "true"
+                    },
+                    legend:{
+                        cursor:"pointer",
+                        itemclick : toggleDataSeries
+                    },
+                    data: [{
+                        type: "spline", 
+                        showInLegend: true,
+                        yValueFormatString: "",
+                        name: "Videos Watched",
+                        dataPoints: aggVideosWatched
+                    },
+                    {
+                        type: "spline", 
+                        showInLegend: true,
+                        yValueFormatString: "",
+                        name: "Posts Viewed",
+                        dataPoints: aggPostsViewed
+                    },
+                    {
+                        type: "spline", 
+                        showInLegend: true,
+                        yValueFormatString: "",
+                        name: "Posts Created",
+                        dataPoints: aggPostsCreated
+                    },
+                    {
+                        type: "spline", 
+                        showInLegend: true,
+                        yValueFormatString: "",
+                        name: "Questions Answered",
+                        dataPoints: aggQuestionsAnswered
+                    }]
+                });
+                chart.render();
+
+                // Allows you to select/unselect certain series in the legend
+                function toggleDataSeries(e) {
+                    if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible ){
+                        e.dataSeries.visible = false;
+                    } else {
+                        e.dataSeries.visible = true;
+                    }
+                    chart.render();
+                }
+            });          
+        };
+
+        // Saves the slider bar data
+        function getSliderValue() {
+            
+            var responseText = document.getElementById("responseText");
+            var sliderWarning = document.getElementById("sliderWarning"); 
+          
+            var percentage = document.getElementById('textInput'); 
+            var number = percentage.substring(0, percentage.length - 1);
+
+            var settings = {
+                "async": true,
+                "crossDomain": true,
+                "url": SERVER_URL + "/api/slider",
+                "method": "GET",
+                "data": {
+                    "userId": userId,
+                    "courseId": courseId, 
+                    "weekNumber": weekNumber, 
+                }
+            };
+
+            $.ajax(settings).done(function (response) {
+                var weekData = response.data; 
+
+                if (weekData != null)
+                {
+                    sliderWarning.style.display = "none";
+                    percentage.innerHTML = weekData.sliderPercentage; 
+                    updateTextInput(weekData.sliderPercentage);
+                }
+                else
+                {
+                    // Disable 'next' buttons until slider bar progress is submitted. 
+                    toggleNextButtonDisabled(true); 
+                }
+            }); 
+        }
+
+        // Saves the slider bar data
+        function saveSlider() {
+            
+            var email = analytics._user._getTraits().email;
+
+            var responseText = document.getElementById("responseText");
+            var sliderWarning = document.getElementById("sliderWarning"); 
+          
+            var percentage = document.getElementById('textInput').innerHTML; 
+            var number = percentage.substring(0, percentage.length - 1);
+
+            var settings = {
+                "async": true,
+                "crossDomain": true,
+                "url": SERVER_URL + "/api/slider",
+                "method": "POST",
+                "data": {
+                    "userId": userId,
+                    "email": email,
+                    "courseId": courseId, 
+                    "weekId": weekId, 
+                    "weekNumber": weekNumber, 
+                    "sliderPercentage": number 
+                }
+            };
+
+            // Enable 'next' buttons when slider bar progress is submitted. We'll do this even if storage fails so we don't block the user. 
+            toggleNextButtonDisabled(false); 
+
+            $.ajax(settings).done(function (response) {
+                sliderWarning.style.display = "none";
+                responseText.style.display = "block"; 
+            }); 
+        }
+
+        //////////////////////////////////////////////
+        //               HELPER FUNCTIONS           //
+        //////////////////////////////////////////////
+
+        // Search dictionary for value and return key (e.g. week num to start date)
+        function getKeyByValue(object, value) {
+            return Object.keys(object).find(key => object[key] === value);
+        }
+
+        // Convert date object to readable string
+        function convertDateToString(d)
+        {
+            var dd = d.getDate(); 
+            var mm = d.getMonth()+1; 
+            var yyyy = d.getFullYear();
+
+            if(dd<10) 
+            {
+                dd='0'+dd;
+            } 
+
+            if(mm<10) 
+            {
+                mm='0'+mm;
+            } 
+
+            return mm +'/'+ dd +'/'+ yyyy;
+        }
+
+        // Get the week number based on the current date and the start date of each week recorded in SRLUICourseInfo.js
+        function getWeekNumber()
+        {
+            var weekNumber;
+
+            var currentDate = new Date();
+
+            for(var key in courseDates) 
+            {
+                var tempDate = new Date(key);
+
+                if (currentDate > tempDate )
+                {
+                    weekNumber = courseDates[key];
                 }
             }
+            return weekNumber; 
         }
 
-        return finalDate; 
-    }
+        // Sort events by week number
+        function sortByWeekNumber(record1, record2)
+        {
+            if (record1.weekNumber > record2.weekNumber)
+            {
+                return 1; 
+            }
 
-    // Checks if date can be parsed
-    function isValidDate(d) {
-        return d instanceof Date && !isNaN(d);
-    }
+            if (record1.weekNumber < record2.weekNumber)
+            {
+                return -1; 
+            }
+
+            return 0; 
+        } 
+
+        // Create the text node used for goals
+        function createGoalTextNode(text)
+        {
+            var textNode = document.createElement("P");
+            textNode.innerHTML = text;
+            textNode.className = "goalText";
+            return textNode; 
+        }
+
+        // Updates slider bar text
+        function updateTextInput(val) {
+            document.getElementById('textInput').innerHTML=val + "%"; 
+        }
+
+        // Toggle 'next' buttons disabled/enabled
+        function toggleNextButtonDisabled(disabled)
+        {
+            console.log("toggle button"); 
+            var nextButton = document.getElementsByClassName("sequence-nav-button button-next");
+            console.log(nextButton); 
+            for (var i = 0; i < nextButton.length; i++)
+            {
+                nextButton[i].disabled = disabled; 
+            }       
+        }
 
     </script>
+
+
 </head>
 
 <body>
+  
+    <p id="pastWeekHeader"></p>
+
+    <br>
+
+    <!-- Current week info -->
+    <div id="three">
+        <div id="col1">
+            <div id="videosWatched" class="text"></div>
+            <div class="vidFeedback titel">Videos Watched</div>
+        </div>
+        <div id="col2">
+            <div id="questionsAnswered" class="text"></div>
+            <div class="quizFeedback titel">Problems Tried</div>
+        </div>
+        <div id="col3">
+            <div id="postsCreated" class="text"></div>
+            <div class="timeFeedback titel">Times Posted</div>
+        </div>
+        <div id="col4">
+            <div id="postsViewed" class="text"></div>
+            <div class="timeFeedback titel">Posts Viewed</div>
+        </div>
+    </div>
+
+    <br>
+    <br>
+
+    <p id="overallProgressHeader">Your overall course progress:</p>
+
+    <div id="chartContainer" style="height: 300px; width: 100%;"> 
+        <script> 
+            loadScript("/static/SRLUICourseInfo.js", generateNumbers);
+            loadScript("https://canvasjs.com/assets/script/canvasjs.min.js", generateLineChart);
+        </script>
+
+    </div>
+
+    <br>
+    <br>
+    <p id="footer">*Note edX course weeks start on Mondays</p>
 
     <script>
         loadScript("/static/SRLUICourseInfo.js", toggleGroupDisplay);
     </script>
 
-    <!-- Show the static weekly goals for the control group !-->
-    <div id="controlWeeklyGoals">
-        <p id="controlHeader">This Week's Learning Topics</p>
-        <br>
-        <br>
-        <div id="controlGoals"></div>
-    </div>
+    <br>
 
-    <!-- Allow treatment group to set their own goals !-->
-    <div id="treatmentWeeklyGoals">
-        <p id="treatmentHeader">What are your study goals for next week?</p>
-        <br>
-        <p id="treatmentSubtitle">Having specific learning can help with motivation. Define goals here to track your progress from week to week. Try to define actionable items.</p>
-        <br>
-        <form id="goalsPlan">
-            <div>
-                <textarea form="replace" id="goal1" class="textRow" placeholder="Example: Watch week 1 videos"></textarea>
-            </div>
-            <div>
-                <textarea form="replace" id="goal2" class="textRow" placeholder="Example: Complete prerequisite knowledge assignment"></textarea>
-            </div>
-            <div>
-                <textarea form="replace" id="goal3" class="textRow" placeholder="Example: review linear algebra and probability"></textarea>
-            </div>
-            <div>
-                <textarea form="replace" id="goal4" class="textRow"></textarea>
-            </div>
-            <br>
+    <!-- Treatment group only section --> 
+    <div id= "weekGoals">
+        <p id="goalsHeaderText">As a reminder, these were the goals you set for yourself last week:</p>
+    <div id="goalsContainer"></div>
+
+    <div id="slider">
+        <p id="sliderSubtitle">Based on your progress this week, how would you rate the completion of your study plan?</p>
+
+        <div id="sliderElements">
+
+            <input type="range" id="rangeInput" min="0" max="100" onchange="updateTextInput(this.value);">
+
+            <p id="textInput">50%</p>
+
             <p style="text-align:center">
-                <button type="button" id="saveGoalsButton" onclick="saveGoals()">Submit</button>
+                <button type="button" id="saveGoalsButton" onclick="saveSlider()">Submit</button>
             </p>
-        </form>
+
+            <p id="sliderWarning">IMPORTANT: You must complete this survey to move forward.</p>
+            <p id= "responseText">Response saved!</p>
+        </div>
     </div>
 
-    <!-- Second page for the treatment group where they can set reminders on a calendar. --> 
-    <div id="scheduleGoals">
-
-      <div id="savedGoals">
-            <p id="savedGoalsHeader">Great! Here are your goals for next week:</p>
-            <p id="savedGoal1" class="savedGoalText"></p>
-            <p id="savedGoal2" class="savedGoalText"></p>
-            <p id="savedGoal3" class="savedGoalText"></p>  
-            <p id="savedGoal4" class="savedGoalText">.</p>    
-            <p id="button">
-                <button id="editGoals" onclick="editGoals()">Edit Goals</button>
-            </p>
-      </div>
-      <br>
-
-      <p id="header">Let's plan your week ahead!</p>
-      <p id="descriptionText">Planning your schedule helps you map out time for study, even just 20 minutes. Remember it is better to break down the content into smaller chunks instead of binge watching all the videos at once. You want to watch/learn the content several times as the repetition will help you cement the information into your memory.</p>
-      <p id="instruction">Use the form below to schedule email reminders for yourself.</p>
-
-      <div id="schedule">
-        <table>
-            <tr>
-                <td>
-                    <p class="tableHeader">Date</p>
-                </td>
-                <td>
-                    <p class="tableHeader">Time</p>
-                </td>
-                <td>
-                    <p class="tableHeader">Task</p>
-                </td>
-                <td>
-                    <p class="tableHeader">Reminder</p>
-                </td>
-            </tr>
-            <tr>
-                <td><input type="date" id="date1"></td>
-                <td><input type="time" id="time1"></td>
-                <td><input type="text" id="task1"></td>
-                <td><input type="checkbox" id="reminder1" value="10" checked>Ten minutes before<br>
-                    <input type="checkbox" id="reminder2" value="60">One hour before<br>
-                    <input type="checkbox" id="reminder3" value="120">Two hours before</td>
-            </tr>
-            <tr>
-                <td><input type="date" id="date2"></td>
-                <td><input type="time" id="time2"></td>
-                <td><input type="text" id="task2"></td>
-                <td><input type="checkbox" id="reminder4" value="10" checked>Ten minutes before<br>
-                    <input type="checkbox" id="reminder5" value="60">One hour before<br>
-                    <input type="checkbox" id="reminder6" value="120">Two hours before</td>
-            </tr>
-            <tr>
-                <td><input type="date" id="date3"></td>
-                <td><input type="time" id="time3"></td>
-                <td><input type="text" id="task3"></td>
-                <td><input type="checkbox" id="reminder7" value="10" checked>Ten minutes before<br>
-                    <input type="checkbox" id="reminder8" value="60">One hour before<br>
-                    <input type="checkbox" id="reminder9" value="120">Two hours before</td>
-            </tr>
-        </table>
-        
-        <p id="button">
-            <button id="saveReminders" onclick="saveReminders()">Save Tasks</button>
-        </p>
-
-        <p id= "responseText">Response saved!</p>
-    </div>
 </body>
+
+

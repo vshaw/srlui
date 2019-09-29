@@ -47,7 +47,7 @@
             font-size: 120%;
             text-align: center;
         }
-
+        
         #sliderElements {
             justify-content:center;
         }
@@ -59,33 +59,43 @@
         #rangeInput {
             width: 45%;
         }
-
+        
         #textInput {
-           font-weight:bold;
-       }
+            text-align:center;
+            font-weight:bold;
+        }
 
-       .titel {
-        font-style: italic;
-        text-align: center;
-    }
+        .titel {
+            font-style: italic;
+            text-align: center;
+        }
 
-    .text {
-        font-style: italic;
-        text-align: center;
-        font-weight: bold;
-        font-size: 300%;
-        color: #C84B4B;
-    }
-</style>
+        .text {
+            font-style: italic;
+            text-align: center;
+            font-weight: bold;
+            font-size: 300%;
+            color: #C84B4B;
+        }
 
-<script>
+    </style>
 
-    var SERVER_URL = "https://guarded-mesa-27479.herokuapp.com";
+    <script>
 
+        var userId; 
+        var courseId; 
+        var weekNumber; 
+        var weekId; 
 
-    /**** LOAD EXTERNAL SCRIPTS ***/ 
-    function loadScript(url, callback)
-    {
+        var SERVER_URL = "https://guarded-mesa-27479.herokuapp.com";
+
+        //////////////////////////////////////////////
+        //            PAGE LOAD FUNCTIONS           //
+        //////////////////////////////////////////////
+
+        // Callback to load external scripts
+        function loadScript(url, callback)
+        {
             // Adding the script tag to the head as suggested before
             var head = document.head;
             var script = document.createElement('script');
@@ -101,34 +111,95 @@
             head.appendChild(script);
         }
 
-        /**** GET PAST WEEK NUMBERS ***/ 
+        // Set user info global variables
+        function getUserInfo()
+        {
+          var url = window.location.href;
+          var split = url.split("/");
+          courseId = split[4].split(":")[1];
+
+          userId = analytics.user()._getId();
+
+          weekNumber = getWeekNumber(); 
+        }
+
+
+        // Toggle between control/treatment displays
+        function toggleGroupDisplay()
+        {
+            // Only do any of this if the user is in the treatment group
+            if (userId % 2 != 0)
+            {
+                var goalsElement = document.getElementById("weekGoals");
+                var goalsContainer = document.getElementById("goalsContainer"); 
+                var weekNumber = getWeekNumber() - 1;
+
+                var settings = {
+                    "async": true,
+                    "crossDomain": true,
+                    "url": SERVER_URL + "/api/goals/week",
+                    "method": "GET",
+                    "data": {
+                        "userId": userId,
+                        "courseId": courseId,
+                        "weekNumber": weekNumber 
+                    }
+                };
+
+                $.ajax(settings).done(function (response) {
+                    var weekResult = response.data; 
+                    
+                    if (weekResult != null)
+                    {
+
+                        if (weekResult.goal1 != null)
+                        {
+                            var textNode = createGoalTextNode(weekResult.goal1); 
+                            goalsContainer.appendChild(textNode);
+                        }
+                        if (weekResult.goal2 != null)
+                        {
+                            var textNode = createGoalTextNode(weekResult.goal2); 
+                            goalsContainer.appendChild(textNode);
+                        }
+                        if (weekResult.goal3 != null)
+                        {
+                            var textNode = createGoalTextNode(weekResult.goal3); 
+                            goalsContainer.appendChild(textNode);
+                        }
+                        if (weekResult.goal4 != null)
+                        {
+                            var textNode = createGoalTextNode(weekResult.goal4); 
+                            goalsContainer.appendChild(textNode);
+                        }
+                    }
+                    else
+                    {
+                        var textNode = createGoalTextNode("You didn't set any goals last week."); 
+                        goalsContainer.appendChild(textNode);
+                    }
+
+                    goalsElement.style.display = "block"; 
+
+                    // Disable 'next' buttons until slider bar progress is submitted. 
+                    toggleNextButton(false); 
+                });
+            }
+        }
+
+        //////////////////////////////////////////////
+        //         GET ACTIVITY DATA                //
+        //////////////////////////////////////////////
+
+        // Get past week's numbers 
         var generateNumbers = function() {
 
-            var userId = analytics.user()._getId();
-
-            var url = window.location.href;
-            var split = url.split("/");
-            var courseId = split[4].split(":")[1];
-
-            // Get the week number based on the current date and the start date of each week recorded in SRLUICourseInfo.js
-            var weekNumber;
-
+            var courseStartDate = new Date(getKeyByValue(courseDates, weekNumber)); 
             var currentDate = new Date();
-            var courseStartDate; 
-
-            for(var key in courseDates) 
-            {
-                var tempDate = new Date(key);
-
-                if (currentDate > tempDate )
-                {
-                    weekNumber = courseDates[key];
-                    courseStartDate = new Date(key);
-                }
-            }
 
             // Set date string for past week      
             var startString = convertDateToString(courseStartDate); 
+
             var endString = convertDateToString(currentDate);
             var dateString = "In the past week of the course (" + startString + " - " + endString + ") you have:";
             document.getElementById("pastWeekHeader").innerHTML = dateString; 
@@ -155,15 +226,10 @@
                 document.getElementById("postsViewed").innerHTML = weekResult.postsViewed; 
                 document.getElementById("postsCreated").innerHTML = weekResult.postsCreated; 
             });          
-        }
+        };
 
-        /**** LOAD THE CHART ***/ 
+        // Generate the line chart 
         var generateLineChart = function () {
-            var userId = analytics.user()._getId();
-
-            var url = window.location.href;
-            var split = url.split("/");
-            var courseId = split[4].split(":")[1];
 
             // Send GET request for to get activity for specific user/course. 
             var settings = {
@@ -202,7 +268,7 @@
                     aggPostsViewed.push({label: weekString, y: result[i].postsCreated});
                 }
 
-
+                // Create chart 
                 var chart = new CanvasJS.Chart("chartContainer", {
                     theme:"light2",
                     animationEnabled: true,
@@ -252,106 +318,25 @@
                 });
                 chart.render();
 
-
-            });          
-
-            function toggleDataSeries(e) {
-                if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible ){
-                    e.dataSeries.visible = false;
-                } else {
-                    e.dataSeries.visible = true;
+                // Allows you to select/unselect certain series in the legend
+                function toggleDataSeries(e) {
+                    if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible ){
+                        e.dataSeries.visible = false;
+                    } else {
+                        e.dataSeries.visible = true;
+                    }
+                    chart.render();
                 }
-                chart.render();
-            }
-
+            });          
         };
 
-        /** TOGGLE BETWEEN USER/TREATMENT DISPLAYS **/ 
-        function toggleGroupDisplay()
-        {
-          console.log("toggle group"); 
-          var url = window.location.href;
-          var split = url.split("/");
-          var courseId = split[4].split(":")[1];
-
-          var userId = analytics.user()._getId();
-
-            // Only do any of this if the user is in the treatment group
-            if (userId % 2 == 0)
-            {
-                var goalsElement = document.getElementById("weekGoals");
-                var goalsContainer = document.getElementById("goalsContainer"); 
-                var weekNumber = getWeekNumber() - 1;
-
-                var settings = {
-                    "async": true,
-                    "crossDomain": true,
-                    "url": SERVER_URL + "/api/goals/week",
-                    "method": "GET",
-                    "data": {
-                        "userId": userId,
-                        "courseId": courseId,
-                        "weekNumber": weekNumber 
-                    }
-                };
-
-                console.log(settings); 
-
-                $.ajax(settings).done(function (response) {
-                    var weekResult = response.data; 
-                    
-                    if (weekResult != null)
-                    {
-
-                        if (weekResult.goal1 != null)
-                        {
-                            var textNode = createGoalTextNode(weekResult.goal1); 
-                            goalsContainer.appendChild(textNode);
-                        }
-                        if (weekResult.goal2 != null)
-                        {
-                            var textNode = createGoalTextNode(weekResult.goal2); 
-                            goalsContainer.appendChild(textNode);
-                        }
-                        if (weekResult.goal3 != null)
-                        {
-                            var textNode = createGoalTextNode(weekResult.goal3); 
-                            goalsContainer.appendChild(textNode);
-                        }
-                        if (weekResult.goal4 != null)
-                        {
-                            var textNode = createGoalTextNode(weekResult.goal4); 
-                            goalsContainer.appendChild(textNode);
-                        }
-                    }
-                    else
-                    {
-                        var textNode = createGoalTextNode("You didn't set any goals last week."); 
-                        goalsContainer.appendChild(textNode);
-                    }
-
-                    goalsElement.style.display = "block"; 
-
-                });
-            }
-        }
-
+        // Saves the slider bar data
         function saveSlider() {
-            var url = window.location.href;
-            var split = url.split("/");
-            var weekId = split[6];
-            var courseId = split[4].split(":")[1];
-
-            var userId = analytics.user()._getId();
-            var email = analytics._user._getTraits().email;
-
-            var weekNumber = getWeekNumber();
 
             var responseText = document.getElementById("responseText");
 
             var percentage = document.getElementById('textInput').innerHTML; 
-            var number = percentage.substring(percentage.length - 1);
-            console.log(number); 
+            var number = percentage.substring(0, percentage.length - 1);
 
             var settings = {
                 "async": true,
@@ -368,11 +353,17 @@
                 }
             };
 
-            $.ajax(settings).done(function (response) {
-              responseText.style.display="block"; 
-          });
+            // Enable 'next' buttons when slider bar progress is submitted. We'll do this even if storage fails so we don't block the user. 
+            toggleNextButton(false); 
 
-            /*** HELPER FUNCTIONS ***/
+            $.ajax(settings).done(function (response) {
+                responseText.style.display="block"; 
+            }); 
+        }
+
+        //////////////////////////////////////////////
+        //               HELPER FUNCTIONS           //
+        //////////////////////////////////////////////
 
         // Search dictionary for value and return key (e.g. week num to start date)
         function getKeyByValue(object, value) {
@@ -443,25 +434,39 @@
             return textNode; 
         }
 
+        // Updates slider bar text
         function updateTextInput(val) {
-          document.getElementById('textInput').innerHTML=val + "%"; 
-      }
+            document.getElementById('textInput').innerHTML=val + "%"; 
+        }
 
-  </script>
+        // Toggle 'next' buttons disabled/enabled
+        function toggleNextButton(enabled)
+        {
+            var nextButton = document.getElementsByClassName("sequence-nav-button button-next");
+
+            for (var i = 0; i < nextButton.length; i++)
+            {
+                nextButton[i].disabled = enabled; 
+            }       
+        }
+
+    </script>
 
 
 </head>
 
 <body>
 
+    <script>
+        loadScript("/static/SRLUICourseInfo.js", getUserInfo);
+    </script>
 
-    <div id="courseProgress">
+    <p id="pastWeekHeader"></p>
 
-      <p id="pastWeekHeader"></p>
+    <br>
 
-      <br>
-
-      <div id="three">
+    <!-- Current week info -->
+    <div id="three">
         <div id="col1">
             <div id="videosWatched" class="text"></div>
             <div class="vidFeedback titel">Videos Watched</div>
@@ -498,31 +503,32 @@
     <p id="footer">*Note edX course weeks start on Mondays</p>
 
     <script>
-       loadScript("/static/SRLUICourseInfo.js", toggleGroupDisplay);
-   </script>
+        loadScript("/static/SRLUICourseInfo.js", toggleGroupDisplay);
+    </script>
 
-   <br>
+    <br>
 
-   <div id= "weekGoals">
-    <p id="goalsHeaderText">As a reminder, these were the goals you set for yourself last week:</p>
+    <!-- Treatment group only section --> 
+    <div id= "weekGoals">
+        <p id="goalsHeaderText">As a reminder, these were the goals you set for yourself last week:</p>
     <div id="goalsContainer"></div>
+
     <div id="slider">
-      <p id="sliderSubtitle">Based on your progress this week, how would you rate the completion of your study plan?</p>
-      
-      <div id="sliderElements">
-          <input type="range" id="rangeInput" min="0" max="100" onchange="updateTextInput(this.value);">
-          <p id="textInput">50%</p>
-          <p style="text-align:center">
-            <button type="button" id="saveGoalsButton" onclick="saveGoals()">Submit</button>
-        </p>
-        <p id= "responseText">Response saved!</p>
+        <p id="sliderSubtitle">Based on your progress this week, how would you rate the completion of your study plan? You must complete this survey to move forward.</p>
 
+        <div id="sliderElements">
+
+            <input type="range" id="rangeInput" min="0" max="100" onchange="updateTextInput(this.value);">
+
+            <p id="textInput">50%</p>
+
+            <p style="text-align:center">
+                <button type="button" id="saveGoalsButton" onclick="saveSlider()">Submit</button>
+            </p>
+
+            <p id= "responseText">Response saved!</p>
+        </div>
     </div>
-</div>
-</div>
-
-
-</div>
 
 </body>
 
