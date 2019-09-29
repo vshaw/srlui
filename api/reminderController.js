@@ -37,6 +37,8 @@ exports.new = async function (req, res) {
 
     var date = new Date(reminder.date1);
 
+    console.log("send date " + date); 
+
     agenda.schedule(date, 'email task', data);
 };
 
