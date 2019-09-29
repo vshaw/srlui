@@ -22,32 +22,32 @@ router.get('/', auth, function (req, res) {
 
 // Routes
 router.route('/events')
-    .post(eventController.createOrUpdate)
-    .get(eventController.viewCourse)
-    .delete(eventController.delete)
+    .post(auth, eventController.createOrUpdate)
+    .get(auth, eventController.viewCourse)
+    .delete(auth, eventController.delete)
 router.route('/events/week')
-	.get(eventController.viewWeek)
+	.get(auth, eventController.viewWeek)
 
 router.route('/tasks')
-    .post(reminderController.new)
-    .get(reminderController.index)
-    .delete(reminderController.delete)
+    .post(auth, reminderController.new)
+    .get(auth, reminderController.index)
+    .delete(auth, reminderController.delete)
 
 router.route('/goals')
-	.post(goalController.new)
-	.get(goalController.index)
-	.delete(goalController.delete)
+	.post(auth, goalController.new)
+	.get(auth, goalController.index)
+	.delete(auth, goalController.delete)
 router.route('/goals/week')
-	.get(goalController.viewWeek)
+	.get(auth, goalController.viewWeek)
 
 router.route('/slider')
-    .post(sliderController.createOrUpdate)
-    .get(sliderController.viewWeek)
-    .delete(sliderController.delete)
+    .post(auth, sliderController.createOrUpdate)
+    .get(auth, sliderController.viewWeek)
+    .delete(auth, sliderController.delete)
 
 router.route('/posts')
-    .get(discussionPostsController.getWeek)
-    .delete(discussionPostsController.delete)
+    .get(auth, discussionPostsController.getWeek)
+    .delete(auth, discussionPostsController.delete)
 	
 // Export API 
 module.exports = router;
