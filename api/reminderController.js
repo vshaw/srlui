@@ -18,13 +18,23 @@ exports.new = async function (req, res) {
     reminder.date1 = req.body.date1;
     reminder.offset1 = req.body.offset1;
 
+    reminder.task2 = req.body.task2;
+    reminder.date2 = req.body.date2;
+    reminder.offset2 = req.body.offset2;
+
+    reminder.task3 = req.body.task3;
+    reminder.date3 = req.body.date3;
+    reminder.offset3 = req.body.offset3;
+        
     var data = {
         from: 'EdX Study Planning <columbiaxcvn@gmail.com>',
         to: reminder.email,
         subject: 'Your EdX Study Planning Reminder',
-        text: "Hello, here is your reminder to begin the following task in " + reminder.offset1 + " minutes: \n\n" + reminder.task1
     };
-        
+
+    var emailText1 = "Hello, here is your reminder to begin the following task in ";
+    var emailText2 = " minutes: \n\n";
+
     // save the reminder and check for errors
     await reminder.save(function (err) {
         if (err)
@@ -35,11 +45,32 @@ exports.new = async function (req, res) {
         });
     }); 
 
-    var date = new Date(reminder.date1);
+    // Schedule tasks via agenda 
+    
+    if (reminder.date1 != null && reminder.task1 != null)
+    {
+        var date = new Date(reminder.date1);
 
-    console.log("send date " + date); 
+        data.text = emailText1 + reminder.offset1 + emailText2 + reminder.task1;
+        await agenda.schedule(date, 'email task', data);
+    }
 
-    agenda.schedule(date, 'email task', data);
+    if (reminder.date2 != null && reminder.task2 != null)
+    {
+        var date = new Date(reminder.date2);
+
+        data.text = emailText1 + reminder.offset2 + emailText2 + reminder.task2;
+        await agenda.schedule(date, 'email task', data);
+    }
+
+    if (reminder.date3 != null && reminder.task3 != null)
+    {
+        var date = new Date(reminder.date1);
+
+        data.text = emailText1 + reminder.offset3 + emailText2 + reminder.task3;
+        await agenda.schedule(date, 'email task', data);
+    }
+
 };
 
 exports.index = function (req, res) {

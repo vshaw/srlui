@@ -34,6 +34,30 @@ var reminderSchema = mongoose.Schema({
         type: Number, 
         required: true
     },
+    task2: {
+        type: String, 
+        required: true
+    },
+    date2: {
+        type: Number, 
+        required: true
+    },
+    offset2: {
+        type: Number, 
+        required: true
+    },
+    task3: {
+        type: String, 
+        required: true
+    },
+    date3: {
+        type: Number, 
+        required: true
+    },
+    offset3 {
+        type: Number, 
+        required: true
+    },
     create_date: {
         type: Date,
         default: Date.now
