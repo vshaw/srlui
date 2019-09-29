@@ -104,7 +104,7 @@
     }
       
     textarea.textRow {
-        width: 700px;
+        width: 100%;
         height: 50px;
         border: 5px solid #cccccc;
         padding: 5px;
@@ -121,6 +121,7 @@
     var weekId;
     var weekNumber;
 
+    var devShowTreatment = false; 
     var SERVER_URL = "https://guarded-mesa-27479.herokuapp.com";
 
     //////////////////////////////////////////////
@@ -153,7 +154,7 @@
         var controlElement = document.getElementById("controlWeeklyGoals");
         var treatmentElement = document.getElementById("treatmentWeeklyGoals"); 
 
-        if (userId % 2 == 0)
+        if (userId % 2 == 0 && !devShowTreatment)
         {
             getControlGoals(); 
             controlElement.style.display = "block"; 
@@ -457,7 +458,10 @@
     <div id="treatmentWeeklyGoals">
         <p id="treatmentHeader">What are your study goals for next week?</p>
         <br>
-        <p id="treatmentSubtitle">Having specific learning can help with motivation. Define goals here to track your progress from week to week. Try to define actionable items.</p>
+        <p id="treatmentSubtitle">
+          Having specific learning can help with motivation. Define goals here to track your progress from week to week. Try to define actionable items.
+          <img src="/static/target-cropped.png" style="float:right; width:15%; margin-left:10px; margin-top:-10px" class="medium">
+        </p>
         <br>
         <form id="goalsPlan">
             <div>
