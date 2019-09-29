@@ -11,7 +11,6 @@ exports.createOrUpdate = function (req, res) {
         'email': req.body.email, 
         'courseId': req.body.courseId, 
         'weekId': req.body.weekId,
-        'weekNumber': req.body.weekNumber, 
     };
 
     var update = 
@@ -37,7 +36,7 @@ exports.viewWeek = function (req, res) {
     var query = {
         'userId': req.query.userId, 
         'courseId': req.query.courseId, 
-        'weekNumber': req.query.weekNumber,
+        'weekId': req.query.weekId,
         'email': req.query.email
     };
 
