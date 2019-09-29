@@ -1,5 +1,6 @@
 
 let jwt = require('jsonwebtoken');
+let express = require('express');
 
 let checkToken = (req, res, next) => {
   let token = req.headers['x-access-token'] || req.headers['authorization']; // Express headers are auto converted to lowercase
