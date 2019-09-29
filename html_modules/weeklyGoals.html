@@ -123,7 +123,6 @@
 
     var SERVER_URL = "https://guarded-mesa-27479.herokuapp.com";
 
-
     //////////////////////////////////////////////
     //            PAGE LOAD FUNCTIONS         //
     //////////////////////////////////////////////
@@ -234,6 +233,9 @@
             "async": true,
             "crossDomain": true,
             "url": SERVER_URL + "/api/goals/week",
+            "headers": {
+                'x-access-token': accessToken
+            },
             "method": "GET",
             "data": {
                 "userId": userId,
@@ -288,6 +290,9 @@
             "crossDomain": true,
             "url": SERVER_URL + "/api/goals",
             "method": "POST",
+            "headers": {
+                'x-access-token': accessToken
+            },
             "data": {
                 "userId": userId,
                 "email": email,
@@ -352,6 +357,9 @@
             "async": true,
             "crossDomain": true,
             "url": SERVER_URL + "/api/tasks",
+            "headers": {
+                'x-access-token': accessToken
+            },
             "method": "POST",
             "data": {
                 "userId": userId,
@@ -439,7 +447,7 @@
 
     <!-- Show the static weekly goals for the control group !-->
     <div id="controlWeeklyGoals">
-        <p id="controlHeader">This Week's Learning Topics</p>
+        <p id="controlHeader">Next Week's Learning Topics</p>
         <br>
         <br>
         <div id="controlGoals"></div>

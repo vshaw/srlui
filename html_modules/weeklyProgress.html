@@ -1,7 +1,3 @@
-<!-- WeeklyProgress.html
-    On this page users in the control group can see their weekly progress/overall course progress. 
-    Users in the treatment group will be evaluate their progress relative to their goals.  --> 
-
 <head>
     <style type="text/css">
 
@@ -68,6 +64,12 @@
             text-align:center;
             font-weight:bold;
         }
+      
+        #sliderWarning {
+            text-align:center;
+            font-weight:bold;
+            color:red;
+        }
 
         .titel {
             font-style: italic;
@@ -131,6 +133,8 @@
         // Toggle between control/treatment displays
         function toggleGroupDisplay()
         {
+            getUserInfo(); 
+          
             // Only do any of this if the user is in the treatment group
             if (userId % 2 != 0)
             {
@@ -143,6 +147,9 @@
                     "crossDomain": true,
                     "url": SERVER_URL + "/api/goals/week",
                     "method": "GET",
+                    "headers": {
+                        'x-access-token': accessToken
+                    },
                     "data": {
                         "userId": userId,
                         "courseId": courseId,
@@ -184,10 +191,9 @@
                     }
 
                     goalsElement.style.display = "block"; 
-
-                    // Disable 'next' buttons until slider bar progress is submitted. 
-                    toggleNextButton(false); 
                 });
+
+                getSliderValue(); 
             }
         }
 
@@ -197,7 +203,7 @@
 
         // Get past week's numbers 
         var generateNumbers = function() {
-
+            getUserInfo();
             var courseStartDate = new Date(getKeyByValue(courseDates, weekNumber)); 
             var currentDate = new Date();
 
@@ -214,6 +220,9 @@
                 "crossDomain": true,
                 "url": SERVER_URL + "/api/events/week",
                 "method": "GET",
+                "headers": {
+                    'x-access-token': accessToken
+                },
                 "data": {
                     "userId": userId,
                     "courseId": courseId, 
@@ -223,23 +232,39 @@
 
             $.ajax(settings).done(function (response) {
                 var weekResult = response.data; 
-
+                
+                var videos = 0;
+                var questions = 0; 
+                var views = 0; 
+                var posts = 0; 
+              
+                if (weekResult != null)
+                {
+                    videos = weekResult.videosWatched; 
+                    questions = weekResult.questionsAnswered; 
+                    views = weekResult.postsViewed; 
+                    posts = weekResult.postsCreated; 
+                }
+                           
                 // Set past week results
-                document.getElementById("videosWatched").innerHTML = weekResult.videosWatched; 
-                document.getElementById("questionsAnswered").innerHTML = weekResult.questionsAnswered; 
-                document.getElementById("postsViewed").innerHTML = weekResult.postsViewed; 
-                document.getElementById("postsCreated").innerHTML = weekResult.postsCreated; 
+                document.getElementById("videosWatched").innerHTML = videos; 
+                document.getElementById("questionsAnswered").innerHTML = questions; 
+                document.getElementById("postsViewed").innerHTML = views; 
+                document.getElementById("postsCreated").innerHTML = posts; 
             });          
         };
 
         // Generate the line chart 
         var generateLineChart = function () {
-
+            getUserInfo();
             // Send GET request for to get activity for specific user/course. 
             var settings = {
                 "async": true,
                 "crossDomain": true,
                 "url": SERVER_URL + "/api/events",
+                "headers": {
+                    'x-access-token': accessToken
+                },
                 "method": "GET",
                 "data": {
                     "userId": userId,
@@ -259,17 +284,20 @@
                 // Set data points for line chart
                 for (var i = 0; i < result.length; i++)
                 {
-                    // Get the actual start date of the week and attach it to the chart label
-                    var startDate = getKeyByValue(courseDates, result[i].weekNumber); 
+                    if (result[i] != null)
+                    {
+                        // Get the actual start date of the week and attach it to the chart label
+                        var startDate = getKeyByValue(courseDates, result[i].weekNumber); 
 
-                    var dates = startDate.split("-");
+                        var dates = startDate.split("-");
 
-                    var weekString = "Week " + result[i].weekNumber + " (" + dates[1] + "/" + dates[2] + ")"; 
+                        var weekString = "Week " + result[i].weekNumber + " (" + dates[1] + "/" + dates[2] + ")"; 
                     
-                    aggVideosWatched.push({label: weekString, y: result[i].videosWatched});
-                    aggQuestionsAnswered.push({label: weekString, y: result[i].questionsAnswered});
-                    aggPostsCreated.push({label: weekString, y: result[i].postsViewed});
-                    aggPostsViewed.push({label: weekString, y: result[i].postsCreated});
+                        aggVideosWatched.push({label: weekString, y: result[i].videosWatched});
+                        aggQuestionsAnswered.push({label: weekString, y: result[i].questionsAnswered});
+                        aggPostsCreated.push({label: weekString, y: result[i].postsViewed});
+                        aggPostsViewed.push({label: weekString, y: result[i].postsCreated});
+                    }
                 }
 
                 // Create chart 
@@ -335,10 +363,54 @@
         };
 
         // Saves the slider bar data
+        function getSliderValue() {
+            
+            var responseText = document.getElementById("responseText");
+            var sliderWarning = document.getElementById("sliderWarning"); 
+          
+            var percentage = document.getElementById('textInput'); 
+            var number = percentage.substring(0, percentage.length - 1);
+
+            var settings = {
+                "async": true,
+                "crossDomain": true,
+                "url": SERVER_URL + "/api/slider",
+                "method": "GET",
+                "headers": {
+                    'x-access-token': accessToken
+                },
+                "data": {
+                    "userId": userId,
+                    "courseId": courseId, 
+                    "weekNumber": weekNumber, 
+                }
+            };
+
+            $.ajax(settings).done(function (response) {
+                var weekData = response.data; 
+
+                if (weekData != null)
+                {
+                    sliderWarning.style.display = "none";
+                    percentage.innerHTML = weekData.sliderPercentage; 
+                    updateTextInput(weekData.sliderPercentage);
+                }
+                else
+                {
+                    // Disable 'next' buttons until slider bar progress is submitted. 
+                    toggleNextButtonDisabled(true); 
+                }
+            }); 
+        }
+
+        // Saves the slider bar data
         function saveSlider() {
+            
+            var email = analytics._user._getTraits().email;
 
             var responseText = document.getElementById("responseText");
-
+            var sliderWarning = document.getElementById("sliderWarning"); 
+          
             var percentage = document.getElementById('textInput').innerHTML; 
             var number = percentage.substring(0, percentage.length - 1);
 
@@ -347,6 +419,9 @@
                 "crossDomain": true,
                 "url": SERVER_URL + "/api/slider",
                 "method": "POST",
+                "headers": {
+                    'x-access-token': accessToken
+                },
                 "data": {
                     "userId": userId,
                     "email": email,
@@ -358,10 +433,11 @@
             };
 
             // Enable 'next' buttons when slider bar progress is submitted. We'll do this even if storage fails so we don't block the user. 
-            toggleNextButton(false); 
+            toggleNextButtonDisabled(false); 
 
             $.ajax(settings).done(function (response) {
-                responseText.style.display="block"; 
+                sliderWarning.style.display = "none";
+                responseText.style.display = "block"; 
             }); 
         }
 
@@ -444,13 +520,14 @@
         }
 
         // Toggle 'next' buttons disabled/enabled
-        function toggleNextButton(enabled)
+        function toggleNextButtonDisabled(disabled)
         {
+            console.log("toggle button"); 
             var nextButton = document.getElementsByClassName("sequence-nav-button button-next");
-
+            console.log(nextButton); 
             for (var i = 0; i < nextButton.length; i++)
             {
-                nextButton[i].disabled = enabled; 
+                nextButton[i].disabled = disabled; 
             }       
         }
 
@@ -460,11 +537,7 @@
 </head>
 
 <body>
-
-    <script>
-        loadScript("/static/SRLUICourseInfo.js", getUserInfo);
-    </script>
-
+  
     <p id="pastWeekHeader"></p>
 
     <br>
@@ -518,7 +591,7 @@
     <div id="goalsContainer"></div>
 
     <div id="slider">
-        <p id="sliderSubtitle">Based on your progress this week, how would you rate the completion of your study plan? You must complete this survey to move forward.</p>
+        <p id="sliderSubtitle">Based on your progress this week, how would you rate the completion of your study plan?</p>
 
         <div id="sliderElements">
 
@@ -530,6 +603,7 @@
                 <button type="button" id="saveGoalsButton" onclick="saveSlider()">Submit</button>
             </p>
 
+            <p id="sliderWarning">IMPORTANT: You must complete this survey to move forward.</p>
             <p id= "responseText">Response saved!</p>
         </div>
     </div>
