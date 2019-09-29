@@ -5,10 +5,8 @@ const scheduler = require('node-schedule');
 
 const mg = mailgun({apiKey: process.env.MAILGUN_API_KEY, domain: process.env.MAILGUN_DOMAIN});
 
-
 // Import event model
 Reminder = require('./reminderModel');
-
 
 // Handle create contact actions
 exports.new = function (req, res) {
@@ -20,10 +18,15 @@ exports.new = function (req, res) {
     reminder.weekId = req.body.weekId;
     reminder.task1 = req.body.task1;
     reminder.date1 = req.body.date1;
+    reminder.offset1 = req.body.offset1;
+
     reminder.task2 = req.body.task2;
     reminder.date2 = req.body.date2;    
+    reminder.offset2 = req.body.offset2;
+
     reminder.task3 = req.body.task3;
     reminder.date3 = req.body.date3;
+    reminder.offset3 = req.body.offset3;
 
     if (reminder.task1 != null && reminder.date1 != null)
     {
@@ -31,7 +34,7 @@ exports.new = function (req, res) {
             from: 'EdX Study Planning <columbiaxcvn@gmail.com>',
             to: reminder.email,
             subject: 'Your EdX Study Planning Reminder',
-            text: reminder.task1
+            text: "Hello, here is your reminder to begin the following task in" + reminder.offset1 + " minutes: \n" + reminder.task1
         };
 
         var date = new Date(reminder.date1);
@@ -49,9 +52,8 @@ exports.new = function (req, res) {
             from: 'EdX Study Planning <columbiaxcvn@gmail.com>',
             to: reminder.email,
             subject: 'Your EdX Study Planning Reminder',
-            text: reminder.task2
+            text: "Hello, here is your reminder to begin the following task in" + reminder.offset2 + " minutes: \n" + reminder.task2
         };
-
 
         var date = new Date(reminder.date2);
 
@@ -68,9 +70,8 @@ exports.new = function (req, res) {
             from: 'EdX Study Planning <columbiaxcvn@gmail.com>',
             to: reminder.email,
             subject: 'Your EdX Study Planning Reminder',
-            text: reminder.task3
+            text: "Hello, here is your reminder to begin the following task in" + reminder.offset3 + " minutes: \n" + reminder.task3
         };
-
 
         var date = new Date(reminder.date3);
 
