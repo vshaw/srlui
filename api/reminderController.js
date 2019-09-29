@@ -28,6 +28,8 @@ exports.new = function (req, res) {
     reminder.date3 = req.body.date3;
     reminder.offset3 = req.body.offset3;
 
+    console.log(reminder); 
+
     if (reminder.task1 != null && reminder.date1 != null)
     {
         var data = {
@@ -66,7 +68,7 @@ exports.new = function (req, res) {
         });
     }
 
-    if (reminder.task3 != null && reminder.date3 != null)
+  /*  if (reminder.task3 != null && reminder.date3 != null)
     {
         var data = {
             from: 'EdX Study Planning <columbiaxcvn@gmail.com>',
@@ -82,7 +84,7 @@ exports.new = function (req, res) {
                 console.log(body);
             });   
         });
-    }
+    } */
 
     // save the reminder and check for errors
     reminder.save(function (err) {
