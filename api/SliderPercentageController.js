@@ -34,7 +34,12 @@ exports.createOrUpdate = function (req, res) {
 // Handle view event info per user for one week
 exports.viewWeek = function (req, res) {
 
-    var query = {'userId': req.query.userId, 'courseId': req.query.courseId, 'weekNumber': req.query.weekNumber};
+    var query = {
+        'userId': req.query.userId, 
+        'courseId': req.query.courseId, 
+        'weekNumber': req.query.weekNumber,
+        'email': req.query.email
+    };
 
     SliderPercentage.findOne(query, function (err, event) {
         if (err)
