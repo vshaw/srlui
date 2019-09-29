@@ -92,14 +92,14 @@ exports.new = function (req, res) {
     } */
 
     // save the reminder and check for errors
-    reminder.save(function (err) {
+  /*  reminder.save(function (err) {
         if (err)
             res.json(err);
         res.json({
             message: 'New reminder created!',
             data: reminder
         });
-    });
+    }); */
 };
 
 exports.index = function (req, res) {
