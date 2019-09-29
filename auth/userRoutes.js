@@ -22,6 +22,7 @@ router.post("/", async (req, res) => {
   user = new User({
     username: req.body.username,
     password: req.body.password,
+     _id: user._id,
   });
   user.password = await bcrypt.hash(user.password, 10);
   await user.save();
