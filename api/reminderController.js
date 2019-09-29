@@ -34,14 +34,14 @@ exports.new = function (req, res) {
             from: 'EdX Study Planning <columbiaxcvn@gmail.com>',
             to: reminder.email,
             subject: 'Your EdX Study Planning Reminder',
-            text: "Hello, here is your reminder to begin the following task in" + reminder.offset1 + " minutes: \n" + reminder.task1
+            text: "Hello, here is your reminder to begin the following task in " + reminder.offset1 + " minutes: \n\n" + reminder.task1
         };
 
         var date = new Date(reminder.date1);
 
         scheduler.scheduleJob(date, function() {
             mg.messages().send(data, function (error, body) {
-                console.log(body);
+                console.log(data);
             });   
         });
     }
@@ -52,14 +52,14 @@ exports.new = function (req, res) {
             from: 'EdX Study Planning <columbiaxcvn@gmail.com>',
             to: reminder.email,
             subject: 'Your EdX Study Planning Reminder',
-            text: "Hello, here is your reminder to begin the following task in" + reminder.offset2 + " minutes: \n" + reminder.task2
+            text: "Hello, here is your reminder to begin the following task in " + reminder.offset2 + " minutes: \n\n" + reminder.task2
         };
 
         var date = new Date(reminder.date2);
 
         scheduler.scheduleJob(date, function() {
             mg.messages().send(data, function (error, body) {
-                console.log(body);
+                console.log(data);
             });   
         });
     }
@@ -70,15 +70,14 @@ exports.new = function (req, res) {
             from: 'EdX Study Planning <columbiaxcvn@gmail.com>',
             to: reminder.email,
             subject: 'Your EdX Study Planning Reminder',
-            text: "Hello, here is your reminder to begin the following task in" + reminder.offset3 + " minutes: \n" + reminder.task3
+            text: "Hello, here is your reminder to begin the following task in " + reminder.offset3 + " minutes: \n\n" + reminder.task3
         };
 
         var date = new Date(reminder.date3);
 
         scheduler.scheduleJob(date, function() {
-            console.log("scheduled");
             mg.messages().send(data, function (error, body) {
-                console.log(body);
+                console.log(data);
             });   
         });
     }
