@@ -92,6 +92,7 @@
         var courseId; 
         var weekNumber; 
         var weekId; 
+        var devShowTreatment = false; 
 
         var SERVER_URL = "https://guarded-mesa-27479.herokuapp.com";
 
@@ -136,7 +137,7 @@
             getUserInfo(); 
           
             // Only do any of this if the user is in the treatment group
-            if (userId % 2 != 0)
+            if (userId % 2 != 0 || devShowTreatment)
             {
                 var goalsElement = document.getElementById("weekGoals");
                 var goalsContainer = document.getElementById("goalsContainer"); 
@@ -563,7 +564,36 @@
 
     <br>
     <br>
+  
+  
+    <!-- Treatment group only section --> 
+    <div id= "weekGoals">
+        
+        <p id="goalsHeaderText">As a reminder, these were the goals you set for yourself last week:</p>
+        <div id="goalsContainer"></div>
 
+        <div id="slider">
+            <p id="sliderSubtitle">Based on your progress this week, how would you rate the completion of your study plan?</p>
+
+            <div id="sliderElements">
+
+                <input type="range" id="rangeInput" min="0" max="100" onchange="updateTextInput(this.value);">
+
+                <p id="textInput">50%</p>
+
+                <p style="text-align:center">
+                    <button type="button" id="saveGoalsButton" onclick="saveSlider()">Submit</button>
+                </p>
+
+                <p id="sliderWarning">IMPORTANT: You must complete this survey to move forward.</p>
+                <p id= "responseText">Response saved!</p>
+            </div>
+        </div>
+    </div>
+
+    <br>
+    <br>
+    
     <p id="overallProgressHeader">Your overall course progress:</p>
 
     <div id="chartContainer" style="height: 300px; width: 100%;"> 
@@ -584,28 +614,6 @@
 
     <br>
 
-    <!-- Treatment group only section --> 
-    <div id= "weekGoals">
-        <p id="goalsHeaderText">As a reminder, these were the goals you set for yourself last week:</p>
-    <div id="goalsContainer"></div>
-
-    <div id="slider">
-        <p id="sliderSubtitle">Based on your progress this week, how would you rate the completion of your study plan?</p>
-
-        <div id="sliderElements">
-
-            <input type="range" id="rangeInput" min="0" max="100" onchange="updateTextInput(this.value);">
-
-            <p id="textInput">50%</p>
-
-            <p style="text-align:center">
-                <button type="button" id="saveGoalsButton" onclick="saveSlider()">Submit</button>
-            </p>
-
-            <p id="sliderWarning">IMPORTANT: You must complete this survey to move forward.</p>
-            <p id= "responseText">Response saved!</p>
-        </div>
-    </div>
 
 </body>
 
