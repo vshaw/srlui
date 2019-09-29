@@ -9,7 +9,6 @@ exports.new = function (req, res) {
         'userId': req.body.userId, 
         'email': req.body.email, 
         'courseId': req.body.courseId, 
-        'weekNumber': req.body.weekNumber, 
         'weekId': req.body.weekId
     };
 
@@ -55,7 +54,6 @@ exports.viewWeek = function (req, res) {
         'userId': req.query.userId, 
         'email': req.query.email, 
         'courseId': req.query.courseId, 
-        'weekNumber': req.query.weekNumber, 
         'weekId': req.query.weekId
     };
 
