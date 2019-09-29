@@ -13,6 +13,7 @@ let app = express();
 
 // Import routes
 let apiRoutes = require("./api/routes");
+const usersRoute = require("./auth/userRoutes");
 
 // Configure bodyparser to handle post requests
 app.use(bodyParser.urlencoded({
@@ -44,7 +45,9 @@ app.use(function(req, res, next) {
 // Send message for default URL
 app.get('/', (req, res) => res.send('SRLUI Hello World'));
 
+// Set api routes
 app.use('/api', apiRoutes);
+app.use("/api/users", usersRoute);
 
 // Launch app to listen to specified port
 app.listen(port, function () {
