@@ -28,8 +28,6 @@ exports.new = function (req, res) {
     reminder.date3 = req.body.date3;
     reminder.offset3 = req.body.offset3;
 
-    console.log(reminder); 
-
     if (reminder.task1 != null && reminder.date1 != null)
     {
         var data = {
@@ -39,12 +37,14 @@ exports.new = function (req, res) {
             text: "Hello, here is your reminder to begin the following task in " + reminder.offset1 + " minutes: \n\n" + reminder.task1
         };
 
-        console.log(data);
         var date = new Date(reminder.date1);
 
         scheduler.scheduleJob(date, function() {
+
+            console.log("Task scheduled for user " reminder.userId);
+
             mg.messages().send(data, function (error, body) {
-                console.log("Task scheduled");
+                console.log(body); 
             });   
         });
     }
@@ -57,13 +57,15 @@ exports.new = function (req, res) {
             subject: 'Your EdX Study Planning Reminder',
             text: "Hello, here is your reminder to begin the following task in " + reminder.offset2 + " minutes: \n\n" + reminder.task2
         };
-        console.log(data);
 
         var date = new Date(reminder.date2);
 
         scheduler.scheduleJob(date, function() {
+
+            console.log("Task scheduled for user " reminder.userId);
+
             mg.messages().send(data, function (error, body) {
-                console.log("Task scheduled");
+                console.log(body); 
             });   
         });
     }
@@ -80,8 +82,11 @@ exports.new = function (req, res) {
         var date = new Date(reminder.date3);
 
         scheduler.scheduleJob(date, function() {
+
+            console.log("Task scheduled for user " reminder.userId);
+
             mg.messages().send(data, function (error, body) {
-                console.log("Task scheduled");
+                console.log(body); 
             });   
         });
     } 
