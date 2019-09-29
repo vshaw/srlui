@@ -3,6 +3,13 @@
 // Initialize express router
 let router = require('express').Router();
 
+// Initialize jwt for auth
+let jwt = require('jsonwebtoken');
+
+// Import auth middleware
+let middleware = require('../auth/middleware');
+
+var handlers = require('../auth/handler');
 
 // Import controllers
 var reminderController = require('./reminderController');
@@ -11,13 +18,9 @@ var eventController = require('./eventController');
 var sliderController = require('./SliderPercentageController');
 var discussionPostsController = require('./discussionPostsController');
 
-// Basic display for /api page 
-router.get('/', function (req, res) {
-    res.json({
-        status: 'API Its Working',
-        message: 'This is the SRLUI API',
-    });
-});
+router.post('/login', handlers.login);
+router.get('/', middleware.checkToken, handlers.index);
+
 
 // Routes
 router.route('/events')
