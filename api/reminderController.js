@@ -25,6 +25,8 @@ exports.new = async function (req, res) {
     reminder.task3 = req.body.task3;
     reminder.date3 = req.body.date3;
     reminder.offset3 = req.body.offset3;
+
+    console.log(reminder); 
         
     var data = {
         from: 'EdX Study Planning <columbiaxcvn@gmail.com>',
@@ -46,7 +48,7 @@ exports.new = async function (req, res) {
     }); 
 
     // Schedule tasks via agenda 
-    
+
     if (reminder.date1 != null && reminder.task1 != null)
     {
         var date = new Date(reminder.date1);
