@@ -6,7 +6,7 @@
         }
         #pastWeekHeader {
             font-style: italic;
-            font-size: 150%;
+            font-size: 150%; 
         }
         #goalsHeaderText {
             font-style: italic;
@@ -29,86 +29,7 @@
             border: 5px solid #cccccc;
             padding: 10px;
             text-align: center;
-        }
-      
-        body {
-        height: 100vh;
-        margin: 0;
-        display: flex;
-       }
-
-        input[type="range"] { 
-         margin: auto;
-        -webkit-appearance: none;
-        position: relative;
-         overflow: hidden;
-            height: 40px;
-            width: 200px;
-            cursor: pointer;
-            border-radius: 0; /* iOS */
-        }
-
-        ::-webkit-slider-runnable-track {
-            background: #ddd;
-        }
-
-        /*
-         * 1. Set to 0 width and remove border for a slider without a thumb
-         */
-        ::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 20px; /* 1 */
-            height: 40px;
-            background: #fff;
-            box-shadow: -100vw 0 0 100vw dodgerblue;
-            border: 2px solid #999; /* 1 */
-        }
-
-        ::-moz-range-track {
-            height: 40px;
-            background: #ddd;
-        }
-
-        ::-moz-range-thumb {
-            background: #fff;
-            height: 40px;
-            width: 20px;
-            border: 3px solid #999;
-            border-radius: 0 !important;
-            box-shadow: -100vw 0 0 100vw dodgerblue;
-            box-sizing: border-box;
-        }
-
-        ::-ms-fill-lower { 
-            background: dodgerblue;
-        }
-
-        ::-ms-thumb { 
-            background: #fff;
-            border: 2px solid #999;
-            height: 40px;
-            width: 20px;
-            box-sizing: border-box;
-        }
-
-        ::-ms-ticks-after { 
-            display: none; 
-        }
-
-        ::-ms-ticks-before { 
-            display: none; 
-        }
-
-        ::-ms-track { 
-            background: #ddd;
-            color: transparent;
-            height: 40px;
-            border: none;
-        }
-
-        ::-ms-tooltip { 
-            display: none;
-        }            
+        }    
         
         #sliderSubtitle{
             font-style: italic;
@@ -154,15 +75,26 @@
             font-size: 300%;
             color: #C84B4B;
         }
+        #noDataText {
+            display:none;
+            text-align:center;
+            font-size:150%;
+            font-style:italic;
+
+        }
     </style>
 
-    <script>
+   
+
+</head>
+
+ <script>
 
         var userId; 
         var courseId; 
         var weekNumber; 
         var weekId; 
-        var devShowTreatment = false; 
+        var devShowTreatment = true; 
 
         var SERVER_URL = "https://guarded-mesa-27479.herokuapp.com";
 
@@ -351,6 +283,11 @@
                 
                 var result = response.data; 
                 result.sort(sortByWeekNumber);
+
+                if (result.length == 0)
+                {
+                    document.getElementById("noDataText").style.display = "block"; 
+                }
 
                 // Set data points for line chart
                 for (var i = 0; i < result.length; i++)
@@ -592,19 +529,24 @@
         // Toggle 'next' buttons disabled/enabled
         function toggleNextButtonDisabled(disabled)
         {
-            console.log("toggle button"); 
             var nextButton = document.getElementsByClassName("sequence-nav-button button-next");
-            console.log(nextButton); 
+
             for (var i = 0; i < nextButton.length; i++)
             {
                 nextButton[i].disabled = disabled; 
-            }       
+            }
+
+            var sectionButtons = document.getElementsByClassName("seq_other inactive nav-item tab");
+
+            for (var i = 0; i < sectionButtons.length; i++)
+            {
+                sectionButtons[i].disabled = disabled; 
+            }
+
         }
 
     </script>
 
-
-</head>
 
 <body>
   
@@ -666,6 +608,9 @@
     
     <p id="overallProgressHeader">Your overall course progress:</p>
 
+    <div id="noDataText">No data available yet.</div>
+    <br>
+    <br>
     <div id="chartContainer" style="height: 300px; width: 100%;"> 
         <script> 
             loadScript("/static/SRLUICourseInfo.js", generateNumbers);
