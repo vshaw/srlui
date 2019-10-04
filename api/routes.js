@@ -46,7 +46,7 @@ router.route('/slider')
     .delete(auth, sliderController.delete)
 
 router.route('/posts')
-    .get(auth, discussionPostsController.getWeek)
+    .get(discussionPostsController.getWeek)
     .delete(auth, discussionPostsController.delete)
 	
 // Export API 

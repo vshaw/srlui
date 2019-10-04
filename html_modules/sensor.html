@@ -110,6 +110,9 @@
             "crossDomain": true,
             "url": SERVER_URL + "/api/posts",
             "method": "GET",
+            "headers": {
+                'x-access-token': accessToken
+            },
             "data": {
                 "email": email,
                 "courseId": finalCourseId,
