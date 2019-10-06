@@ -2,6 +2,9 @@
     On this page users in the control group can see weekly goals loaded from a static file. 
     Users in the treatment group will be able to set their own goals, and setup email reminders for study plans --> 
 
+<link rel="stylesheet" type="text/css" href="/static/mdtimepicker.css">
+<script type="text/javascript" src="/static/mdtimepicker.js"></script>
+
 <head>
 
     <style type="text/css">
@@ -266,6 +269,7 @@
                 document.getElementById("savedGoal4").innerHTML = goal4; 
 
                 treatmentWeeklyGoals.style.display="none";
+                setDateTimePickers(); 
                 scheduleGoals.style.display="block"; 
             } 
             else
@@ -316,6 +320,7 @@
           document.getElementById("savedGoal4").innerHTML = goal4; 
           
           treatmentWeeklyGoals.style.display="none";
+          setDateTimePickers(); 
           scheduleGoals.style.display="block"; 
       });          
     }
@@ -437,6 +442,42 @@
         return d instanceof Date && !isNaN(d);
     }
 
+    // Use jquery timepickers for cross browser compatability 
+    function setDateTimePickers()
+    {
+        if ( $('#time1').prop('type') != 'time' ) 
+        {
+            $('#time1').mdtimepicker();
+            $('#time1').attr('placeholder', "--:-- --");
+        }
+
+        if ( $('#time2').prop('type') != 'time' ) {
+            $('#time2').mdtimepicker();
+            $('#time2').attr('placeholder', "--:-- --");        
+        }
+
+        if ( $('#time3').prop('type') != 'time' ) {
+            $('#time3').mdtimepicker();
+            $('#time3').attr('placeholder', "--:-- --");        
+        }
+
+        if ( $('#date1').prop('type') != 'date' ) {
+            $('#date1').datepicker();
+            $('#date1').attr('placeholder', "mm/dd/yyyy");
+
+        }
+        if ( $('#date2').prop('type') != 'date' ) {
+            $('#date2').datepicker();
+            $('#date2').attr('placeholder', "mm/dd/yyyy");
+
+        }
+
+        if ( $('#date3').prop('type') != 'date' ) {
+            $('#date3').datepicker();
+            $('#date3').attr('placeholder', "mm/dd/yyyy");
+        } 
+    }
+
     </script>
 </head>
 
@@ -518,24 +559,24 @@
                 </td>
             </tr>
             <tr>
-                <td><input type="date" id="date1"></td>
-                <td><input type="time" id="time1"></td>
+                <td><input type="text" id="date1"></td>
+                <td><input type="text" id="time1"></td>
                 <td><input type="text" id="task1"></td>
                 <td><input type="checkbox" id="reminder1" value="10" checked>Ten minutes before<br>
                     <input type="checkbox" id="reminder2" value="60">One hour before<br>
                     <input type="checkbox" id="reminder3" value="120">Two hours before</td>
             </tr>
             <tr>
-                <td><input type="date" id="date2"></td>
-                <td><input type="time" id="time2"></td>
+                <td><input type="text" id="date2"></td>
+                <td><input type="text" id="time2"></td>
                 <td><input type="text" id="task2"></td>
                 <td><input type="checkbox" id="reminder4" value="10" checked>Ten minutes before<br>
                     <input type="checkbox" id="reminder5" value="60">One hour before<br>
                     <input type="checkbox" id="reminder6" value="120">Two hours before</td>
             </tr>
             <tr>
-                <td><input type="date" id="date3"></td>
-                <td><input type="time" id="time3"></td>
+                <td><input type="text" id="date3"></td>
+                <td><input type="text" id="time3"></td>
                 <td><input type="text" id="task3"></td>
                 <td><input type="checkbox" id="reminder7" value="10" checked>Ten minutes before<br>
                     <input type="checkbox" id="reminder8" value="60">One hour before<br>
