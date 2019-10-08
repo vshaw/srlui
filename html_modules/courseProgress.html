@@ -82,9 +82,7 @@
             font-style:italic;
 
         }
-    </style>
-
-   
+    </style>   
 
 </head>
 
@@ -207,13 +205,16 @@
         // Get past week's numbers 
         var generateNumbers = function() {
             getUserInfo();
-            var courseStartDate = new Date(getKeyByValue(courseDates, weekNumber)); 
-            var currentDate = new Date();
+
+            var pastWeekNumber = weekNumber - 1; 
+
+            var weekStartDate = new Date(getKeyByValue(courseDates, pastWeekNumber)); 
+            var weekEndDate = new Date(getKeyByValue(courseDates, weekNumber));
 
             // Set date string for past week      
-            var startString = convertDateToString(courseStartDate); 
+            var startString = convertDateToString(weekStartDate); 
+            var endString = convertDateToString(weekEndDate);
 
-            var endString = convertDateToString(currentDate);
             var dateString = "In the past week of the course (" + startString + " - " + endString + ") you have:";
             document.getElementById("pastWeekHeader").innerHTML = dateString; 
 
@@ -229,7 +230,7 @@
                 "data": {
                     "userId": userId,
                     "courseId": courseId, 
-                    "weekNumber": weekNumber
+                    "weekNumber": pastWeekNumber
                 }
             };
 
