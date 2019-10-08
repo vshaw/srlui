@@ -18,8 +18,6 @@ PythonShell.run('scraping_scripts/discussionCrawler.py', function (err) {
   console.log('discussion scraper finished');
 });
 
-var python = require('python-shell');
-
 // Import routes
 let apiRoutes = require("./api/routes");
 const usersRoute = require("./auth/userRoutes");
