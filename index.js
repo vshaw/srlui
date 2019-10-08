@@ -11,8 +11,12 @@ let mongoose = require('mongoose');
 // Initialise the app
 let app = express();
 
-const spawn = require("child_process").spawn; 
-const scraperProcess = spawn('python', ["scraping_scripts/discussionCrawler.py"]);
+var PythonShell = require('python-shell');
+
+PythonShell.run('scraping_scripts/discussionCrawler.py', function (err) {
+  if (err) throw err;
+  console.log('discussion scraper finished');
+});
 
 var python = require('python-shell');
 
