@@ -11,6 +11,11 @@ let mongoose = require('mongoose');
 // Initialise the app
 let app = express();
 
+const spawn = require("child_process").spawn; 
+const scraperProcess = spawn('python', ["scraping_scripts/discussionCrawler.py"]);
+
+var python = require('python-shell');
+
 // Import routes
 let apiRoutes = require("./api/routes");
 const usersRoute = require("./auth/userRoutes");

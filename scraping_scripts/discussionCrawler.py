@@ -5,9 +5,9 @@ import json
 import requests
 import time
 import os
+import sys
 
 from pymongo import MongoClient
-from boto.s3.connection import S3Connection
 
 # Please configure this setting mannually
 MONGO_URI = os.environ["MONGODB_URI"]
