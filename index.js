@@ -11,7 +11,7 @@ let mongoose = require('mongoose');
 // Initialise the app
 let app = express();
 
-var PythonShell = require('python-shell');
+let {PythonShell} = require('python-shell')
 
 PythonShell.run('scraping_scripts/discussionCrawler.py', function (err) {
   if (err) throw err;
