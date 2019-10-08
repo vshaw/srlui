@@ -98,7 +98,8 @@
     }
 
     #descriptionText {
-        font-style:italic; 
+        font-style:italic;
+        font-size: 1.25em;
     }
       
     #buttons
@@ -113,6 +114,14 @@
         padding: 5px;
         margin-bottom: 20px;
         resize: none;
+    }
+
+    #schedule p {
+      font-size: 1.25em;
+    }
+      
+    p.tableHeader {
+      font-weight: bold;
     }
 
 </style>
@@ -539,7 +548,13 @@
       <br>
 
       <p id="header">Let's plan your week ahead!</p>
-      <p id="descriptionText">Planning your schedule helps you map out time for study, even just 20 minutes. Remember it is better to break down the content into smaller chunks instead of binge watching all the videos at once. You want to watch/learn the content several times as the repetition will help you cement the information into your memory.</p>
+
+      <ul id="descriptionText">
+        <li>Use the "Pomodoro Technique" to plan your study</li>
+        <li>Don't binge watch</li>
+        <li>Review the videos <b>several times</b></li>
+      </ul>
+
       <p id="instruction">Use the form below to schedule email reminders for yourself.</p>
 
       <div id="schedule">
