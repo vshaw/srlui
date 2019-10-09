@@ -11,12 +11,12 @@ let mongoose = require('mongoose');
 // Initialise the app
 let app = express();
 
-/*let {PythonShell} = require('python-shell')
+let pythonShell = require('python-shell');
 
-PythonShell.run('scraping_scripts/discussionCrawler.py', null, function (err) {
+pythonShell.run('scraping_scripts/discussionCrawler.py', null, function (err) {
   if (err) throw err;
   console.log('discussion scraper finished');
-}); */
+}); 
 
 // Import routes
 let apiRoutes = require("./api/routes");
