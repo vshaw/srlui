@@ -57,7 +57,10 @@ app.listen(port, function () {
     console.log("Running RestHub on port " + port);
 });
 
-  PythonShell.run('./scraping_scripts/discussionCrawler.py', null, function (err, data) {
-    if (err) res.send(err);
-    console.log("finished scraping");
+  var spawn = require("child_process").spawn;
+
+  var process = spawn('python', ["./scraping_scripts/discussionCrawler.py"]);
+
+  process.stdout.on('data', function (data) {
+    res.send(data.toString());
   });
