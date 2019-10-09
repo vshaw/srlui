@@ -11,6 +11,8 @@ let mongoose = require('mongoose');
 // Initialise the app
 let app = express();
 
+let PythonShell = require('python-shell');
+
 // Import routes
 let apiRoutes = require("./api/routes");
 const usersRoute = require("./auth/userRoutes");
