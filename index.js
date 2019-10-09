@@ -11,8 +11,6 @@ let mongoose = require('mongoose');
 // Initialise the app
 let app = express();
 
-let PythonShell = require('python-shell');
-
 // Import routes
 let apiRoutes = require("./api/routes");
 const usersRoute = require("./auth/userRoutes");
@@ -51,16 +49,7 @@ app.get('/', (req, res) => res.send('SRLUI Hello World'));
 app.use('/api', apiRoutes);
 app.use("/api/users", usersRoute);
 
-
 // Launch app to listen to specified port
 app.listen(port, function () {
     console.log("Running RestHub on port " + port);
 });
-
-  var spawn = require("child_process").spawn;
-
-  var process = spawn('python', ["./scraping_scripts/discussionCrawler.py"]);
-
-  process.stdout.on('data', function (data) {
-    res.send(data.toString());
-  });
