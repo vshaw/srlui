@@ -100,10 +100,11 @@
         var currentDate = new Date(); 
         var currentDateTimestamp = currentDate.getTime() / 1000; 
 
-        // Get unix timestamp of week start date
-        var start = getKeyByValue(courseDates, weekNumber); 
-        var startDate = new Date(start); 
-        var startDateTimestamp = (startDate.getTime() / 1000) 
+        
+        var start = getKeyByValue(courseDates, weekNumber);
+        var startDate = new Date(start);
+        var startDateTimestamp = (startDate.getTime() / 1000) - 300; // minius some margin
+        var endDateTimestamp = startDateTimestamp + 86400*7 + 600; // get the timestamp one weeks later + some margin
 
         var settings = {
             "async": true,
@@ -113,27 +114,45 @@
             "headers": {
                 'x-access-token': accessToken
             },
-            "data": {
+            "data": 
+            {
                 "email": email,
                 "courseId": finalCourseId,
                 "startTime": startDateTimestamp,
-                "endTime": currentDateTimestamp
+                "endTime": endDateTimestamp
             }
-        }; 
-        
+        };
+​
         $.ajax(settings).done(function (response) {
-            var result = response.data; 
-
-            if (result != null)
-            {
-                result.sort(sortByTimestamp); 
-
-                var views = result[0].Views; 
-                var posts = result[0]['Aggregated post'];
-
-                logWeekPosts(views, posts); 
-            }
-        });  
+           var result = response.data;
+           if (result != null)
+           {
+               var view1, posts1, view2, posts2;
+               result.sort(sortByTimestamp);
+               resultNum = result.length;
+               for (var i = 0; i < resultNum; i++) 
+               {
+                    if (result[i].Timestamp >= startDateTimestamp)
+                    {
+                        view1 = result[i].Views;
+                        posts1 = result[i]['Aggregated post'];
+                        break;
+                    }
+               }
+               for (var k = resultNum - 1; k >= 0; k--) 
+               {
+                    if (result[k].Timestamp <= endDateTimestamp)
+                    {
+                        view2 = result[k].Views;
+                        posts2 = result[k]['Aggregated post'];
+                        break;
+                    }
+               }
+               var views = view1 - view2;
+               var posts = posts1 - posts2;
+               logWeekPosts(views, posts);
+           }
+       });
     }
 
     // Save the discussion activity in this week's event record
