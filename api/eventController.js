@@ -80,7 +80,7 @@ exports.createOrUpdate = async function (req, res) {
     // If no record matches the user/course/week info, create a new record (upsert:true)
     Event.findOneAndUpdate(query, update, {upsert:true, setDefaultsOnInsert:true}, function (err, event) {
         if (err)
-            res.send(err);
+     //       res.send(err);
         res.json({
             message: 'Event details updated',
             data: event
