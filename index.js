@@ -11,6 +11,8 @@ let mongoose = require('mongoose');
 // Initialise the app
 let app = express();
 
+var timeout = require('connect-timeout');
+
 // Import routes
 let apiRoutes = require("./api/routes");
 const usersRoute = require("./auth/userRoutes");
@@ -21,6 +23,8 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.use(bodyParser.json());
+
+
 
 // Connect to Mongoose and set connection variable
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true});
@@ -48,6 +52,9 @@ app.get('/', (req, res) => res.send('SRLUI Hello World'));
 // Set api routes
 app.use('/api', apiRoutes);
 app.use("/api/users", usersRoute);
+
+ app.use(timeout('100s'));
+
 
 // Launch app to listen to specified port
 app.listen(port, function () {
