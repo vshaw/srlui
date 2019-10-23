@@ -122,7 +122,7 @@
                 "endTime": endDateTimestamp
             }
         };
-​
+
         $.ajax(settings).done(function (response) {
            var result = response.data;
            if (result != null)
@@ -148,8 +148,8 @@
                         break;
                     }
                }
-               var views = view1 - view2;
-               var posts = posts1 - posts2;
+               var views = view2 - view1;
+               var posts = posts2 - posts1;
                logWeekPosts(views, posts);
            }
        });
