@@ -46,28 +46,8 @@ exports.createOrUpdate = async function (req, res) {
         // So we will check to see if a record exists for the previous week and save the difference. 
         if (req.body.weekNumber > 1)
         {
-            var postsQuery = {
-                'userId': req.body.userId, 
-                'email': req.body.email, 
-                'courseId': req.body.courseId, 
-                'weekNumber': req.body.weekNumber - 1, 
-                'group': req.body.group
-            };
-
-            var prevViews = 0; 
-            var prevPosts = 0; 
-
-            await Event.findOne(postsQuery).then(res => 
-            {
-                if (res != null)
-                {
-                    prevViews = res.postsViewed; 
-                    prevPosts = res.postsCreated; 
-                }
-            });
-
-            var updatePosts = req.body.postsCreated - prevPosts; 
-            var updateViews = req.body.postsViewed - prevViews; 
+            var updatePosts = req.body.postsCreated; 
+            var updateViews = req.body.postsViewed;  
 
             update = { postsViewed: updateViews, postsCreated: updatePosts };
         }
