@@ -36,7 +36,7 @@ var goal2Schema = mongoose.Schema({
     },
     estimatedTimeGoal: {
         type: String
-    }
+    },
     content: {
         type: [String]
     },
