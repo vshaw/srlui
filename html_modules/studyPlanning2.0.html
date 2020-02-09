@@ -35,6 +35,13 @@
         justify-content: left;
     }
 
+    #weekHeader {
+        font-weight: bold;
+        font-style: italic; 
+        font-size:130%;
+        margin-bottom:10px;
+    }
+
     #controlWeeklyGoals {
         display: none;
         width: 60%;
@@ -63,10 +70,8 @@
 
     #treatmentSubtitle {
         font-style: italic;
-        display: flex;
         font-size: 100%;
         margin-bottom: 0;
-        justify-content: left;        
     }
 
     #instruction {
@@ -109,7 +114,7 @@
       
     textarea.textRow {
         width: 100%;
-        height: 50px;
+        height: 80px;
         border: 5px solid #cccccc;
         padding: 5px;
         margin-bottom: 20px;
@@ -123,10 +128,12 @@
     p.tableHeader {
       font-weight: bold;
     }
-
+    
     .pagination {
         display: inline-block;
+        width: 100%;
         float: right;
+        margin-bottom: 20px;
     }
 
     .pagination a {
@@ -143,6 +150,46 @@
 
     .pagination a:hover:not(.active) {background-color: #ddd;}    
 
+    input[type='checkbox'] {
+        width:20px;
+        height:20px;
+        background:white;
+        border-radius:5px;
+        border:2px solid #555;
+    }
+    
+    input[type='checkbox']:checked {
+        background: #3FE133;   
+    }
+
+    #three {
+        display: flex;
+        justify-content: space-around;
+        width: 100%;
+    }
+
+    .titel {
+        font-style: italic;
+        text-align: center;
+        font-weight: bold;
+    }    
+
+    .text {
+        font-style: italic;
+        text-align: center;
+        font-size: 200%;
+        color: #219A18;
+    }
+
+    /* Override EdX CSS */
+    .xmodule_display.xmodule_HtmlBlock table td, .xmodule_display.xmodule_HtmlBlock table th {
+        margin: 20px 0;
+        padding: 5px;
+        border: 1px solid #c8c8c8;
+        font-size: 14px;
+    }
+}
+
 </style>
 
 <script>
@@ -151,6 +198,12 @@
     var email;
     var weekId;
     var weekNumber;
+    var selectedVideos = []; 
+    var goalVideos = 0; 
+    var goalQuizzes = 0; 
+    var goalAssignments = 0; 
+    var goalTime = new Date(); 
+    goalTime.setHours(0, 0, 0, 0);
 
     var devShowTreatment = true; 
     var SERVER_URL = "https://guarded-mesa-27479.herokuapp.com";
@@ -193,7 +246,8 @@
         }
         else
         {
-            getTreatementGoals(); 
+            loadScript("/static/mdtimepicker.js", getTreatementGoals);
+            // getTreatementGoals(); 
         }
     };
 
@@ -334,14 +388,27 @@
             {
                 counter = 1; 
                 videoTable = document.createElement('table');
+                videoTable.id = "videoTable";
                 thead = document.createElement("thead");
                 tbody = document.createElement("tbody");
 
                 var headRow = document.createElement("tr");
                 var weekHeaderString = "Week " + weekNum + " Content";
 
-                ["#", weekHeaderString, "Time"].forEach(function(el) {
+                // Create table header checkbox 
+                var thCheckbox = document.createElement("th");
+                var headerCb = document.createElement("INPUT");
+                headerCb.setAttribute("type", "checkbox");
+                headerCb.onclick = function(e){ selectAllVideos(this.checked) };   
+
+                thCheckbox.appendChild(headerCb);
+                thCheckbox.style.textAlign = "center"; 
+                headRow.appendChild(thCheckbox); 
+
+
+                ["#", weekHeaderString, "Time (hh:mm:ss)"].forEach(function(el) {
                     var th=document.createElement("th");
+                    th.style.textAlign = "center"; 
                     th.appendChild(document.createTextNode(el));
                     headRow.appendChild(th);
                 });
@@ -353,21 +420,42 @@
             // Create the table row
             var tr = document.createElement("tr");
 
-            for (var j=0; j < videos[i].length; j++)
+            for (var j=0; j < videos[i].length + 1; j++)
             {
                 var td = document.createElement("td");
+                td.style.textAlign = "center"; 
 
                 if (j == 0)
                 {
                     // For the # column, use an incrementing counter
                     td.appendChild(document.createTextNode(counter));
                 }
-                else
+                else if (j != videos[i].length)
                 {
                     td.appendChild(document.createTextNode(videos[i][j]));
                 }
+                else
+                {
+                    // Lastly add the checkbox column
+                    var cb = document.createElement("INPUT");
+                    cb.setAttribute("type", "checkbox");
+                    cb.id = videos[i][0] + "_" + videos[i][1] + "_" + videos[i][2]; 
 
-                tr.appendChild(td);
+                    cb.onclick = function(e){ saveSelectedVideos(this.checked, this.id) };   
+
+                    td.appendChild(cb); 
+                }
+
+                // Checkbox should be inserted at first position
+                if (j == videos[i].length)
+                {
+                    tr.insertBefore(td, tr.firstChild)
+                }
+                else
+                {
+                    tr.appendChild(td);
+        
+                }
             }
 
             tbody.appendChild(tr);
@@ -378,6 +466,67 @@
         }
 
         return tableArray; 
+    }
+
+    // Adds checked rows to a global array 
+    function saveSelectedVideos(checked, videoRow)
+    {
+        var rowElements = videoRow.split("_");
+        var row = [rowElements[0], rowElements[1], rowElements[2]];
+
+        if (checked)
+        {
+            selectedVideos.push(row);
+            incrementGoalNumbers(1, rowElements[1], rowElements[2]);
+        }
+        else
+        {
+            incrementGoalNumbers(-1, rowElements[1], rowElements[2]);
+    
+            var index = selectedVideos.indexOf(row)
+
+            if (index > -1) {
+                selectedVideos.splice(index, 1);
+            }
+        }
+    }
+
+    // Add/Subtract goal numbers 
+    function incrementGoalNumbers(increment, name, time)
+    {
+        var tempDate = new Date(); 
+        var timeBuckets = time.split(":");
+
+        if (timeBuckets.length == 3)
+        {
+            tempDate.setHours(timeBuckets[0], timeBuckets[1], timeBuckets[2], 0);
+        }
+        else
+        {
+            tempDate.setHours(0, timeBuckets[0], timeBuckets[1], 0);
+        }
+
+        goalTime.setHours(goalTime.getHours() + (tempDate.getHours() * increment)); 
+        goalTime.setMinutes(goalTime.getMinutes() + (tempDate.getMinutes() * increment)); 
+        goalTime.setSeconds(goalTime.getSeconds() + (tempDate.getSeconds() * increment)); 
+
+        if (name.includes("Quiz"))
+        {
+            goalQuizzes += increment; 
+        }
+        else if (name.includes("Assignment") && name.includes("Week"))
+        {
+            goalAssignments += increment; 
+        }
+        else
+        {
+            goalVideos += increment; 
+        }    
+
+        document.getElementById("videos").innerHTML = goalVideos; 
+        document.getElementById("quizzes").innerHTML = goalQuizzes; 
+        document.getElementById("assignments").innerHTML = goalAssignments; 
+        document.getElementById("estimatedTime").innerHTML = goalTime.getHours() + ":" + goalTime.getMinutes() + ":" + goalTime.getSeconds(); 
     }
 
     // Assign page numbers to the correct table content
@@ -405,10 +554,37 @@
     function showSelectedVideos(weekNum, videoTable)
     {
         var videoTableDiv = document.getElementById("videoTableDiv");
+        var learningGoalsDiv = document.getElementById("learningGoals");
+        var weekHeaderText = document.getElementById("weekHeader"); 
+
+        learningGoalsDiv.style.fontStyle = "italic";
 
         // Clear the video table and add new content
+        learningGoalsDiv.innerHTML = ""; 
         videoTableDiv.innerHTML = "";
+        weekHeaderText.innerHTML = ""; 
         videoTableDiv.appendChild(videoTable[weekNum]); 
+        var allGoalsArray = []; 
+
+        if (mappedInfo.length > weekNum)
+        {
+            var goals = mappedInfo[weekNum - 1][1];
+
+            console.log(goals); 
+            for (var i=0; i < goals.length; i++)
+            {
+                var goal = goals[i];
+                var goalArray = goal.split(" ");
+                goalArray.splice(0, 1);
+                allGoalsArray.push(" " + goalArray.join(" ")); 
+            }
+        }
+
+        var textNode = document.createElement("P");
+        textNode.innerHTML = allGoalsArray.toString();
+        learningGoalsDiv.appendChild(textNode);
+        
+        weekHeaderText.innerHTML = "Week " + weekNum + " Learning Topic(s):"; 
 
         var pageNumberElements = document.getElementById("paginationDiv").children;
 
@@ -424,6 +600,29 @@
         // Mark current week number as active
         var pageNum = document.getElementById(weekNum); 
         pageNum.className = "active"; 
+    }
+
+    // Select all videos when header checkbox is selected
+    function selectAllVideos(isChecked) {
+
+        var table = document.getElementById("videoTable").rows;
+        console.log(table);
+
+        // Get week
+        var weekContentString = table[0].children[2].innerHTML; 
+        var tempArray = weekContentString.split(" ");
+        var week = tempArray[1]; 
+
+        // Iterate through all visible rows
+        for(var i = 1; i < table.length; i++) {
+
+            var nodes = table[i].children; 
+            var tempId = week + "_" + nodes[2].innerHTML + "_" + nodes[3].innerHTML;
+
+            console.log(tempId); 
+            document.getElementById(tempId).checked = isChecked;
+            saveSelectedVideos(isChecked, tempId); 
+        }  
     }
 
     // Save set goals
@@ -647,24 +846,44 @@
         <p id="treatmentHeader">What are your study goals for next week?</p>
         <br>
         <p id="treatmentSubtitle">
-          Having specific learning can help with motivation. Use this checklist to help you create goals for the upcoming week. You'll be able to track your progress from week to week. 
+          Having specific learning can help with motivation. <b>Use this checklist to help you plan your learning goals and tasks for the upcoming week</b>. You can use it to track your progress as well.
         </p>
         <br>
+
+        <div id="paginationDiv" class="pagination"></div>
+
+        <p id="weekHeader">Week 1</p>
+        <div id="learningGoals"></div>
 
 
         <div id="videoTableDiv"></div>
 
-        <div id="paginationDiv" class="pagination"></div>
+        <!-- Current week info -->
+        <div id="three">
+            <div id="col1">
+                <div id="videos" class="text">0</div>
+                <div class="vidFeedback titel">Videos</div>
+            </div>
+            <div id="col2">
+                <div id="quizzes" class="text">0</div>
+                <div class="quizFeedback titel">Quizzes</div>
+            </div>
+            <div id="col3">
+                <div id="assignments" class="text">0</div>
+                <div class="assignmentsFeedback titel">Assignments</div>
+            </div>
+            <div id="col4">
+                <div id="estimatedTime" class="text">00:00:00</div>
+                <div class="timeFeedback titel">Total Estimated Time</div>
+            </div>
+        </div>
 
-        <br>
 
-        <br>
-
-        <p id="treatmentSubtitle" style="padding-top: 40px">
-            (Optional) Describe any additional goals you want to complete this week. Try to define actionable items.
+        <p id="additionalGoals" style="padding-top: 40px; margin-bottom: 5px; font-size: 100%; font-style: italic;">
+            <b>Describe any additional goals you want to complete. Try to define actionable items.</b>
         </p>
 
-        <form id="goalsPlan">
+        <form id="goalsPlan" style= "margin-top: 5px">
             <div>
                 <textarea form="replace" id="goal3" class="textRow" placeholder="Example: review linear algebra and probability"></textarea>
             </div>

@@ -7,10 +7,16 @@ const auth = require("../auth/middleware");
 
 // Import controllers
 var reminderController = require('./reminderController');
-var goalController = require('./goalController');
 var eventController = require('./eventController');
 var sliderController = require('./SliderPercentageController');
 var discussionPostsController = require('./discussionPostsController');
+
+var goalController2 = require('./goalController2');
+
+
+/** DEPRECATED **/
+var goalController = require('./goalController');
+
 
 // Basic display for /api page 
 router.get('/', auth, function (req, res) {
@@ -33,13 +39,6 @@ router.route('/tasks')
     .get(auth, reminderController.index)
     .delete(auth, reminderController.delete)
 
-router.route('/goals')
-	.post(auth, goalController.new)
-	.get(auth, goalController.index)
-	.delete(auth, goalController.delete)
-router.route('/goals/week')
-	.get(auth, goalController.viewWeek)
-
 router.route('/slider')
     .post(auth, sliderController.createOrUpdate)
     .get(auth, sliderController.viewWeek)
@@ -48,6 +47,22 @@ router.route('/slider')
 router.route('/posts')
     .get(discussionPostsController.getWeek)
     .delete(auth, discussionPostsController.delete)
-	
+
+router.route('/goals2')
+    .post(auth, goalController.new)
+    .get(auth, goalController.index)
+    .delete(auth, goalController.delete)
+router.route('/goals2/week')
+    .get(auth, goalController.viewWeek)    
+
+
+/** DEPRECATED **/ 
+router.route('/goals')
+    .post(auth, goalController.new)
+    .get(auth, goalController.index)
+    .delete(auth, goalController.delete)
+router.route('/goals/week')
+    .get(auth, goalController.viewWeek)
+
 // Export API 
 module.exports = router;
