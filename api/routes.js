@@ -49,11 +49,11 @@ router.route('/posts')
     .delete(auth, discussionPostsController.delete)
 
 router.route('/goals2')
-    .post(auth, goalController.new)
-    .get(auth, goalController.index)
-    .delete(auth, goalController.delete)
+    .post(auth, goalController2.new)
+    .get(auth, goalController2.index)
+    .delete(auth, goalController2.delete)
 router.route('/goals2/week')
-    .get(auth, goalController.viewWeek)    
+    .get(auth, goalController2.viewWeek)    
 
 
 /** DEPRECATED **/ 
