@@ -43,8 +43,9 @@ var goal2Schema = mongoose.Schema({
     additionalGoal: {
         type: String
     },
-    timestamps: true
-});
+},
+timestamps: true
+);
 
 // Export goals model
 var Goal2 = module.exports = mongoose.model('goal2', goal2Schema);
