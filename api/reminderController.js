@@ -5,7 +5,7 @@ let agenda = require('../jobs/agenda');
 Reminder = require('./reminderModel');
 
 // Handle create contact actions
-exports.new = async function (req, res) {
+exports.new = function (req, res) {
 
     var reminder = new Reminder();
     reminder.userId = req.body.userId;
@@ -40,6 +40,7 @@ exports.new = async function (req, res) {
     // save the reminder and check for errors
     reminder.save(function (err) {
         if (err) {
+            console.log(err); 
             res.json(err);
         }
         res.json({
