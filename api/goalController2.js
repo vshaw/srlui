@@ -18,6 +18,8 @@ exports.new = function (req, res) {
         quizGoal: req.body.quizGoal,
         assignmentGoal: req.body.assignmentGoal,
         estimatedTimeGoal: req.body.estimatedTimeGoal,
+        content: req.body.content, 
+        additionalGoal: req.body.additionalGoal,
         createDate: req.body.createDate
     };
 

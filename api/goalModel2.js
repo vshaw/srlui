@@ -40,6 +40,9 @@ var goal2Schema = mongoose.Schema({
     content: [{
         type: String
     }],
+    additionalGoal: {
+        type: String
+    },
     createDate: {
         type: Date,
         default: Date.now
