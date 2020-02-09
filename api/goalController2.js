@@ -63,6 +63,7 @@ exports.viewWeek = function (req, res) {
 
     Goal2.findOne(query, function (err, goals) {
         if (err) {
+            console.log(err); 
             res.json({
                 status: "error",
                 message: err,
