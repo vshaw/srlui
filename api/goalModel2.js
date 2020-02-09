@@ -43,10 +43,7 @@ var goal2Schema = mongoose.Schema({
     additionalGoal: {
         type: String
     },
-    createDate: {
-        type: Date,
-        default: Date.now
-    }
+    timestamps: true
 });
 
 // Export goals model
