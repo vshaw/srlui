@@ -57,7 +57,7 @@ exports.new = function (req, res) {
         var date = new Date(reminder.date1);
 
         data.text = emailText1 + reminder.offset1 + emailText2 + reminder.task1;
-        await agenda.schedule(date, 'email task', data);
+        agenda.schedule(date, 'email task', data);
     }
 
     if (reminder.date2 != null && reminder.task2 != null)
@@ -65,7 +65,7 @@ exports.new = function (req, res) {
         var date = new Date(reminder.date2);
 
         data.text = emailText1 + reminder.offset2 + emailText2 + reminder.task2;
-        await agenda.schedule(date, 'email task', data);
+        agenda.schedule(date, 'email task', data);
     }
 
     if (reminder.date3 != null && reminder.task3 != null)
@@ -73,7 +73,7 @@ exports.new = function (req, res) {
         var date = new Date(reminder.date1);
 
         data.text = emailText1 + reminder.offset3 + emailText2 + reminder.task3;
-        await agenda.schedule(date, 'email task', data);
+        agenda.schedule(date, 'email task', data);
     }
 
 };
