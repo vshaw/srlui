@@ -12,6 +12,8 @@ exports.new = function (req, res) {
         'weekId': req.body.weekId
     };
 
+    console.log(req.body);
+
     update = 
     {
         videoGoal: req.body.videoGoal, 
