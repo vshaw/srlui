@@ -38,7 +38,7 @@ exports.new = async function (req, res) {
     var emailText2 = " minutes: \n\n";
 
     // save the reminder and check for errors
-    await reminder.save(function (err) {
+    reminder.save(function (err) {
         if (err) {
             res.json(err);
         }
