@@ -46,6 +46,7 @@ exports.new = async function (req, res) {
             message: 'New reminder created!',
             data: reminder
         });
+        return;
     }); 
 
     // Schedule tasks via agenda 
