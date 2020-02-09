@@ -50,7 +50,7 @@ var goal2Schema = mongoose.Schema({
 });
 
 // Export goals model
-var Goal2 = module.exports = mongoose.model('goal2', goalSchema);
+var Goal2 = module.exports = mongoose.model('goal2', goal2Schema);
 module.exports.get = function (callback, limit) {
     Goal.find(callback).limit(limit);
 }
