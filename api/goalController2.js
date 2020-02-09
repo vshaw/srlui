@@ -1,6 +1,6 @@
 
 // Import event model
-Goal = require('./goalModel2');
+Goal2 = require('./goalModel2');
 
 // Handle create contact actions
 exports.new = function (req, res) {
@@ -24,7 +24,7 @@ exports.new = function (req, res) {
     };
 
     // save or update the goal and check for errors
-    Goal.findOneAndUpdate(query, update, {upsert:true, setDefaultsOnInsert:true}, function (err, goal) {
+    Goal2.findOneAndUpdate(query, update, {upsert:true, setDefaultsOnInsert:true}, function (err, goal) {
         if (err)
             res.send(err);
         res.json({
@@ -35,7 +35,7 @@ exports.new = function (req, res) {
 };
 
 exports.index = function (req, res) {
-    Goal.get(function (err, goals) {
+    Goal2.get(function (err, goals) {
         if (err) {
             res.json({
                 status: "error",
@@ -59,7 +59,7 @@ exports.viewWeek = function (req, res) {
         'weekId': req.query.weekId
     };
 
-    Goal.findOne(query, function (err, goals) {
+    Goal2.findOne(query, function (err, goals) {
         if (err) {
             res.json({
                 status: "error",
@@ -77,7 +77,7 @@ exports.viewWeek = function (req, res) {
 // Handle delete reminder
 exports.delete = function (req, res) {
     var query = {'userId': req.body.userId, 'courseId': req.body.courseId}
-    Goal.deleteMany(query, function (err) {
+    Goal2.deleteMany(query, function (err) {
         if (err) 
             res.send(err); 
         res.json({
