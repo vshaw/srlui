@@ -13,7 +13,7 @@
         font-weight: bold;
         font-style:italic;
         display: flex;
-        font-size: 180%;
+        font-size: 140%;
         margin-bottom: 0;
     }
 
@@ -63,7 +63,7 @@
     #savedGoalsHeader {
         font-weight: bold;
         display: flex;
-        font-size: 180%;
+        font-size: 140%;
         margin-bottom: 0;
         font-style:italic;
     }
@@ -104,7 +104,6 @@
 
     #descriptionText {
         font-style:italic;
-        font-size: 1.25em;
     }
       
     #buttons
@@ -162,10 +161,18 @@
         background: #3FE133;   
     }
 
-    #three {
+    #editThree {
         display: flex;
         justify-content: space-around;
         width: 100%;
+    }
+
+    #savedThree {
+        display: flex;
+        justify-content: space-around;
+        width: 100%;
+        margin-bottom: 30px;
+        margin-top: 30px;
     }
 
     .titel {
@@ -197,7 +204,7 @@
     var userId; 
     var email;
     var weekId;
-    var weekNumber;
+    var weekNumber = 0;
     var selectedVideos = []; 
     var goalVideos = 0; 
     var goalQuizzes = 0; 
@@ -268,7 +275,7 @@
 
             var tempDate = new Date(key);
 
-            if (currentDate > tempDate )
+            if (currentDate > tempDate)
             {
                 weekNumber = courseDates[key];
             }
@@ -312,7 +319,6 @@
     // Retrieve user defined goals from the database
     function getTreatementGoals()
     {
-
         var videoTable = generateVideoTable(); 
         assignVideoTablePagination(videoTable);
         
@@ -322,7 +328,7 @@
         var settings = {
             "async": true,
             "crossDomain": true,
-            "url": SERVER_URL + "/api/goals/week",
+            "url": SERVER_URL + "/api/goals2/week",
             "headers": {
                 'x-access-token': accessToken
             },
@@ -331,8 +337,7 @@
                 "userId": userId,
                 "email": email,
                 "courseId": courseId, 
-                "weekId": weekId, 
-                "weekNumber": weekNumber, 
+                "weekId": weekId
             }
         };
 
@@ -344,18 +349,18 @@
             // the set goal page. 
             if (result != null)
             {
-                var goal1 = result.goal1 ? "1. " + result.goal1 : ""; 
-                var goal2 = result.goal2 ? "2. " + result.goal2 : ""; 
-                var goal3 = result.goal3 ? "3. " + result.goal3 : ""; 
-                var goal4 = result.goal4 ? "4. " + result.goal4 : ""; 
-
-                document.getElementById("savedGoal1").innerHTML = goal1;     
-                document.getElementById("savedGoal2").innerHTML = goal2; 
-                document.getElementById("savedGoal3").innerHTML = goal3; 
-                document.getElementById("savedGoal4").innerHTML = goal4; 
-
                 treatmentWeeklyGoals.style.display="none";
                 setDateTimePickers(); 
+
+                selectedVideos = result.content; 
+
+                createSavedVideoTable(result.additionalGoal); 
+
+                document.getElementById("savedVideos").innerHTML = result.videoGoal; 
+                document.getElementById("savedQuizzes").innerHTML = result.quizGoal; 
+                document.getElementById("savedAssignments").innerHTML = result.assignmentGoal; 
+                document.getElementById("savedEstimatedTime").innerHTML = result.estimatedTimeGoal; 
+                
                 scheduleGoals.style.display="block"; 
             } 
             else
@@ -454,7 +459,6 @@
                 else
                 {
                     tr.appendChild(td);
-        
                 }
             }
 
@@ -472,18 +476,16 @@
     function saveSelectedVideos(checked, videoRow)
     {
         var rowElements = videoRow.split("_");
-        var row = [rowElements[0], rowElements[1], rowElements[2]];
-
         if (checked)
         {
-            selectedVideos.push(row);
+            selectedVideos.push(videoRow);
             incrementGoalNumbers(1, rowElements[1], rowElements[2]);
         }
         else
         {
             incrementGoalNumbers(-1, rowElements[1], rowElements[2]);
     
-            var index = selectedVideos.indexOf(row)
+            var index = selectedVideos.indexOf(videoRow)
 
             if (index > -1) {
                 selectedVideos.splice(index, 1);
@@ -570,7 +572,6 @@
         {
             var goals = mappedInfo[weekNum - 1][1];
 
-            console.log(goals); 
             for (var i=0; i < goals.length; i++)
             {
                 var goal = goals[i];
@@ -606,7 +607,6 @@
     function selectAllVideos(isChecked) {
 
         var table = document.getElementById("videoTable").rows;
-        console.log(table);
 
         // Get week
         var weekContentString = table[0].children[2].innerHTML; 
@@ -619,7 +619,6 @@
             var nodes = table[i].children; 
             var tempId = week + "_" + nodes[2].innerHTML + "_" + nodes[3].innerHTML;
 
-            console.log(tempId); 
             document.getElementById(tempId).checked = isChecked;
             saveSelectedVideos(isChecked, tempId); 
         }  
@@ -628,17 +627,14 @@
     // Save set goals
     function saveGoals() {
 
-        var goal1 = document.getElementById("goal1").value;
-        var goal2 = document.getElementById("goal2").value;
-        var goal3 = document.getElementById("goal3").value;
-        var goal4 = document.getElementById("goal4").value;
+        var additionalGoal = document.getElementById("additionalGoal").value;
 
-        var responseText = document.getElementById("responseText");
+        var estimatedTime = goalTime.getHours() + ":" + goalTime.getMinutes() + ":" + goalTime.getSeconds(); 
 
         var settings = {
             "async": true,
             "crossDomain": true,
-            "url": SERVER_URL + "/api/goals",
+            "url": SERVER_URL + "/api/goals2",
             "method": "POST",
             "headers": {
                 'x-access-token': accessToken
@@ -649,25 +645,74 @@
                 "courseId": courseId, 
                 "weekId": weekId, 
                 "weekNumber": weekNumber, 
-                "goal1": goal1, 
-                "goal2": goal2, 
-                "goal3": goal3, 
-                "goal4": goal4
+                "videoGoal": goalVideos,
+                "quizGoal": goalQuizzes,
+                "assignmentGoal": goalAssignments,
+                "estimatedTimeGoal": estimatedTime,
+                "additionalGoal": additionalGoal,
+                "content": selectedVideos
             }
         };
 
         // Save the goal and switch to calendar view
         $.ajax(settings).done(function (response) {
-          responseText.style.display="block"; 
-          document.getElementById("savedGoal1").innerHTML = goal1;     
-          document.getElementById("savedGoal2").innerHTML = goal2; 
-          document.getElementById("savedGoal3").innerHTML = goal3; 
-          document.getElementById("savedGoal4").innerHTML = goal4; 
-          
+
           treatmentWeeklyGoals.style.display="none";
+
+          createSavedVideoTable(additionalGoal); 
+
+          document.getElementById("savedVideos").innerHTML = goalVideos; 
+          document.getElementById("savedQuizzes").innerHTML = goalQuizzes; 
+          document.getElementById("savedAssignments").innerHTML = goalAssignments; 
+          document.getElementById("savedEstimatedTime").innerHTML = estimatedTime; 
+
           setDateTimePickers(); 
-          scheduleGoals.style.display="block"; 
+          document.getElementById("scheduleGoals").style.display="block"; 
       });          
+    }
+
+    // Create the table of selected goals
+    function createSavedVideoTable(additionalGoal)
+    {
+        document.getElementById("savedVideoTableDiv").innerHTML = "";
+
+        var savedVideoTable = document.createElement('table');
+        var thead = document.createElement("thead");
+        var tbody = document.createElement("tbody");
+
+        var headRow = document.createElement("tr");
+
+        ["Week", "Content", "Time (hh:mm:ss)"].forEach(function(el) {
+            var th=document.createElement("th");
+            th.style.textAlign = "center"; 
+            th.appendChild(document.createTextNode(el));
+            headRow.appendChild(th);
+        });
+
+        thead.appendChild(headRow); 
+        savedVideoTable.appendChild(thead); 
+
+        // Create the table rows
+        for (var j=0; j < selectedVideos.length; j++)
+        {
+            var tr = document.createElement("tr");
+            var contentArray = selectedVideos[j].split("_");
+
+            for (var i=0; i < contentArray.length; i++ )
+            {
+                var td = document.createElement("td");
+                td.style.textAlign = "center"; 
+                td.appendChild(document.createTextNode(contentArray[i]));
+                tr.appendChild(td); 
+            }
+
+            tbody.appendChild(tr);
+        }
+
+        savedVideoTable.appendChild(tbody); 
+
+        document.getElementById("savedVideoTableDiv").appendChild(savedVideoTable);
+        document.getElementById("savedAdditionalGoal").innerHTML = additionalGoal;
     }
 
     // Allow the user to return to the set goals page and edit goals. 
@@ -859,7 +904,7 @@
         <div id="videoTableDiv"></div>
 
         <!-- Current week info -->
-        <div id="three">
+        <div id="editThree">
             <div id="col1">
                 <div id="videos" class="text">0</div>
                 <div class="vidFeedback titel">Videos</div>
@@ -885,7 +930,7 @@
 
         <form id="goalsPlan" style= "margin-top: 5px">
             <div>
-                <textarea form="replace" id="goal3" class="textRow" placeholder="Example: review linear algebra and probability"></textarea>
+                <textarea form="replace" id="additionalGoal" class="textRow" placeholder="Example: review linear algebra and probability"></textarea>
             </div>
 
             <br>
@@ -900,10 +945,30 @@
 
       <div id="savedGoals">
             <p id="savedGoalsHeader">Great! Here are your goals for next week:</p>
-            <p id="savedGoal1" class="savedGoalText"></p>
-            <p id="savedGoal2" class="savedGoalText"></p>
-            <p id="savedGoal3" class="savedGoalText"></p>  
-            <p id="savedGoal4" class="savedGoalText">.</p>    
+
+        <div id="savedVideoTableDiv"></div>
+
+        <div id="savedThree">
+            <div id="col1">
+                <div id="savedVideos" class="text">0</div>
+                <div class="vidFeedback titel">Videos</div>
+            </div>
+            <div id="col2">
+                <div id="savedQuizzes" class="text">0</div>
+                <div class="quizFeedback titel">Quizzes</div>
+            </div>
+            <div id="col3">
+                <div id="savedAssignments" class="text">0</div>
+                <div class="assignmentsFeedback titel">Assignments</div>
+            </div>
+            <div id="col4">
+                <div id="savedEstimatedTime" class="text">00:00:00</div>
+                <div class="timeFeedback titel">Total Estimated Time</div>
+            </div>
+        </div>
+
+        <p id="savedAdditionalGoal"></p>
+
             <p id="button">
                 <button id="editGoals" onclick="editGoals()">Edit Goals</button>
             </p>

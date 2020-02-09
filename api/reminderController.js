@@ -5,7 +5,7 @@ let agenda = require('../jobs/agenda');
 Reminder = require('./reminderModel');
 
 // Handle create contact actions
-exports.new = function (req, res) {
+exports.new = async function (req, res) {
 
     var reminder = new Reminder();
     reminder.userId = req.body.userId;
@@ -38,16 +38,14 @@ exports.new = function (req, res) {
     var emailText2 = " minutes: \n\n";
 
     // save the reminder and check for errors
-    reminder.save(function (err) {
+    await reminder.save(function (err) {
         if (err) {
-            console.log(err); 
             res.json(err);
         }
         res.json({
             message: 'New reminder created!',
             data: reminder
         });
-        return;
     }); 
 
     // Schedule tasks via agenda 
@@ -57,7 +55,7 @@ exports.new = function (req, res) {
         var date = new Date(reminder.date1);
 
         data.text = emailText1 + reminder.offset1 + emailText2 + reminder.task1;
-        agenda.schedule(date, 'email task', data);
+        await agenda.schedule(date, 'email task', data);
     }
 
     if (reminder.date2 != null && reminder.task2 != null)
@@ -65,7 +63,7 @@ exports.new = function (req, res) {
         var date = new Date(reminder.date2);
 
         data.text = emailText1 + reminder.offset2 + emailText2 + reminder.task2;
-        agenda.schedule(date, 'email task', data);
+        await agenda.schedule(date, 'email task', data);
     }
 
     if (reminder.date3 != null && reminder.task3 != null)
@@ -73,7 +71,7 @@ exports.new = function (req, res) {
         var date = new Date(reminder.date1);
 
         data.text = emailText1 + reminder.offset3 + emailText2 + reminder.task3;
-        agenda.schedule(date, 'email task', data);
+        await agenda.schedule(date, 'email task', data);
     }
 
 };
