@@ -22,7 +22,8 @@ exports.new = function (req, res) {
         estimatedTimeGoal: req.body.estimatedTimeGoal,
         content: req.body.content, 
         additionalGoal: req.body.additionalGoal,
-        createDate: req.body.createDate
+        createDate: req.body.createDate,
+        weekNumber: req.body.weekNumber
     };
 
     // save or update the goal and check for errors
