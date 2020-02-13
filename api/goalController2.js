@@ -82,7 +82,7 @@ exports.viewWeekByNum = function (req, res) {
         'userId': req.query.userId, 
         'email': req.query.email, 
         'courseId': req.query.courseId, 
-        'weekNum': req.query.weekNum
+        'weekNumber': req.query.weekNumber
     };
 
     console.log(req); 
