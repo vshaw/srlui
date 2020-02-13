@@ -97,11 +97,11 @@
             font-style:italic;
         }
         .ratings{
-           display: inline-block;
-           padding: 0 3em;
-           text-align: center;
+ 		   display: inline-block;
+		   padding: 0 3em;
+		   text-align: center;
            font-size: 210%;
-        } 
+		} 
 
         #goalsContainer {
             text-align: center; 
@@ -130,7 +130,7 @@
 
 </head>
 
- <!-- <script>
+ <script>
 
         var userId; 
         var courseId; 
@@ -185,8 +185,8 @@
             // Only do any of this if the user is in the treatment group
             if (userId % 2 != 0 || devShowTreatment)
             {
-                var saveGoalsButton = document.getElementById("saveGoalsButton");
-                saveGoalsButton.disabled = true; 
+            	var saveGoalsButton = document.getElementById("saveGoalsButton");
+            	saveGoalsButton.disabled = true; 
 
                 var goalsElement = document.getElementById("weekGoals");
                 var goalsContainer = document.getElementById("goalsContainer"); 
@@ -624,14 +624,14 @@
 
             if (smiley.checked == true)
             {
-                ratingValue = 1; 
+            	ratingValue = 1; 
             }
             else
             {
-                ratingValue = 0; 
+            	ratingValue = 0; 
             }
 
-            var responseText = document.getElementById("responseText");             
+            var responseText = document.getElementById("responseText");          	
 
             var settings = {
                 "async": true,
@@ -735,19 +735,19 @@
         // Updates rating
         function updateRating(val) {
 
-            if (val != undefined)
-            {
-               if (val == 1)
-               {
-                   document.getElementById("satisfied").checked = true;
-                   document.getElementById("unstatisfied").checked = false;
-               }
-               else if (val == 0)
-               {
+        	if (val != undefined)
+        	{
+        	   if (val == 1)
+        	   {
+        		   document.getElementById("satisfied").checked = true;
+        	       document.getElementById("unstatisfied").checked = false;
+        	   }
+        	   else if (val == 0)
+        	   {
                     document.getElementById("unsatisfied").checked = true;
-                   document.getElementById("satisfied").checked = false;
-               }
-            }
+        	       document.getElementById("satisfied").checked = false;
+        	   }
+        	}
         }
 
         // Toggle 'next' buttons disabled/enabled
@@ -772,11 +772,11 @@
         // Activate submit button when an option is selected
         function activateButton()
         {
-            var saveGoalsButton = document.getElementById("saveGoalsButton");
-            saveGoalsButton.disabled = false;
+        	var saveGoalsButton = document.getElementById("saveGoalsButton");
+        	saveGoalsButton.disabled = false;
         }
 
-    </script> -->
+    </script>
 
 
 <body>
@@ -840,20 +840,20 @@
             <p id="savedAdditionalGoal" style="text-align:center"></p>
 
         </div>
-        <p id="ratingSubtitle" style="text-align:center; font-size: 150%; color: darkred">Are you satisfied with last week's study goal completion?</p>
+      	<p id="ratingSubtitle" style="text-align:center; font-size: 150%; color: darkred">Are you satisfied with last week's study goal completion?</p>
         <p id="ratingWarning" style="text-align:center;"> <b> IMPORTANT: You must complete this survey to move to the next module.</b> </p>
-        <!-- <form> -->
+		<form>
           <div id="rating">
               
               <div id="ratingElements">
 
-                    <label for="unstatisfied" class='ratings'> &#x1F61E <br />
-                      <input type="radio" name = "rating" id="unsatisfied" onclick="activateButton()">
-                    </label>
+					<label for="unstatisfied" class='ratings'> &#x1F61E <br />
+					  <input type="radio" name = "rating" id="unsatisfied" onclick="activateButton()">
+					</label>
 
-                    <label for="unstatisfied" class='ratings'> &#x1F60A <br />
-                      <input type="radio" name = "rating" id="satisfied" onclick="activateButton()">
-                    </label>
+					<label for="unstatisfied" class='ratings'> &#x1F60A <br />
+					  <input type="radio" name = "rating" id="satisfied" onclick="activateButton()">
+					</label>
 
                   <br/>
                   <p style="text-align:center">
@@ -877,9 +877,9 @@
     <br>
 
    <div id="chartContainer" style="height: 300px; width: 100%;"> 
-        <!-- <script> 
+        <script> 
             loadScript("/static/SRLUICourseInfo.js", generateNumbers);
-        </script> -->
+        </script>
 
     </div>
 
@@ -887,9 +887,9 @@
     <br>
     <p id="footer">*Note edX course weeks start on Mondays</p>
 
-    <!-- <script>
+    <script>
         loadScript("/static/SRLUICourseInfo.js", toggleGroupDisplay);
-    </script> -->
+    </script>
 
     <br>
 
