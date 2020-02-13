@@ -26,12 +26,10 @@ var ratingSchema = mongoose.Schema({
     satisfied: {
         type: Number, 
         required: true     
-    },
-    createDate: {
-        type: Date,
-        default: Date.now,
-        required: true
     }
+},
+{
+timestamps: true
 });
 // Export event model
 var Rating = module.exports = mongoose.model('rating', ratingSchema);

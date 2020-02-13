@@ -10,13 +10,14 @@ exports.createOrUpdate = function (req, res) {
         'userId': req.body.userId, 
         'email': req.body.email, 
         'courseId': req.body.courseId, 
-        'weekId': req.body.weekId,
+        'weekId': req.body.weekId
     };
 
     var update = 
     {
-        satisfied: req.body.satisfied
-    }
+        satisfied: req.body.satisfied,
+        weekNumber: req.body.weekNumber
+    };
 
 
     // If no record matches the user/course/week info, create a new record (upsert:true)
