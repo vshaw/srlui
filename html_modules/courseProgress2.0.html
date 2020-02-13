@@ -244,10 +244,11 @@
                     goalsContainer.appendChild(textNode);             
                 }
 
-                loadScript("https://canvasjs.com/assets/script/canvasjs.min.js", generateLineChart);
-
                 getSavedRating(); 
             }
+
+            loadScript("https://canvasjs.com/assets/script/canvasjs.min.js", generateLineChart);
+
         }
 
         //////////////////////////////////////////////
@@ -359,8 +360,6 @@
 
             $.ajax(settings).done(function (response) {
                 var weekResult = response.data; 
-                console.log("numbers"); 
-                console.log(weekResult); 
 
                 var videos = 0; 
                 var questions = 0; 
@@ -404,7 +403,7 @@
             var aggQuestionsAnswered = []; 
             var aggPostsCreated = []; 
             var aggPostsViewed = []; 
-                
+
             document.getElementById("noDataText").style.display = "block"; 
             document.getElementById("chartContainer").style.display = "none"; 
 
