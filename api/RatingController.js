@@ -1,7 +1,7 @@
 // eventController.js
 
 // Import event model
-SliderPercentage = require('./SliderPercentageModel');
+Rating = require('./RatingModel');
 
 // Handle update event info, create if no match found 
 exports.createOrUpdate = function (req, res) {
@@ -15,16 +15,16 @@ exports.createOrUpdate = function (req, res) {
 
     var update = 
     {
-        sliderPercentage: req.body.sliderPercentage
+        satisfied: req.body.satisfied
     }
 
 
     // If no record matches the user/course/week info, create a new record (upsert:true)
-    SliderPercentage.findOneAndUpdate(query, update, {upsert:true, setDefaultsOnInsert:true}, function (err, event) {
+    Rating.findOneAndUpdate(query, update, {upsert:true, setDefaultsOnInsert:true}, function (err, event) {
         if (err)
             res.send(err);
         res.json({
-            message: 'Slider details updated',
+            message: 'Rating updated',
             data: event
         });
     });
@@ -40,26 +40,26 @@ exports.viewWeek = function (req, res) {
         'email': req.query.email
     };
 
-    SliderPercentage.findOne(query, function (err, event) {
+    Rating.findOne(query, function (err, event) {
         if (err)
             res.send(err);
         res.json({
-            message: 'Slider details loading..',
+            message: 'Rating details loading..',
             data: event
         });
     });
 };
 
 
-// Handle delete contact
+// Handle delete 
 exports.delete = function (req, res) {
     var query = {'userId': req.body.userId, 'courseId': req.body.courseId}
-    SliderPercentage.deleteMany(query, function (err) {
+    Rating.deleteMany(query, function (err) {
         if (err) 
             res.send(err); 
         res.json({
             status: "success",
-            message: 'Slider deleted'
+            message: 'Rating deleted'
         });
     });
 };

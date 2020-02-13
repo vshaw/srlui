@@ -8,7 +8,7 @@ const auth = require("../auth/middleware");
 // Import controllers
 var reminderController = require('./reminderController');
 var eventController = require('./eventController');
-var sliderController = require('./SliderPercentageController');
+var ratingController = require('./RatingController');
 var discussionPostsController = require('./discussionPostsController');
 
 var goalController2 = require('./goalController2');
@@ -39,10 +39,10 @@ router.route('/tasks')
     .get(auth, reminderController.index)
     .delete(auth, reminderController.delete)
 
-router.route('/slider')
-    .post(auth, sliderController.createOrUpdate)
-    .get(auth, sliderController.viewWeek)
-    .delete(auth, sliderController.delete)
+router.route('/rating')
+    .post(auth, ratingController.createOrUpdate)
+    .get(auth, ratingController.viewWeek)
+    .delete(auth, ratingController.delete)
 
 router.route('/posts')
     .get(discussionPostsController.getWeek)

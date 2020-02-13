@@ -2,7 +2,7 @@
 var mongoose = require('mongoose');
 
 // Setup schema
-var sliderPercentageSchema = mongoose.Schema({
+var ratingSchema = mongoose.Schema({
     userId: {
         type: String,
         required: true
@@ -23,9 +23,8 @@ var sliderPercentageSchema = mongoose.Schema({
         type: Number, 
         required: true
     },
-    sliderPercentage: {
+    satisfied: {
         type: Number, 
-        default:0,
         required: true     
     },
     createDate: {
@@ -35,7 +34,7 @@ var sliderPercentageSchema = mongoose.Schema({
     }
 });
 // Export event model
-var SliderPercentage = module.exports = mongoose.model('sliderPercentage', sliderPercentageSchema);
+var Rating = module.exports = mongoose.model('rating', ratingSchema);
 module.exports.get = function (callback, limit) {
-    SliderPercentage.find(callback).limit(limit);
+    Rating.find(callback).limit(limit);
 }
