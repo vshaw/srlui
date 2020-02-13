@@ -34,6 +34,9 @@ var eventSchema2 = mongoose.Schema({
     contentId: {
         type: String, 
         required: true     
+    },
+    numQuestions: {
+        type: Number
     }
 },
 {
