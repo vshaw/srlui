@@ -12,6 +12,7 @@ exports.create = async function (req, res) {
     event2.courseId = req.body.courseId; 
     event2.email = req.body.email;
     event2.weekNumber = req.body.weekNumber;
+    event2.group = req.body.group;
     event2.weekId = req.body.weekId;
     event2.event = req.body.event; 
     event2.contentId = req.body.contentId; 
@@ -22,8 +23,8 @@ exports.create = async function (req, res) {
             res.json(err);
         }
         res.json({
-            message: 'New reminder created!',
-            data: reminder
+            message: 'New event created!',
+            data: event2
         });
     }); 
 };
