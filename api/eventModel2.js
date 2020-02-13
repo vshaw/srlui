@@ -53,7 +53,7 @@ eventSchema2.index(
     });
 
 // Export event model
-var Event2 = module.exports = mongoose.model('event', eventSchema2);
+var Event2 = module.exports = mongoose.model('event2', eventSchema2);
 module.exports.get = function (callback, limit) {
     Event2.find(callback).limit(limit);
 }
