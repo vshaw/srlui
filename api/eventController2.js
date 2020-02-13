@@ -16,8 +16,9 @@ exports.create = async function (req, res) {
     event2.event = req.body.event; 
     event2.contentId = req.body.contentId; 
 
-    Event2.save(function (err) {
+    event2.save(function (err) {
         if (err) {
+            console.log(err); 
             res.json(err);
         }
         res.json({
