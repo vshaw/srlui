@@ -2,8 +2,8 @@
     On this page users in the control group can see weekly goals loaded from a static file. 
     Users in the treatment group will be able to set their own goals, and setup email reminders for study plans --> 
 
-<link rel="stylesheet" type="text/css" href="/static/mdtimepicker.css">
-<script type="text/javascript" src="/static/mdtimepicker.js"></script>
+<!-- <link rel="stylesheet" type="text/css" href="/static/mdtimepicker.css"> -->
+<!-- <script type="text/javascript" src="/static/mdtimepicker.js"></script> -->
 
 <head>
 
@@ -199,7 +199,7 @@
 
 </style>
 
-<script>
+<!-- <script>
 
     var userId; 
     var email;
@@ -211,6 +211,7 @@
     var goalAssignments = 0; 
     var goalTime = new Date(); 
     goalTime.setHours(0, 0, 0, 0);
+    var additionalGoal = ""; 
 
     var devShowTreatment = false; 
     var SERVER_URL = "https://guarded-mesa-27479.herokuapp.com";
@@ -254,7 +255,6 @@
         else
         {
             loadScript("/static/mdtimepicker.js", getTreatementGoals);
-            // getTreatementGoals(); 
         }
     };
 
@@ -354,12 +354,34 @@
 
                 selectedVideos = result.content; 
 
-                createSavedVideoTable(result.additionalGoal); 
+                goalVideos = result.videoGoal; 
+                goalQuizzes = result.quizGoal; 
+                goalAssignments = result.assignmentGoal; 
+                additionalGoal = result.additionalGoal; 
+
+                createSavedVideoTable(additionalGoal); 
 
                 document.getElementById("savedVideos").innerHTML = result.videoGoal; 
                 document.getElementById("savedQuizzes").innerHTML = result.quizGoal; 
                 document.getElementById("savedAssignments").innerHTML = result.assignmentGoal; 
                 document.getElementById("savedEstimatedTime").innerHTML = result.estimatedTimeGoal; 
+
+
+                document.getElementById("videos").innerHTML = result.videoGoal; 
+                document.getElementById("quizzes").innerHTML = result.quizGoal; 
+                document.getElementById("assignments").innerHTML = result.assignmentGoal; 
+                document.getElementById("estimatedTime").innerHTML = result.estimatedTimeGoal; 
+
+                var timeArray = result.estimatedTimeGoal.split(":");
+                
+                if (timeArray.length == 3)
+                {
+                    goalTime.setHours(timeArray[0], timeArray[1], timeArray[2], 0);
+                }
+                else
+                {
+                    goalTime.setHours(0, timeArray[0], timeArray[1], 0);
+                }
                 
                 scheduleGoals.style.display="block"; 
             } 
@@ -369,6 +391,20 @@
                 scheduleGoals.style.display="none"; 
             }              
         }); 
+    }
+
+    // Mark the saved rows as selected
+    function selectSavedRows()
+    {
+        for (var i=0; i < selectedVideos.length; i++)
+        {
+            var element = document.getElementById(selectedVideos[i]);
+
+            if (element)
+            {
+                element.checked = true; 
+            }
+        }
     }
 
     // Generate a master table of all course content corresponding to each week
@@ -476,14 +512,15 @@
     function saveSelectedVideos(checked, videoRow)
     {
         var rowElements = videoRow.split("_");
+
         if (checked)
         {
             selectedVideos.push(videoRow);
-            incrementGoalNumbers(1, rowElements[1], rowElements[2]);
+            incrementGoalNumbers(1, rowElements[1], rowElements[rowElements.length - 1]);
         }
         else
         {
-            incrementGoalNumbers(-1, rowElements[1], rowElements[2]);
+            incrementGoalNumbers(-1, rowElements[1], rowElements[rowElements.length - 1]);
     
             var index = selectedVideos.indexOf(videoRow)
 
@@ -566,6 +603,10 @@
         videoTableDiv.innerHTML = "";
         weekHeaderText.innerHTML = ""; 
         videoTableDiv.appendChild(videoTable[weekNum]); 
+
+        selectSavedRows();
+
+
         var allGoalsArray = []; 
 
         if (mappedInfo.length > weekNum)
@@ -619,8 +660,11 @@
             var nodes = table[i].children; 
             var tempId = week + "_" + nodes[2].innerHTML + "_" + nodes[3].innerHTML;
 
-            document.getElementById(tempId).checked = isChecked;
-            saveSelectedVideos(isChecked, tempId); 
+            if (document.getElementById(tempId).checked != isChecked)
+            {
+                document.getElementById(tempId).checked = isChecked;
+                saveSelectedVideos(isChecked, tempId); 
+            }
         }  
     }
 
@@ -698,13 +742,26 @@
             var tr = document.createElement("tr");
             var contentArray = selectedVideos[j].split("_");
 
-            for (var i=0; i < contentArray.length; i++ )
-            {
-                var td = document.createElement("td");
-                td.style.textAlign = "center"; 
-                td.appendChild(document.createTextNode(contentArray[i]));
-                tr.appendChild(td); 
-            }
+
+            var weekTd = document.createElement("td");
+            weekTd.style.textAlign = "center"; 
+            weekTd.appendChild(document.createTextNode(contentArray[0]));
+
+            contentArray.splice(0, 1);
+
+            var timeTd = document.createElement("td");
+            timeTd.style.textAlign = "center"; 
+            timeTd.appendChild(document.createTextNode(contentArray[contentArray.length - 1]));
+
+            contentArray.splice(contentArray.length - 1, 1);
+
+            var contentTd = document.createElement("td");
+            contentTd.style.textAlign = "center"; 
+            contentTd.appendChild(document.createTextNode(contentArray.join(' ')));
+
+            tr.appendChild(weekTd); 
+            tr.appendChild(timeTd); 
+            tr.appendChild(contentTd); 
 
             tbody.appendChild(tr);
         }
@@ -723,6 +780,10 @@
         
         scheduleGoalsElement.style.display ="none"; 
         treatmentElement.style.display = "block"; 
+
+        document.getElementById("additionalGoal").innerHTML = additionalGoal;
+
+        selectSavedRows(); 
     }
 
     // Save calendar email reminders
@@ -868,15 +929,15 @@
         } 
     }
 
-    </script>
+    </script> -->
 </head>
 
 <body>
 
-    <script>
+    <!-- <script>
         loadScript("/static/SRLUICourseInfo.js", toggleGroupDisplay);
 
-    </script>
+    </script> -->
 
     <!-- Show the static weekly goals for the control group !-->
     <div id="controlWeeklyGoals">
@@ -928,7 +989,7 @@
             <b>Describe any additional goals you want to complete. Try to define actionable items.</b>
         </p>
 
-        <form id="goalsPlan" style= "margin-top: 5px">
+        <!-- <form id="goalsPlan" style= "margin-top: 5px"> -->
             <div>
                 <textarea form="replace" id="additionalGoal" class="textRow" placeholder="Example: review linear algebra and probability"></textarea>
             </div>
