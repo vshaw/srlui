@@ -59,7 +59,8 @@ router.route('/events2')
     .delete(auth, eventController2.delete)
 router.route('/events2/week')
     .get(auth, eventController2.viewWeek)
-
+router.route('/event2/postsPerWeek')
+    .get(auth, eventController2.savePostsInfo)
 
 /** DEPRECATED **/ 
 router.route('/goals')

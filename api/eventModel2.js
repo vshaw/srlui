@@ -21,7 +21,6 @@ var eventSchema2 = mongoose.Schema({
     },
     weekId: {
         type: String, 
-        required: true
     },
     weekNumber: {
         type: Number, 
@@ -36,6 +35,12 @@ var eventSchema2 = mongoose.Schema({
         required: true     
     },
     numQuestions: {
+        type: Number
+    },
+    postsViewed: {
+        type: Number
+    },
+    postsCreated: {
         type: Number
     }
 },

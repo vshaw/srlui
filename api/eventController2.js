@@ -67,6 +67,31 @@ exports.viewCourse = function (req, res) {
     });
 };
 
+exports.savePostsInfo = function (req, res) {
+    var updateType = req.body.type; 
+    var updateAmount; 
+
+    var query = {
+        'userId': req.body.userId, 
+        'email': req.body.email, 
+        'courseId': req.body.courseId, 
+        'weekNumber': req.body.weekNumber,
+        'event': req.body.event,
+        'group': req.body.group
+    };
+
+    update = { postsViewed: req.body.postsViewed, postsCreated: req.body.postsCreated };
+
+    Event2.findOneAndUpdate(query, update, {upsert:true, setDefaultsOnInsert:true}, function (err, event) {
+        if (err)
+            res.send(err);
+        res.json({
+            message: 'Event details updated',
+            data: event
+        });
+    });
+}
+
 // Handle delete
 exports.delete = function (req, res) {
     var query = {'userId': req.body.userId, 'courseId': req.body.courseId}
