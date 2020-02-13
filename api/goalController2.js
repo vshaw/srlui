@@ -85,6 +85,8 @@ exports.viewWeekByNum = function (req, res) {
         'weekNum': req.query.weekNum
     };
 
+    console.log(req); 
+
     Goal2.findOne(query, function (err, goals) {
         if (err) {
             console.log(err); 
