@@ -53,8 +53,9 @@ router.route('/goals2')
     .get(auth, goalController2.index)
     .delete(auth, goalController2.delete)
 router.route('/goals2/week')
-    .get(auth, goalController2.viewWeek)    
-
+    .get(auth, goalController2.viewWeek)
+router.route('/goals2/weekByNum')
+    .get(auth, goalController2.viewWeekByNum)
 
 /** DEPRECATED **/ 
 router.route('/goals')

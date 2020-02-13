@@ -12,8 +12,6 @@ exports.new = function (req, res) {
         'weekId': req.body.weekId
     };
 
-    console.log(req.body);
-
     update = 
     {
         videoGoal: req.body.videoGoal, 
@@ -77,6 +75,33 @@ exports.viewWeek = function (req, res) {
         });
     });
 };
+
+exports.viewWeekByNum = function (req, res) {
+
+    var query = {
+        'userId': req.query.userId, 
+        'email': req.query.email, 
+        'courseId': req.query.courseId, 
+        'weekNum': req.query.weekNum
+    };
+
+    Goal2.findOne(query, function (err, goals) {
+        if (err) {
+            console.log(err); 
+            res.json({
+                status: "error",
+                message: err,
+            });
+        }
+        res.json({
+            status: "success",
+            message: "Goals retrieved successfully",
+            data: goals
+        });
+    });
+};
+
+
 
 // Handle delete reminder
 exports.delete = function (req, res) {
