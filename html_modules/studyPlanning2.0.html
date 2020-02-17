@@ -120,10 +120,6 @@
         resize: none;
     }
 
-    #schedule p {
-      font-size: 1.25em;
-    }
-      
     p.tableHeader {
       font-weight: bold;
     }
@@ -195,6 +191,17 @@
         border: 1px solid #c8c8c8;
         font-size: 14px;
     }
+
+    .xmodule_display.xmodule_HtmlBlock p {
+        /* margin-bottom: 1.416em; */
+        font-size: 1em;
+        line-height: 1.6em !important;
+        color: #313131;
+    }
+
+    .course-wrapper .course-content p, .course-wrapper .courseware-results-wrapper p {
+        /* margin-bottom: 1.41575em; */
+    }
 }
 
 </style>
@@ -213,7 +220,7 @@
     goalTime.setHours(0, 0, 0, 0);
     var additionalGoal = ""; 
 
-    var devShowTreatment = false; 
+    var devShowTreatment = true; 
     var SERVER_URL = "https://guarded-mesa-27479.herokuapp.com";
 
     //////////////////////////////////////////////
@@ -810,6 +817,34 @@
 
         var finalDate3 = getFinalSendDate(date3, time3, offset3);
 
+        var date4 = document.getElementById("date4").value;
+        var time4 = document.getElementById("time4").value;
+        var task4 = document.getElementById("task4").value;
+        var offset4 = getCheckedBox("reminder10", "reminder11", "reminder12");
+
+        var finalDate4 = getFinalSendDate(date4, time4, offset4);
+
+        var date5 = document.getElementById("date5").value;
+        var time5 = document.getElementById("time5").value;
+        var task5 = document.getElementById("task5").value;
+        var offset5 = getCheckedBox("reminder13", "reminder14", "reminder15");
+
+        var finalDate5 = getFinalSendDate(date5, time5, offset5);
+
+        var date6 = document.getElementById("date6").value;
+        var time6 = document.getElementById("time6").value;
+        var task6 = document.getElementById("task6").value;
+        var offset6 = getCheckedBox("reminder16", "reminder17", "reminder18");
+
+        var finalDate6 = getFinalSendDate(date6, time6, offset6);
+
+        var date7 = document.getElementById("date7").value;
+        var time7 = document.getElementById("time7").value;
+        var task7 = document.getElementById("task7").value;
+        var offset7 = getCheckedBox("reminder19", "reminder20", "reminder21");
+
+        var finalDate7 = getFinalSendDate(date7, time7, offset7);
+
         var settings = {
             "async": true,
             "crossDomain": true,
@@ -832,7 +867,20 @@
                 "offset2": offset2,
                 "task3": task3, 
                 "date3": finalDate3,
-                "offset3": offset3 
+                "offset3": offset3,
+                "task4": task4, 
+                "date4": finalDate4,
+                "offset4": offset4,
+                "task5": task5, 
+                "date5": finalDate5,
+                "offset5": offset5, 
+                "task6": task6, 
+                "date6": finalDate6,
+                "offset6": offset6, 
+                "task7": task7, 
+                "date7": finalDate7,
+                "offset7": offset7,
+                "content": selectedVideos  
             }
         };
 
@@ -911,6 +959,26 @@
             $('#time3').mdtimepicker();
             $('#time3').attr('placeholder', "--:-- --");        
         }
+               
+        if ( $('#time4').prop('type') != 'time' ) {
+            $('#time4').mdtimepicker();
+            $('#time4').attr('placeholder', "--:-- --");        
+        }
+
+        if ( $('#time5').prop('type') != 'time' ) {
+            $('#time5').mdtimepicker();
+            $('#time5').attr('placeholder', "--:-- --");        
+        }
+
+        if ( $('#time6').prop('type') != 'time' ) {
+            $('#time6').mdtimepicker();
+            $('#time6').attr('placeholder', "--:-- --");        
+        }
+
+        if ( $('#time7').prop('type') != 'time' ) {
+            $('#time7').mdtimepicker();
+            $('#time7').attr('placeholder', "--:-- --");        
+        }
 
         if ( $('#date1').prop('type') != 'date' ) {
             $('#date1').datepicker();
@@ -926,6 +994,26 @@
         if ( $('#date3').prop('type') != 'date' ) {
             $('#date3').datepicker();
             $('#date3').attr('placeholder', "mm/dd/yyyy");
+        } 
+
+        if ( $('#date4').prop('type') != 'date' ) {
+            $('#date4').datepicker();
+            $('#date4').attr('placeholder', "mm/dd/yyyy");
+        } 
+
+        if ( $('#date5').prop('type') != 'date' ) {
+            $('#date5').datepicker();
+            $('#date5').attr('placeholder', "mm/dd/yyyy");
+        } 
+
+        if ( $('#date6').prop('type') != 'date' ) {
+            $('#date6').datepicker();
+            $('#date6').attr('placeholder', "mm/dd/yyyy");
+        } 
+
+        if ( $('#date7').prop('type') != 'date' ) {
+            $('#date7').datepicker();
+            $('#date7').attr('placeholder', "mm/dd/yyyy");
         } 
     }
 
@@ -1048,19 +1136,11 @@
 
       <div id="schedule">
         <table>
-            <tr>
-                <td>
-                    <p class="tableHeader">Date</p>
-                </td>
-                <td>
-                    <p class="tableHeader">Time</p>
-                </td>
-                <td>
-                    <p class="tableHeader">Task</p>
-                </td>
-                <td>
-                    <p class="tableHeader">Reminder</p>
-                </td>
+            <tr style="text-align:center;">
+                <th style="background-color: lightblue;">Date</th>
+                <th style="background-color: lightblue;">Time</th>
+                <th style="background-color: lightblue;">Task</th>
+                <th style="background-color: lightblue;">Reminder</th>
             </tr>
             <tr>
                 <td><input type="text" id="date1"></td>
@@ -1085,6 +1165,38 @@
                 <td><input type="checkbox" id="reminder7" value="10" checked>Ten minutes before<br>
                     <input type="checkbox" id="reminder8" value="60">One hour before<br>
                     <input type="checkbox" id="reminder9" value="120">Two hours before</td>
+            </tr>
+            <tr>
+                <td><input type="text" id="date4"></td>
+                <td><input type="text" id="time4"></td>
+                <td><input type="text" id="task4"></td>
+                <td><input type="checkbox" id="reminder10" value="10" checked>Ten minutes before<br>
+                    <input type="checkbox" id="reminder11" value="60">One hour before<br>
+                    <input type="checkbox" id="reminder12" value="120">Two hours before</td>
+            </tr>
+            <tr>
+                <td><input type="text" id="date5"></td>
+                <td><input type="text" id="time5"></td>
+                <td><input type="text" id="task5"></td>
+                <td><input type="checkbox" id="reminder13" value="10" checked>Ten minutes before<br>
+                    <input type="checkbox" id="reminder14" value="60">One hour before<br>
+                    <input type="checkbox" id="reminder15" value="120">Two hours before</td>
+            </tr>
+            <tr>
+                <td><input type="text" id="date6"></td>
+                <td><input type="text" id="time6"></td>
+                <td><input type="text" id="task6"></td>
+                <td><input type="checkbox" id="reminder16" value="10" checked>Ten minutes before<br>
+                    <input type="checkbox" id="reminder17" value="60">One hour before<br>
+                    <input type="checkbox" id="reminder18" value="120">Two hours before</td>
+            </tr>
+            <tr>
+                <td><input type="text" id="date7"></td>
+                <td><input type="text" id="time7"></td>
+                <td><input type="text" id="task7"></td>
+                <td><input type="checkbox" id="reminder19" value="10" checked>Ten minutes before<br>
+                    <input type="checkbox" id="reminder20" value="60">One hour before<br>
+                    <input type="checkbox" id="reminder21" value="120">Two hours before</td>
             </tr>
         </table>
         
