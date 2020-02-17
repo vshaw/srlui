@@ -98,9 +98,9 @@
         }
         .ratings{
            display: inline-block;
-           padding: 0 3em;
+           padding: 0 2em;
            text-align: center;
-           font-size: 210%;
+           font-size: 180%;
         } 
 
         #goalsContainer {
@@ -119,18 +119,44 @@
             width: 60%;
             height: 1em;
         }
-
-        #satisfied {
+        
+        #veryUnsatisfied {
             border: 0px;
             width: 60%;
             height: 1em;
+        }
+
+        #happy {
+            border: 0px;
+            width: 60%;
+            height: 1em;
+        }
+
+        #neutral {
+            border: 0px;
+            width: 60%;
+            height: 1em;
+        }
+
+        #veryHappy {
+            border: 0px;
+            width: 60%;
+            height: 1em;
+        }
+
+        #label {
+            display: flex;
+            justify-content: space-between;
+            margin-left: 17%;
+            margin-right: 18%;
+            margin-bottom: 20px;
         }
 
     </style>   
 
 </head>
 
- <!-- <script>
+ <script>
 
         var userId; 
         var courseId; 
@@ -619,12 +645,27 @@
             var email = analytics._user._getTraits().email;
 
             var ratingValue; 
-            var smiley = document.getElementById("satisfied");
-            var frown = document.getElementById("unsatisfied");
+            var veryUnhappy = document.getElementById("veryUnsatisfied");
+            var unhappy = document.getElementById("unsatisfied");
+            var neutral = document.getElementById("neutral");
+            var smiley = document.getElementById("happy");
+            var verySmiley = document.getElementById("veryHappy");
 
             if (smiley.checked == true)
             {
                 ratingValue = 1; 
+            }
+            else if (verySmiley.checked == true)
+            {
+                ratingValue = 2; 
+            }
+            else if (veryUnhappy.checked == true)
+            {
+                ratingValue = -2; 
+            }
+            else if (unhappy.checked == true)
+            {
+                ratingValue = -1
             }
             else
             {
@@ -739,13 +780,43 @@
             {
                if (val == 1)
                {
-                   document.getElementById("satisfied").checked = true;
-                   document.getElementById("unstatisfied").checked = false;
+                    document.getElementById("veryUnsatisfied").checked = false;
+                    document.getElementById("unsatisfied").checked = false;
+                    document.getElementById("neutral").checked = false;
+                    document.getElementById("happy").checked = true;
+                    document.getElementById("veryHappy").checked = false;
                }
                else if (val == 0)
                {
+                    document.getElementById("veryUnsatisfied").checked = false;
+                    document.getElementById("unsatisfied").checked = false;
+                    document.getElementById("neutral").checked = true;
+                    document.getElementById("happy").checked = false;
+                    document.getElementById("veryHappy").checked = false;
+               }
+               else if (val == 2)
+               {
+                    document.getElementById("veryUnsatisfied").checked = false;
+                    document.getElementById("unsatisfied").checked = false;
+                    document.getElementById("neutral").checked = false;
+                    document.getElementById("happy").checked = false;
+                    document.getElementById("veryHappy").checked = true;
+               }
+               else if (val == -1)
+               {
+                    document.getElementById("veryUnsatisfied").checked = false;
                     document.getElementById("unsatisfied").checked = true;
-                   document.getElementById("satisfied").checked = false;
+                    document.getElementById("neutral").checked = false;
+                    document.getElementById("happy").checked = false;
+                    document.getElementById("veryHappy").checked = false;
+               }
+               else if (val == -2)
+               {
+                    document.getElementById("veryUnsatisfied").checked = true;
+                    document.getElementById("unsatisfied").checked = false;
+                    document.getElementById("neutral").checked = false;
+                    document.getElementById("happy").checked = false;
+                    document.getElementById("veryHappy").checked = false;
                }
             }
         }
@@ -776,7 +847,7 @@
             saveGoalsButton.disabled = false;
         }
 
-    </script> -->
+    </script>
 
 
 <body>
@@ -840,21 +911,38 @@
             <p id="savedAdditionalGoal" style="text-align:center"></p>
 
         </div>
-        <p id="ratingSubtitle" style="text-align:center; font-size: 150%; color: darkred">Are you satisfied with last week's study goal completion?</p>
+        <p id="ratingSubtitle" style="text-align:center; font-size: 150%; color: darkred">How satisfied are you with last week's study goal completion?</p>
         <p id="ratingWarning" style="text-align:center;"> <b> IMPORTANT: You must complete this survey to move to the next module.</b> </p>
-        <!-- <form> -->
+        <form>
           <div id="rating">
               
+            <div id="label">
+                <div id="satisfiedString">Unsatisfied</div>
+                <div id="satisfiedString">Satisfied</div>
+            </div>
+
               <div id="ratingElements">
-
-                    <label for="unstatisfied" class='ratings'> &#x1F61E <br />
-                      <input type="radio" name = "rating" id="unsatisfied" onclick="activateButton()">
+                
+                    <label for="unstatisfied" class='ratings'> &#x1F614 <br />
+                      <input type="radio" name = "rating" id="veryUnsatisfied" onclick="activateButton()">
                     </label>
 
-                    <label for="unstatisfied" class='ratings'> &#x1F60A <br />
-                      <input type="radio" name = "rating" id="satisfied" onclick="activateButton()">
+                    <label for="unstatisfied" class='ratings'> &#x1F615 <br />
+                      <input type="radio" name ="rating" id="unsatisfied" onclick="activateButton()">
+                    </label>
+                
+                    <label for="unstatisfied" class='ratings'> &#x1F610 <br />
+                      <input type="radio" name = "rating" id="neutral" onclick="activateButton()">
+                    </label>    
+
+                    <label for="unstatisfied" class='ratings'> &#x1F642 <br />
+                      <input type="radio" name = "rating" id="happy" onclick="activateButton()">
                     </label>
 
+                    <label for="unstatisfied" class='ratings'> &#x1F600 <br />
+                      <input type="radio" name = "rating" id="veryHappy" onclick="activateButton()">
+                    </label>
+                
                   <br/>
                   <p style="text-align:center">
                       <button type="button" id="saveGoalsButton" onclick="saveRating()">Submit</button>
@@ -877,9 +965,9 @@
     <br>
 
    <div id="chartContainer" style="height: 300px; width: 100%;"> 
-        <!-- <script> 
+        <script> 
             loadScript("/static/SRLUICourseInfo.js", generateNumbers);
-        </script> -->
+        </script>
 
     </div>
 
@@ -887,9 +975,9 @@
     <br>
     <p id="footer">*Note edX course weeks start on Mondays</p>
 
-    <!-- <script>
+    <script>
         loadScript("/static/SRLUICourseInfo.js", toggleGroupDisplay);
-    </script> -->
+    </script>
 
     <br>
 
