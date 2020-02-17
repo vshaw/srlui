@@ -49,11 +49,47 @@ var reminderSchema = mongoose.Schema({
     offset3: {
         type: Number, 
     },
-    create_date: {
-        type: Date,
-        default: Date.now
+    task4: {
+        type: String, 
+    },
+    date4: {
+        type: Number, 
+    },
+    offset4: {
+        type: Number, 
+    },
+    task5: {
+        type: String, 
+    },
+    date5: {
+        type: Number, 
+    },
+    offset5: {
+        type: Number, 
+    },
+    task6: {
+        type: String, 
+    },
+    date6: {
+        type: Number, 
+    },
+    offset6: {
+        type: Number, 
+    },
+    task7: {
+        type: String, 
+    },
+    date7: {
+        type: Number, 
+    },
+    offset7: {
+        type: Number, 
     }
+},
+{
+timestamps: true
 });
+
 // Export event model
 var Reminder = module.exports = mongoose.model('reminder', reminderSchema);
 module.exports.get = function (callback, limit) {
