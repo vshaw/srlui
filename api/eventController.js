@@ -4,58 +4,7 @@
 Event = require('./eventModel');
 
 // Handle update event info, create if no match found 
-exports.createOrUpdate = async function (req, res) {
-
-    var updateType = req.body.type; 
-    var updateAmount; 
-
-    var query = {
-        'userId': req.body.userId, 
-        'email': req.body.email, 
-        'courseId': req.body.courseId, 
-        'weekNumber': req.body.weekNumber, 
-        'group': req.body.group
-    };
-
-    // If no update type is specified, create a new record with amounts specified. 
-    // Typically this request would be a manual update by an admin.     
-    if (updateType == null)
-    {
-        update = 
-        {
-            videosWatched: req.body.videosWatched ? req.body.videosWatched : 0, 
-            questionsAnswered: req.body.questionsAnswered ? req.body.questionsAnswered : 0,
-            postsViewed: req.body.postsViewed ? req.body.postsViewed : 0,
-            postsCreated: req.body.postsCreated ? req.body.postsCreated : 0
-        }
-    }
-    else if (updateType == "videosWatched")
-    {
-        // Increment by one unless another amount is specified
-        var amount = req.body.amount ? req.body.amount : 1; 
-        update = { $inc: {videosWatched: amount}};   
-    }
-    else if (updateType == "questionsAnswered")
-    {
-        var amount = req.body.amount ? req.body.amount : 1; 
-        update = { $inc: {questionsAnswered: amount}};
-    }
-    else if (updateType == "posts")
-    {
-        // Post info always comes in as an aggreated amount. 
-        // So we will check to see if a record exists for the previous week and save the difference. 
-        if (req.body.weekNumber > 1)
-        {
-            var updatePosts = req.body.postsCreated; 
-            var updateViews = req.body.postsViewed;  
-
-            update = { postsViewed: updateViews, postsCreated: updatePosts };
-        }
-        else
-        {
-            update = { postsViewed: req.body.postsViewed, postsCreated: req.body.postsCreated };
-        }
-    }
+exports.createOrUpdate = function (req, res) {
 
     // If no record matches the user/course/week info, create a new record (upsert:true)
     /*Event.findOneAndUpdate(query, update, {upsert:true, setDefaultsOnInsert:true}, function (err, event) {

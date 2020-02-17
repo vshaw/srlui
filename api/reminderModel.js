@@ -84,6 +84,9 @@ var reminderSchema = mongoose.Schema({
     },
     offset7: {
         type: Number, 
+    },
+    content: {
+        type: [String]
     }
 },
 {

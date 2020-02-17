@@ -13,6 +13,7 @@ exports.new = async function (req, res) {
     reminder.email = req.body.email;
     reminder.weekNumber = req.body.weekNumber;
     reminder.weekId = req.body.weekId;
+    reminder.content = req.body.content;
 
     reminder.task1 = req.body.task1 ? req.body.task1 : null;
     reminder.date1 = req.body.date1 ? req.body.date1 : null;
@@ -41,6 +42,8 @@ exports.new = async function (req, res) {
     reminder.task7 = req.body.task7 ? req.body.task7 : null;
     reminder.date7 = req.body.date7 ? req.body.date7 : null;
     reminder.offset7 = req.body.offset7 ? req.body.offset7 : null;
+
+    console.log(reminder); 
         
     var data = {
         from: 'ColumbiaX Study Planning <columbiaxcvn@gmail.com>',
