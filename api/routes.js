@@ -71,7 +71,6 @@ router.route('/goals/week')
     .get(auth, goalController.viewWeek)
 
 router.route('/events')
-    .post(auth, eventController.createOrUpdate)
     .get(auth, eventController.viewCourse)
     .delete(auth, eventController.delete)
 router.route('/events/week')
