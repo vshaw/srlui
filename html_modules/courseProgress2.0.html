@@ -97,11 +97,11 @@
             font-style:italic;
         }
         .ratings{
- 		   display: inline-block;
-		   padding: 0 3em;
-		   text-align: center;
-           font-size: 210%;
-		} 
+           display: inline-block;
+           padding: 0 2em;
+           text-align: center;
+           font-size: 180%;
+        } 
 
         #goalsContainer {
             text-align: center; 
@@ -119,11 +119,37 @@
             width: 60%;
             height: 1em;
         }
-
-        #satisfied {
+        
+        #veryUnsatisfied {
             border: 0px;
             width: 60%;
             height: 1em;
+        }
+
+        #happy {
+            border: 0px;
+            width: 60%;
+            height: 1em;
+        }
+
+        #neutral {
+            border: 0px;
+            width: 60%;
+            height: 1em;
+        }
+
+        #veryHappy {
+            border: 0px;
+            width: 60%;
+            height: 1em;
+        }
+
+        #label {
+            display: flex;
+            justify-content: space-between;
+            margin-left: 17%;
+            margin-right: 18%;
+            margin-bottom: 20px;
         }
 
     </style>   
@@ -136,7 +162,7 @@
         var courseId; 
         var weekNumber; 
         var weekId; 
-        var devShowTreatment = false; 
+        var devShowTreatment = true; 
 
         var SERVER_URL = "https://guarded-mesa-27479.herokuapp.com";
 
@@ -185,8 +211,8 @@
             // Only do any of this if the user is in the treatment group
             if (userId % 2 != 0 || devShowTreatment)
             {
-            	var saveGoalsButton = document.getElementById("saveGoalsButton");
-            	saveGoalsButton.disabled = true; 
+                var saveGoalsButton = document.getElementById("saveGoalsButton");
+                saveGoalsButton.disabled = true; 
 
                 var goalsElement = document.getElementById("weekGoals");
                 var goalsContainer = document.getElementById("goalsContainer"); 
@@ -244,11 +270,10 @@
                     goalsContainer.appendChild(textNode);             
                 }
 
+                loadScript("https://canvasjs.com/assets/script/canvasjs.min.js", generateLineChart);
+
                 getSavedRating(); 
             }
-
-            loadScript("https://canvasjs.com/assets/script/canvasjs.min.js", generateLineChart);
-
         }
 
         //////////////////////////////////////////////
@@ -331,7 +356,7 @@
 
             var dateString = "In the past week of the course (" + startString + " - " + endString + ") you have:";
 
-            if (startString.includes("NaN") || endString.includes("NaN"))
+            if (startString.includes("NaN") || endString.includes("NaN") || weekNumber == 1)
             {
                 dateString = "In the past week of the course you have:"
             } 
@@ -360,6 +385,8 @@
 
             $.ajax(settings).done(function (response) {
                 var weekResult = response.data; 
+                console.log("numbers"); 
+                console.log(weekResult); 
 
                 var videos = 0; 
                 var questions = 0; 
@@ -403,7 +430,7 @@
             var aggQuestionsAnswered = []; 
             var aggPostsCreated = []; 
             var aggPostsViewed = []; 
-
+                
             document.getElementById("noDataText").style.display = "block"; 
             document.getElementById("chartContainer").style.display = "none"; 
 
@@ -618,19 +645,34 @@
             var email = analytics._user._getTraits().email;
 
             var ratingValue; 
-            var smiley = document.getElementById("satisfied");
-            var frown = document.getElementById("unsatisfied");
+            var veryUnhappy = document.getElementById("veryUnsatisfied");
+            var unhappy = document.getElementById("unsatisfied");
+            var neutral = document.getElementById("neutral");
+            var smiley = document.getElementById("happy");
+            var verySmiley = document.getElementById("veryHappy");
 
             if (smiley.checked == true)
             {
-            	ratingValue = 1; 
+                ratingValue = 1; 
+            }
+            else if (verySmiley.checked == true)
+            {
+                ratingValue = 2; 
+            }
+            else if (veryUnhappy.checked == true)
+            {
+                ratingValue = -2; 
+            }
+            else if (unhappy.checked == true)
+            {
+                ratingValue = -1
             }
             else
             {
-            	ratingValue = 0; 
+                ratingValue = 0; 
             }
 
-            var responseText = document.getElementById("responseText");          	
+            var responseText = document.getElementById("responseText");             
 
             var settings = {
                 "async": true,
@@ -734,19 +776,49 @@
         // Updates rating
         function updateRating(val) {
 
-        	if (val != undefined)
-        	{
-        	   if (val == 1)
-        	   {
-        		   document.getElementById("satisfied").checked = true;
-        	       document.getElementById("unstatisfied").checked = false;
-        	   }
-        	   else if (val == 0)
-        	   {
+            if (val != undefined)
+            {
+               if (val == 1)
+               {
+                    document.getElementById("veryUnsatisfied").checked = false;
+                    document.getElementById("unsatisfied").checked = false;
+                    document.getElementById("neutral").checked = false;
+                    document.getElementById("happy").checked = true;
+                    document.getElementById("veryHappy").checked = false;
+               }
+               else if (val == 0)
+               {
+                    document.getElementById("veryUnsatisfied").checked = false;
+                    document.getElementById("unsatisfied").checked = false;
+                    document.getElementById("neutral").checked = true;
+                    document.getElementById("happy").checked = false;
+                    document.getElementById("veryHappy").checked = false;
+               }
+               else if (val == 2)
+               {
+                    document.getElementById("veryUnsatisfied").checked = false;
+                    document.getElementById("unsatisfied").checked = false;
+                    document.getElementById("neutral").checked = false;
+                    document.getElementById("happy").checked = false;
+                    document.getElementById("veryHappy").checked = true;
+               }
+               else if (val == -1)
+               {
+                    document.getElementById("veryUnsatisfied").checked = false;
                     document.getElementById("unsatisfied").checked = true;
-        	       document.getElementById("satisfied").checked = false;
-        	   }
-        	}
+                    document.getElementById("neutral").checked = false;
+                    document.getElementById("happy").checked = false;
+                    document.getElementById("veryHappy").checked = false;
+               }
+               else if (val == -2)
+               {
+                    document.getElementById("veryUnsatisfied").checked = true;
+                    document.getElementById("unsatisfied").checked = false;
+                    document.getElementById("neutral").checked = false;
+                    document.getElementById("happy").checked = false;
+                    document.getElementById("veryHappy").checked = false;
+               }
+            }
         }
 
         // Toggle 'next' buttons disabled/enabled
@@ -771,8 +843,8 @@
         // Activate submit button when an option is selected
         function activateButton()
         {
-        	var saveGoalsButton = document.getElementById("saveGoalsButton");
-        	saveGoalsButton.disabled = false;
+            var saveGoalsButton = document.getElementById("saveGoalsButton");
+            saveGoalsButton.disabled = false;
         }
 
     </script>
@@ -839,21 +911,38 @@
             <p id="savedAdditionalGoal" style="text-align:center"></p>
 
         </div>
-      	<p id="ratingSubtitle" style="text-align:center; font-size: 150%; color: darkred">Are you satisfied with last week's study goal completion?</p>
+        <p id="ratingSubtitle" style="text-align:center; font-size: 150%; color: darkred">How satisfied are you with last week's study goal completion?</p>
         <p id="ratingWarning" style="text-align:center;"> <b> IMPORTANT: You must complete this survey to move to the next module.</b> </p>
-		<form>
+        <form>
           <div id="rating">
               
+            <div id="label">
+                <div id="satisfiedString">Unsatisfied</div>
+                <div id="satisfiedString">Satisfied</div>
+            </div>
+
               <div id="ratingElements">
+                
+                    <label for="unstatisfied" class='ratings'> &#x1F614 <br />
+                      <input type="radio" name = "rating" id="veryUnsatisfied" onclick="activateButton()">
+                    </label>
 
-					<label for="unstatisfied" class='ratings'> &#x1F61E <br />
-					  <input type="radio" name = "rating" id="unsatisfied" onclick="activateButton()">
-					</label>
+                    <label for="unstatisfied" class='ratings'> &#x1F615 <br />
+                      <input type="radio" name ="rating" id="unsatisfied" onclick="activateButton()">
+                    </label>
+                
+                    <label for="unstatisfied" class='ratings'> &#x1F610 <br />
+                      <input type="radio" name = "rating" id="neutral" onclick="activateButton()">
+                    </label>    
 
-					<label for="unstatisfied" class='ratings'> &#x1F60A <br />
-					  <input type="radio" name = "rating" id="satisfied" onclick="activateButton()">
-					</label>
+                    <label for="unstatisfied" class='ratings'> &#x1F642 <br />
+                      <input type="radio" name = "rating" id="happy" onclick="activateButton()">
+                    </label>
 
+                    <label for="unstatisfied" class='ratings'> &#x1F600 <br />
+                      <input type="radio" name = "rating" id="veryHappy" onclick="activateButton()">
+                    </label>
+                
                   <br/>
                   <p style="text-align:center">
                       <button type="button" id="saveGoalsButton" onclick="saveRating()">Submit</button>
