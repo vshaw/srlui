@@ -1,6 +1,3 @@
-<script src="/static/SRLUICourseInfo.js" onloadeddata=""></script> 
-
-<script>
     //////////////////////////////////////////////
     //               Logging User Data           //
     //////////////////////////////////////////////
@@ -52,17 +49,17 @@
 
         // Retrieve the newest discussion activity information and update the week's record. This process is separate from video/questions answered because the information comes from a python web scraper. 
         // TODO: Have this run in a scheduled script instead of in this sensor module... 
-        getWeekPosts(); 
+       //  getWeekPosts(); 
     }
 
     // Log events that occur. We store events per week, so a 'type' parameter indicates which event we are updating.
-    function logEvent(eventType, amount) {
+    function logVideoEvent(contentId) {
         var email = analytics._user._getTraits().email; 
 
         var settings = {
             "async": true,
             "crossDomain": true,
-            "url": SERVER_URL + "/api/events",
+            "url": SERVER_URL + "/api/events2",
             "method": "POST",
             "headers": {
                 'x-access-token': accessToken
@@ -74,13 +71,40 @@
                 "courseId": courseId,
                 "weekNumber": weekNumber,
                 "weekId": weekId, 
-                "type": eventType, 
-                "amount": amount
+                "event": "Watched video", 
+                "contentId": contentId
             }
         }; 
         
         $.ajax(settings).done(function (response) {
-           // console.log("log");
+       }); 
+    }
+
+    function logQuestionEvent(contentId, numQuestions) {
+        var email = analytics._user._getTraits().email; 
+
+        var settings = {
+            "async": true,
+            "crossDomain": true,
+            "url": SERVER_URL + "/api/events2",
+            "method": "POST",
+            "headers": {
+                'x-access-token': accessToken
+            },
+            "data": {
+                "userId": userId,
+                "email": email,
+                "group": group,
+                "courseId": courseId,
+                "weekNumber": weekNumber,
+                "weekId": weekId, 
+                "event": "Answered questions", 
+                "contentId": contentId,
+                "numQuestions": numQuestions
+            }
+        }; 
+        
+        $.ajax(settings).done(function (response) {
        }); 
     }
 
@@ -175,7 +199,7 @@
                 "courseId": courseId,
                 "weekNumber": weekNumber,
                 "weekId": weekId, 
-                "type": "posts", 
+                "event": "Posts", 
                 "postsCreated": posts,
                 "postsViewed": views
             }
@@ -211,10 +235,6 @@
 
         return 0; 
     } 
-
-</script>
-
-<script>
 
     //////////////////////////////////////////////
     //               EVENT LISTENER             //
@@ -277,6 +297,7 @@
             } 
             else if (listening && vidlog.event_type === "pause_video") 
             {
+                console.log("in"); 
                 listening = false;
                 setTimeout(function () {
                     listening = true
@@ -299,6 +320,8 @@
                     
                     var numProblems = 0;
 
+                    var problemNames = []; 
+
                     // Loop through problem sets and look for child element with the problem id. Then we can count the number of problems that were answered. 
                     for (var i = 0; i < problemSets.length; i++)
                     {
@@ -310,13 +333,29 @@
 
                         if (problemHTML.includes(problemSetId))
                         {
+                            for (var j = 0; j < problems.length; j++)
+                            {
+                                var name = problems[j].innerText; 
+                                var nameArray = name.split("?");
+
+                                problemNames.push(nameArray[0] + "?");
+                            }
+
                             numProblems = problems.length; 
                             break;
                         }    
                     }
 
+                    var elements = document.getElementsByClassName("hd hd-2"); 
+                    var title = ""; 
+
+                    if (elements.length > 0)
+                    {
+                        title = elements[0].innerText+"_"+numProblems; 
+                    }
+
                     // Finally store the number of questions answered in the week's event record     
-                    logEvent("questionsAnswered", numProblems);
+                    logQuestionEvent(title + "- "+ problemNames.join(), numProblems);
 
                     // Store problem ID so we won't store the same info if they retry the questions. 
                     // Note this is not sticky, so if they refresh the page and answer the questions again it'll be recorded.
@@ -339,13 +378,21 @@
         durVid = vidSum.reduce(add, 0) / 1000;
 
         // Somewhat arbitrary amount in seconds to mark the video as "watched". 
-        if (durVid >= 30) 
+        if (durVid >= 5) 
         {
             var vidId = vidlog.event.split("%")[5];
 
             if (!finishedContentIds.includes(vidId))
             {
-                logEvent("videosWatched", 1);
+                var elements = document.getElementsByClassName("hd hd-2"); 
+                var videoTitle = ""; 
+
+                if (elements.length > 0)
+                {
+                    videoTitle = elements[0].innerText; 
+                }
+
+                logVideoEvent(videoTitle);
                 finishedContentIds.push(vidId)
             }
         }
@@ -356,5 +403,3 @@
     {
         return a + b;
     }
-
-</script>
