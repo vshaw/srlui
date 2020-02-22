@@ -270,10 +270,10 @@
                     goalsContainer.appendChild(textNode);             
                 }
 
-                loadScript("https://canvasjs.com/assets/script/canvasjs.min.js", generateLineChart);
-
                 getSavedRating(); 
             }
+
+            loadScript("https://canvasjs.com/assets/script/canvasjs.min.js", generateLineChart);
         }
 
         //////////////////////////////////////////////
@@ -385,8 +385,6 @@
 
             $.ajax(settings).done(function (response) {
                 var weekResult = response.data; 
-                console.log("numbers"); 
-                console.log(weekResult); 
 
                 var videos = 0; 
                 var questions = 0; 
@@ -395,8 +393,6 @@
 
                 if (weekResult != null && weekResult.length > 0)
                 {
-
-
                     for (var i = 0; i < weekResult.length; i++)
                     {
                         if (weekResult[i].event.includes("video"))
@@ -432,7 +428,7 @@
             var aggPostsViewed = []; 
                 
             document.getElementById("noDataText").style.display = "block"; 
-            document.getElementById("chartContainer").style.display = "none"; 
+            document.getElementById("chartContainer").style.display = "block"; 
 
             // Send GET request for to get activity for specific user/course. 
              var settings = {
@@ -450,7 +446,7 @@
             };
 
             $.ajax(settings).done(function (response) {
-
+                console.log(response.data)
                 var result = response.data; 
                 result.sort(sortByWeekNumber);
 
@@ -481,6 +477,7 @@
                         }
                         else if (result[i].event.includes("Posts"))
                         {
+                            console.log(result[i]);
                             views = result[i].postsViewed; 
                             posts = result[i].postsCreated; 
                         }
@@ -535,6 +532,8 @@
                 aggPostsCreated.push({label: weekString, y: views});
                 aggPostsViewed.push({label: weekString, y: posts});
 
+                console.log(aggPostsCreated);
+                console.log(aggPostsViewed);
                 // Create chart 
                 var chart = new CanvasJS.Chart("chartContainer", {
                     theme:"light2",
