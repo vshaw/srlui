@@ -49,7 +49,8 @@
 
         // Retrieve the newest discussion activity information and update the week's record. This process is separate from video/questions answered because the information comes from a python web scraper. 
         // TODO: Have this run in a scheduled script instead of in this sensor module... 
-       //  getWeekPosts(); 
+        console.log("week"); 
+         getWeekPosts(); 
     }
 
     // Log events that occur. We store events per week, so a 'type' parameter indicates which event we are updating.
@@ -118,7 +119,7 @@
         // Ex: Convert ColumbiaX+CSMM.104x+3T2019 to CSMM104
         var shortCourseId = courseId.split("+")[1]; 
         shortCourseId = shortCourseId.substring(0, shortCourseId.length - 1);    
-        var finalCourseId = shortCourseId.replace(".", ""); 
+        var finalCourseId = shortCourseId.replace(".", "");  
 
         // Get the current date in Unix timestamp. 
         var currentDate = new Date(); 
@@ -129,6 +130,11 @@
         var startDate = new Date(start);
         var startDateTimestamp = (startDate.getTime() / 1000) - 300; // minius some margin
         var endDateTimestamp = startDateTimestamp + 86400*7 + 600; // get the timestamp one weeks later + some margin
+
+        if (courseNumber == null)
+        {
+            courseNumber = ""; 
+        }
 
         var settings = {
             "async": true,
@@ -141,13 +147,14 @@
             "data": 
             {
                 "email": email,
-                "courseId": finalCourseId,
+                "courseId": courseNumber,
                 "startTime": startDateTimestamp,
                 "endTime": endDateTimestamp
             }
         };
 
         $.ajax(settings).done(function (response) {
+
            var result = response.data;
            if (result != null)
            {
@@ -187,7 +194,7 @@
         var settings = {
             "async": true,
             "crossDomain": true,
-            "url": SERVER_URL + "/api/events",
+            "url": SERVER_URL + "/api/events2",
             "method": "POST",
             "headers": {
                 'x-access-token': accessToken
@@ -201,7 +208,8 @@
                 "weekId": weekId, 
                 "event": "Posts", 
                 "postsCreated": posts,
-                "postsViewed": views
+                "postsViewed": views,
+                "contentId": "N/a"
             }
         }; 
         
