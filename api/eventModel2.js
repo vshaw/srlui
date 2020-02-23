@@ -8,8 +8,7 @@ var eventSchema2 = mongoose.Schema({
         required: true
     },
     email: {
-        type: String, 
-        required: true
+        type: String 
     },
     group: {
         type: String, 
