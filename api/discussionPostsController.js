@@ -46,7 +46,7 @@ exports.getAllByCourse = function (req, res) {
 
     var queryParams = {
         'Email': req.query.email,
-        'Course ID': req.query.courseId
+        'Course Number': req.query.courseNumber
     };
 
     console.log(queryParams); 
