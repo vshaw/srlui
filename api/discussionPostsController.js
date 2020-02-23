@@ -24,6 +24,22 @@ exports.getWeek = function (req, res) {
     }); 
 }
 
+exports.getAllByEmail = function (req, res) {
+
+    var queryParams = {
+        'Email': req.query.email
+    };
+
+    DiscussionPost.find(queryParams, function (err, activity) {
+        if (err)
+            res.send(err);
+        res.json({
+            message: 'Discussion post details loading..',
+            data: activity
+        });
+    }); 
+}
+
 // Handle delete contact
 exports.delete = function (req, res) {
     var query = {'userId': req.body.email, 'courseId': req.body.courseId}
