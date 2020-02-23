@@ -7,7 +7,7 @@ exports.getWeek = function (req, res) {
 
     var queryParams = {
         'Email': req.query.email, 
-        'Course ID': req.query.courseId,
+        'Course Number': req.query.courseNumber,
         'Timestamp': {
             $gte: req.query.startTime,
             $lte: req.query.endTime
