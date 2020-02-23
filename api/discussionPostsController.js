@@ -28,8 +28,28 @@ exports.getAllByEmail = function (req, res) {
 
     var queryParams = {
         'Email': req.query.email,
+    };
+
+    console.log(queryParams); 
+
+    DiscussionPost.find(queryParams, function (err, activity) {
+        if (err)
+            res.send(err);
+        res.json({
+            message: 'Discussion post details loading..',
+            data: activity
+        });
+    }); 
+}
+
+exports.getAllByCourse = function (req, res) {
+
+    var queryParams = {
+        'Email': req.query.email,
         'Course ID': req.query.courseId
     };
+
+    console.log(queryParams); 
 
     DiscussionPost.find(queryParams, function (err, activity) {
         if (err)

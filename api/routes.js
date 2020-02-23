@@ -45,6 +45,8 @@ router.route('/posts')
     .delete(auth, discussionPostsController.delete)
 router.route('/posts/email')
     .get(discussionPostsController.getAllByEmail)
+router.route('/posts/course')
+    .get(discussionPostsController.getAllByCourse)
 
 router.route('/goals2')
     .post(auth, goalController2.new)
