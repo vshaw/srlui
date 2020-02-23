@@ -46,11 +46,6 @@
                 weekNumber = courseDates[key];
             }
         } 
-
-        // Retrieve the newest discussion activity information and update the week's record. This process is separate from video/questions answered because the information comes from a python web scraper. 
-        // TODO: Have this run in a scheduled script instead of in this sensor module... 
-        console.log("week"); 
-         getWeekPosts(); 
     }
 
     // Log events that occur. We store events per week, so a 'type' parameter indicates which event we are updating.
@@ -108,115 +103,6 @@
         $.ajax(settings).done(function (response) {
        }); 
     }
-
-    // Get discussion activity data in order to update the week's record.
-    // Discussion activity is stored in a separate database that is updated by a web scraper python script. 
-    // The way this works is convoluted because the scraper is constantly inserting aggregated data (atm the only available format) to the db. So in order to get this week's data, we have to get the current amount and subtract the previous week's amount. 
-    function getWeekPosts() {
-        var email = analytics._user._getTraits().email; 
-
-        // The activity database stores a different format of course ID so we need to convert ours. 
-        // Ex: Convert ColumbiaX+CSMM.104x+3T2019 to CSMM104
-        var shortCourseId = courseId.split("+")[1]; 
-        shortCourseId = shortCourseId.substring(0, shortCourseId.length - 1);    
-        var finalCourseId = shortCourseId.replace(".", "");  
-
-        // Get the current date in Unix timestamp. 
-        var currentDate = new Date(); 
-        var currentDateTimestamp = currentDate.getTime() / 1000; 
-
-        
-        var start = getKeyByValue(courseDates, weekNumber);
-        var startDate = new Date(start);
-        var startDateTimestamp = (startDate.getTime() / 1000) - 300; // minius some margin
-        var endDateTimestamp = startDateTimestamp + 86400*7 + 600; // get the timestamp one weeks later + some margin
-
-        if (courseNumber == null)
-        {
-            courseNumber = ""; 
-        }
-
-        var settings = {
-            "async": true,
-            "crossDomain": true,
-            "url": SERVER_URL + "/api/posts",
-            "method": "GET",
-            "headers": {
-                'x-access-token': accessToken
-            },
-            "data": 
-            {
-                "email": email,
-                "courseId": courseNumber,
-                "startTime": startDateTimestamp,
-                "endTime": endDateTimestamp
-            }
-        };
-
-        $.ajax(settings).done(function (response) {
-
-           var result = response.data;
-           if (result != null)
-           {
-               var view1, posts1, view2, posts2;
-               result.sort(sortByTimestamp);
-               resultNum = result.length;
-               for (var i = 0; i < resultNum; i++) 
-               {
-                    if (result[i].Timestamp >= startDateTimestamp)
-                    {
-                        view1 = result[i].Views;
-                        posts1 = result[i]['Aggregated post'];
-                        break;
-                    }
-               }
-               for (var k = resultNum - 1; k >= 0; k--) 
-               {
-                    if (result[k].Timestamp <= endDateTimestamp)
-                    {
-                        view2 = result[k].Views;
-                        posts2 = result[k]['Aggregated post'];
-                        break;
-                    }
-               }
-               var views = view2 - view1;
-               var posts = posts2 - posts1;
-               logWeekPosts(views, posts);
-           }
-       });
-    }
-
-    // Save the discussion activity in this week's event record
-    function logWeekPosts(views, posts)
-    {
-        var email = analytics._user._getTraits().email; 
-
-        var settings = {
-            "async": true,
-            "crossDomain": true,
-            "url": SERVER_URL + "/api/events2",
-            "method": "POST",
-            "headers": {
-                'x-access-token': accessToken
-            },
-            "data": {
-                "userId": userId,
-                "email": email,
-                "group": group,
-                "courseId": courseId,
-                "weekNumber": weekNumber,
-                "weekId": weekId, 
-                "event": "Posts", 
-                "postsCreated": posts,
-                "postsViewed": views,
-                "contentId": "N/a"
-            }
-        }; 
-        
-        $.ajax(settings).done(function (response) {
-           // console.log("log posts");
-        }); 
-    } 
 
     //////////////////////////////////////////////
     //               HELPER FUNCTIONS           //
@@ -305,7 +191,6 @@
             } 
             else if (listening && vidlog.event_type === "pause_video") 
             {
-                console.log("in"); 
                 listening = false;
                 setTimeout(function () {
                     listening = true
