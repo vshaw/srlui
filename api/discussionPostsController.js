@@ -27,7 +27,8 @@ exports.getWeek = function (req, res) {
 exports.getAllByEmail = function (req, res) {
 
     var queryParams = {
-        'Email': req.query.email
+        'Email': req.query.email,
+        'Course ID': req.query.courseId
     };
 
     DiscussionPost.find(queryParams, function (err, activity) {
