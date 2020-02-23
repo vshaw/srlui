@@ -17,6 +17,8 @@ exports.create = async function (req, res) {
     event2.event = req.body.event; 
     event2.contentId = req.body.contentId; 
     event2.numQuestions = req.body.numQuestions;
+    event2.postsViewed = req.body.postsViewed; 
+    event2.postsCreated = req.body.postsCreated; 
 
     event2.save(function (err) {
         if (err) {
