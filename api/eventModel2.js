@@ -4,34 +4,28 @@ var mongoose = require('mongoose');
 // Setup schema
 var eventSchema2 = mongoose.Schema({
     userId: {
-        type: String,
-        required: true
+        type: String
     },
     email: {
         type: String 
     },
     group: {
-        type: String, 
-        required: true
+        type: String
     },
     courseId: {
-        type: String,
-        required: true
+        type: String
     },
     weekId: {
         type: String, 
     },
     weekNumber: {
-        type: Number, 
-        required: true
+        type: Number
     },
     event: {
-        type: String, 
-        required: true     
+        type: String
     },
     contentId: {
-        type: String, 
-        required: true     
+        type: String
     },
     numQuestions: {
         type: Number
