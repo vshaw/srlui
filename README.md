@@ -10,7 +10,7 @@ All the code for building the Weekly Reflection module is in the folder html_mod
   
 2. Study Planning
 
-  Add studyPlanning2.0.html to the edX unit in the Raw HTML section. This code uses the MDTimePicker library (https://github.com/dmuy/MDTimePicker). Download mdtimepicker.js and mdtimepicker.css and upload them to the "Files and Uploads" section.
+  Add studyPlanning2.0.html to the edX unit in the Raw HTML section. Then upload studyPlanning.js to the "Files and Uploads" section. This code also uses the MDTimePicker library (https://github.com/dmuy/MDTimePicker). Download mdtimepicker.js and mdtimepicker.css and upload them to the "Files and Uploads" section.
   
 3. Study Tips
 
