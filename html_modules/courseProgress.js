@@ -463,12 +463,12 @@
                     {
                         if (views != undefined && views != null)
                         {
-                            views = weekResult[i].postsViewed; 
+                            views = result[i].postsViewed; 
                         }
 
                         if (posts != undefined && posts != null)
                         {
-                            posts = weekResult[i].postsCreated; 
+                            posts = result[i].postsCreated; 
                         }
                     }
                 } 
