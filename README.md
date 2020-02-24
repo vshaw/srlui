@@ -20,3 +20,7 @@ All the code for building the Weekly Reflection module is in the folder html_mod
  
   Every edX module you want to track user activity (videos watched and questions answered) needs to have the sensor.html code in Raw HTML on that module. Additionally, upload the sensor.js code to "Files and Uploads". 
 
+ 5. Course Info 
+ 
+Finally, you need to create a javascript file called SRLUICourseInfo.js and upload it to the "Files and Uploads" section. A sample template is in the static_files folder. 
+
