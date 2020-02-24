@@ -257,7 +257,7 @@
     }
 
     // Create the table of selected goals
-    function createSavedVideoTable(additionalGoal)
+    function createSavedVideoTable(selectedVideos, additionalGoal)
     {
         document.getElementById("savedAdditionalGoal").innerHTML = additionalGoal;
         document.getElementById("savedVideoTableDiv").innerHTML = "";
