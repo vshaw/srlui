@@ -257,60 +257,63 @@
     }
 
     // Create the table of selected goals
-    function createSavedVideoTable(selectedVideos, additionalGoal)
+    function createSavedVideoTable(additionalGoal)
     {
+        document.getElementById("savedAdditionalGoal").innerHTML = additionalGoal;
         document.getElementById("savedVideoTableDiv").innerHTML = "";
 
-        var savedVideoTable = document.createElement('table');
-        var thead = document.createElement("thead");
-        var tbody = document.createElement("tbody");
-
-        var headRow = document.createElement("tr");
-
-        ["Week", "Content", "Time (hh:mm:ss)"].forEach(function(el) {
-            var th=document.createElement("th");
-            th.style.textAlign = "center"; 
-            th.appendChild(document.createTextNode(el));
-            headRow.appendChild(th);
-        });
-
-        thead.appendChild(headRow); 
-        savedVideoTable.appendChild(thead); 
-
-        // Create the table rows
-        for (var j=0; j < selectedVideos.length; j++)
+        if (selectedVideos != null)
         {
-            var tr = document.createElement("tr");
-            var contentArray = selectedVideos[j].split("_");
+            var savedVideoTable = document.createElement('table');
+            var thead = document.createElement("thead");
+            var tbody = document.createElement("tbody");
+
+            var headRow = document.createElement("tr");
+
+            ["Week", "Content", "Time (hh:mm:ss)"].forEach(function(el) {
+                var th=document.createElement("th");
+                th.style.textAlign = "center"; 
+                th.appendChild(document.createTextNode(el));
+                headRow.appendChild(th);
+            });
+
+            thead.appendChild(headRow); 
+            savedVideoTable.appendChild(thead); 
+
+            // Create the table rows
+            for (var j=0; j < selectedVideos.length; j++)
+            {
+                var tr = document.createElement("tr");
+                var contentArray = selectedVideos[j].split("_");
 
 
-            var weekTd = document.createElement("td");
-            weekTd.style.textAlign = "center"; 
-            weekTd.appendChild(document.createTextNode(contentArray[0]));
+                var weekTd = document.createElement("td");
+                weekTd.style.textAlign = "center"; 
+                weekTd.appendChild(document.createTextNode(contentArray[0]));
 
-            contentArray.splice(0, 1);
+                contentArray.splice(0, 1);
 
-            var timeTd = document.createElement("td");
-            timeTd.style.textAlign = "center"; 
-            timeTd.appendChild(document.createTextNode(contentArray[contentArray.length - 1]));
+                var timeTd = document.createElement("td");
+                timeTd.style.textAlign = "center"; 
+                timeTd.appendChild(document.createTextNode(contentArray[contentArray.length - 1]));
 
-            contentArray.splice(contentArray.length - 1, 1);
+                contentArray.splice(contentArray.length - 1, 1);
 
-            var contentTd = document.createElement("td");
-            contentTd.style.textAlign = "center"; 
-            contentTd.appendChild(document.createTextNode(contentArray.join(' ')));
+                var contentTd = document.createElement("td");
+                contentTd.style.textAlign = "center"; 
+                contentTd.appendChild(document.createTextNode(contentArray.join(' ')));
 
-            tr.appendChild(weekTd); 
-            tr.appendChild(timeTd); 
-            tr.appendChild(contentTd); 
+                tr.appendChild(weekTd); 
+                tr.appendChild(timeTd); 
+                tr.appendChild(contentTd); 
 
-            tbody.appendChild(tr);
+                tbody.appendChild(tr);
+            }
+
+            savedVideoTable.appendChild(tbody); 
+
+            document.getElementById("savedVideoTableDiv").appendChild(savedVideoTable);
         }
-
-        savedVideoTable.appendChild(tbody); 
-
-        document.getElementById("savedVideoTableDiv").appendChild(savedVideoTable);
-        document.getElementById("savedAdditionalGoal").innerHTML = additionalGoal;
     }
 
     // Get past week's numbers 
@@ -380,8 +383,15 @@
                     }
                     else if (weekResult[i].event.includes("Posts"))
                     {
-                        views = weekResult[i].postsViewed; 
-                        posts = weekResult[i].postsCreated; 
+                        if (views != undefined && views != null)
+                        {
+                            views = weekResult[i].postsViewed; 
+                        }
+
+                        if (posts != undefined && posts != null)
+                        {
+                            posts = weekResult[i].postsCreated; 
+                        }
                     }
                 }
             }
@@ -451,8 +461,15 @@
                     }
                     else if (result[i].event.includes("Posts"))
                     {
-                        views = result[i].postsViewed; 
-                        posts = result[i].postsCreated; 
+                        if (views != undefined && views != null)
+                        {
+                            views = weekResult[i].postsViewed; 
+                        }
+
+                        if (posts != undefined && posts != null)
+                        {
+                            posts = weekResult[i].postsCreated; 
+                        }
                     }
                 } 
                 else
@@ -485,8 +502,15 @@
                     }
                     else if (result[i].event.includes("Posts"))
                     {
-                        views = result[i].postsViewed; 
-                        posts = result[i].postsCreated; 
+                        if (views != undefined && views != null)
+                        {
+                            views = weekResult[i].postsViewed; 
+                        }
+
+                        if (posts != undefined && posts != null)
+                        {
+                            posts = weekResult[i].postsCreated; 
+                        }
                     }
 
                     week++; 
