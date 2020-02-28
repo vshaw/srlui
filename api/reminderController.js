@@ -4,10 +4,6 @@ let agenda = require('../jobs/agenda');
 // Import event model
 Reminder = require('./reminderModel');
 
-const mailgun = require("mailgun-js");
-const DOMAIN = "mg.columbiaxstudyplanning.com";
-const mg = mailgun({apiKey: process.env.MAILGUN_API_KEY, domain: process.env.MAILGUN_DOMAIN});
-
 // Handle create contact actions
 // Handle create contact actions
 exports.new = async function (req, res) {
@@ -19,6 +15,7 @@ exports.new = async function (req, res) {
     reminder.weekNumber = req.body.weekNumber;
     reminder.weekId = req.body.weekId;
     reminder.content = req.body.content;
+    reminder.url = req.body.url;
 
     reminder.task1 = req.body.task1 ? req.body.task1 : null;
     reminder.date1 = req.body.date1 ? req.body.date1 : null;
@@ -54,6 +51,8 @@ exports.new = async function (req, res) {
         from: 'ColumbiaX Study Planning <columbiaxcvn@gmail.com>',
         to: reminder.email,
         subject: 'Your ColumbiaX Study Planning Reminder',
+        template: "study_planning",
+        "v:courseUrl": reminder.url
     };
 
     var emailText1 = "Hello, here is your reminder to begin the following task in ";
@@ -76,7 +75,9 @@ exports.new = async function (req, res) {
     {
         var date = new Date(reminder.date1);
 
-        data.text = emailText1 + reminder.offset1 + emailText2 + reminder.task1;
+        data["v:offset"] = reminder.offset1;
+        data["v:task"] = reminder.task1;
+
         await agenda.schedule(date, 'email task', data);
     }
 
@@ -84,7 +85,9 @@ exports.new = async function (req, res) {
     {
         var date = new Date(reminder.date2);
 
-        data.text = emailText1 + reminder.offset2 + emailText2 + reminder.task2;
+        data["v:offset"] = reminder.offset2;
+        data["v:task"] = reminder.task2;
+
         await agenda.schedule(date, 'email task', data);
     }
 
@@ -92,7 +95,9 @@ exports.new = async function (req, res) {
     {
         var date = new Date(reminder.date3);
 
-        data.text = emailText1 + reminder.offset3 + emailText2 + reminder.task3;
+        data["v:offset"] = reminder.offset3;
+        data["v:task"] = reminder.task3;
+
         await agenda.schedule(date, 'email task', data);
     }
 
@@ -100,7 +105,9 @@ exports.new = async function (req, res) {
     {
         var date = new Date(reminder.date4);
 
-        data.text = emailText1 + reminder.offset4 + emailText2 + reminder.task4;
+        data["v:offset"] = reminder.offset4;
+        data["v:task"] = reminder.task4;
+
         await agenda.schedule(date, 'email task', data);
     }
 
@@ -108,7 +115,9 @@ exports.new = async function (req, res) {
     {
         var date = new Date(reminder.date5);
 
-        data.text = emailText1 + reminder.offset5 + emailText2 + reminder.task5;
+        data["v:offset"] = reminder.offset5;
+        data["v:task"] = reminder.task5;
+
         await agenda.schedule(date, 'email task', data);
     }
 
@@ -116,7 +125,9 @@ exports.new = async function (req, res) {
     {
         var date = new Date(reminder.date6);
 
-        data.text = emailText1 + reminder.offset6 + emailText2 + reminder.task6;
+        data["v:offset"] = reminder.offset6;
+        data["v:task"] = reminder.task6;
+
         await agenda.schedule(date, 'email task', data);
     }
 
@@ -124,7 +135,9 @@ exports.new = async function (req, res) {
     {
         var date = new Date(reminder.date7);
 
-        data.text = emailText1 + reminder.offset7 + emailText2 + reminder.task7;
+        data["v:offset"] = reminder.offset7;
+        data["v:task"] = reminder.task7;
+
         await agenda.schedule(date, 'email task', data);
     }
 };
@@ -142,23 +155,6 @@ exports.index = function (req, res) {
             message: "Reminders retrieved successfully",
             data: reminders
         });
-    });
-};
-
-exports.sendTestMail = function (req, res) {
-
-    var data = {
-        from: 'ColumbiaX Study Planning <columbiaxcvn@gmail.com>',
-        to: "shaw.vivienne@gmail.com",
-        subject: 'Your ColumbiaX Study Planning Reminder',
-        template:"study_planning",
-        "v:offset": "10",
-        "v:task": "my task", 
-        "v:courseUrl": "courseUrl.com"
-    };
-
-    mg.messages().send(data, function (error, body) {
-        console.log(body);
     });
 };
 
