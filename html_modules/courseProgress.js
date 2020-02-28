@@ -197,8 +197,19 @@
 
                         //Begin recording the new week 
                         week++; 
-                        weekEndDate = getKeyByValue(courseDates, week + 1);
-                        weekEndDateObj = new Date(weekEndDate);
+
+                        if (week == 12)
+                        {
+                            weekEndDate = getKeyByValue(courseDates, 12);
+                            weekEndDateObj = new Date(weekEndDate);
+                            weekEndDateObj.setDate(weekEndDateObj.getDate() + 7);
+                        }
+                        else
+                        {
+                            weekEndDate = getKeyByValue(courseDates, week + 1);
+                            weekEndDateObj = new Date(weekEndDate);
+                        }
+
                         weekEndDateTimestamp = (weekEndDateObj.getTime() / 1000) - 300;
 
                         cummulativeViews += tempWeekView; 
@@ -502,7 +513,7 @@
                     type: "spline", 
                     showInLegend: true,
                     yValueFormatString: "",
-                    name: "Questions Answered",
+                    name: "Questions Tried",
                     dataPoints: aggQuestionsAnswered
                 } ]
             });
