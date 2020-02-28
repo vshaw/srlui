@@ -158,7 +158,7 @@ exports.sendTestMail = function (req, res) {
     mg.messages().send(data, function (error, body) {
         console.log(body);
     });
-}
+};
 
 // Handle delete reminder
 exports.delete = function (req, res) {
