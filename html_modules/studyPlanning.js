@@ -638,6 +638,15 @@
 
         var finalDate7 = getFinalSendDate(date7, time7, offset7);
 
+        var finalUrl = ""; 
+        var url = window.location.href;
+        var urlArray = url.split("courseware"); 
+
+        if (urlArray.length > 0)
+        {
+            finalUrl = urlArray[0]; 
+        }
+
         var settings = {
             "async": true,
             "crossDomain": true,
@@ -652,6 +661,7 @@
                 "courseId": courseId, 
                 "weekId": weekId, 
                 "weekNumber": weekNumber, 
+                "url": url,
                 "task1": task1, 
                 "date1": finalDate1, 
                 "offset1": offset1,
