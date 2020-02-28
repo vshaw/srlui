@@ -170,10 +170,10 @@
                var cummulativePosts = 0; 
 
                var week = 1; 
-               var weekDate = getKeyByValue(courseDates, week);
+               var weekEndDate = getKeyByValue(courseDates, week + 1);
 
-               var weekDateObj = new Date(weekDate);
-               var weekDateTimestamp = (weekDateObj.getTime() / 1000) - 300;
+               var weekEndDateObj = new Date(weekEndDate);
+               var weekEndDateTimestamp = (weekEndDateObj.getTime() / 1000) - 300;
 
                var tempArray = {};
                var postsPerWeek = {}; 
@@ -181,7 +181,7 @@
                for (var i = 0; i < result.length; i++) 
                {
                     // Get views/posts for previous weeks 
-                    if (result[i].Timestamp < weekDateTimestamp)
+                    if (result[i].Timestamp < weekEndDateTimestamp)
                     {
                         // Since edstem does cummulative data, we have to subtract the total of the previous weeks
                         tempWeekView = result[i].Views - cummulativeViews; 
@@ -197,9 +197,9 @@
 
                         //Begin recording the new week 
                         week++; 
-                        weekDate = getKeyByValue(courseDates, week);
-                        weekDateObj = new Date(weekDate);
-                        weekDateTimestamp = (weekDateObj.getTime() / 1000) - 300;
+                        weekEndDate = getKeyByValue(courseDates, week + 1);
+                        weekEndDateObj = new Date(weekEndDate);
+                        weekEndDateTimestamp = (weekEndDateObj.getTime() / 1000) - 300;
 
                         cummulativeViews += tempWeekView; 
                         cummulativePosts += tempWeekPosts; 
