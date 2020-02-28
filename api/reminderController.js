@@ -152,7 +152,9 @@ exports.sendTestMail = function (req, res) {
         to: "shaw.vivienne@gmail.com",
         subject: 'Your ColumbiaX Study Planning Reminder',
         template:"study_planning",
-        'h:X-Mailgun-Variables': {"[Offset]": "10", "[Task]": "my task", "[CourseUrl]": "courseUrl.com"}
+        'v:[Offset]': "10",
+        'v:[Task]': "my task",
+        'v:[CourseUrl]': "courseUrl.com"
     };
 
     mg.messages().send(data, function (error, body) {
