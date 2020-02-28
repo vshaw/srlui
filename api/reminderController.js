@@ -179,7 +179,7 @@ exports.sendTestMail = function (req, res) {
 
     var data = {
         from: 'ColumbiaX Study Planning <columbiaxcvn@gmail.com>',
-        to: shaw.vivienne@gmail.com,
+        to: "shaw.vivienne@gmail.com",
         subject: 'Your ColumbiaX Study Planning Reminder',
         template:"study_planning",
         'h:X-Mailgun-Variables': {"[Offset]": "10", "[Task]": "my task", "[CourseUrl]": "courseUrl.com"}
