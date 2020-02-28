@@ -152,9 +152,9 @@ exports.sendTestMail = function (req, res) {
         to: "shaw.vivienne@gmail.com",
         subject: 'Your ColumbiaX Study Planning Reminder',
         template:"study_planning",
-        'v:[Offset]': "10",
-        'v:[Task]': "my task",
-        'v:[CourseUrl]': "courseUrl.com"
+        "v:[Offset]": "10",
+        "v:[Task]": "my task",
+        "v:[CourseUrl]": "courseUrl.com"
     };
 
     mg.messages().send(data, function (error, body) {
