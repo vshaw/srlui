@@ -35,7 +35,7 @@ router.route('/tasks')
     .get(auth, reminderController.index)
     .delete(auth, reminderController.delete)
 router.route('/tasks/test')
-    .post(auth, sendTestMail)
+    .post(auth, reminderController.sendTestMail)
 
 router.route('/rating')
     .post(auth, ratingController.createOrUpdate)
