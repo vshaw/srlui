@@ -24,7 +24,7 @@ var reminderSchema = mongoose.Schema({
     },
     url: {
         type: String,
-    }
+    },
     task1: {
         type: String, 
     },
