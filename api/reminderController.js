@@ -4,13 +4,11 @@ let agenda = require('../jobs/agenda');
 // Import event model
 Reminder = require('./reminderModel');
 
-// Email template
-let emailTemplate = require('./mailgun/email_template');
-
 const mailgun = require("mailgun-js");
 const DOMAIN = "mg.columbiaxstudyplanning.com";
 const mg = mailgun({apiKey: process.env.MAILGUN_API_KEY, domain: process.env.MAILGUN_DOMAIN});
 
+// Handle create contact actions
 // Handle create contact actions
 exports.new = async function (req, res) {
 
@@ -78,11 +76,7 @@ exports.new = async function (req, res) {
     {
         var date = new Date(reminder.date1);
 
-        var text = emailTemplate;
-        text.replace("[Offset]", reminder.offset1)
-        text.replace("[Task]", reminder.task1)
-
-        data.html = text;
+        data.text = emailText1 + reminder.offset1 + emailText2 + reminder.task1;
         await agenda.schedule(date, 'email task', data);
     }
 
@@ -90,11 +84,7 @@ exports.new = async function (req, res) {
     {
         var date = new Date(reminder.date2);
 
-        var text = emailTemplate;
-        text.replace("[Offset]", reminder.offset2)
-        text.replace("[Task]", reminder.task2)
-
-        data.html = text;
+        data.text = emailText1 + reminder.offset2 + emailText2 + reminder.task2;
         await agenda.schedule(date, 'email task', data);
     }
 
@@ -102,11 +92,7 @@ exports.new = async function (req, res) {
     {
         var date = new Date(reminder.date3);
 
-        var text = emailTemplate;
-        text.replace("[Offset]", reminder.offset3)
-        text.replace("[Task]", reminder.task3)
-
-        data.html = text;
+        data.text = emailText1 + reminder.offset3 + emailText2 + reminder.task3;
         await agenda.schedule(date, 'email task', data);
     }
 
@@ -114,11 +100,7 @@ exports.new = async function (req, res) {
     {
         var date = new Date(reminder.date4);
 
-        var text = emailTemplate;
-        text.replace("[Offset]", reminder.offset4)
-        text.replace("[Task]", reminder.task4)
-
-        data.html = text;
+        data.text = emailText1 + reminder.offset4 + emailText2 + reminder.task4;
         await agenda.schedule(date, 'email task', data);
     }
 
@@ -126,11 +108,7 @@ exports.new = async function (req, res) {
     {
         var date = new Date(reminder.date5);
 
-        var text = emailTemplate;
-        text.replace("[Offset]", reminder.offset5)
-        text.replace("[Task]", reminder.task5)
-
-        data.html = text;
+        data.text = emailText1 + reminder.offset5 + emailText2 + reminder.task5;
         await agenda.schedule(date, 'email task', data);
     }
 
@@ -138,11 +116,7 @@ exports.new = async function (req, res) {
     {
         var date = new Date(reminder.date6);
 
-        var text = emailTemplate;
-        text.replace("[Offset]", reminder.offset6)
-        text.replace("[Task]", reminder.task6)
-
-        data.html = text;
+        data.text = emailText1 + reminder.offset6 + emailText2 + reminder.task6;
         await agenda.schedule(date, 'email task', data);
     }
 
@@ -150,11 +124,7 @@ exports.new = async function (req, res) {
     {
         var date = new Date(reminder.date7);
 
-        var text = emailTemplate;
-        text.replace("[Offset]", reminder.offset7)
-        text.replace("[Task]", reminder.task7)
-
-        data.html = text;
+        data.text = emailText1 + reminder.offset7 + emailText2 + reminder.task7;
         await agenda.schedule(date, 'email task', data);
     }
 };
