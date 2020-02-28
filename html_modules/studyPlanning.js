@@ -661,7 +661,7 @@
                 "courseId": courseId, 
                 "weekId": weekId, 
                 "weekNumber": weekNumber, 
-                "url": url,
+                "url": finalUrl,
                 "task1": task1, 
                 "date1": finalDate1, 
                 "offset1": offset1,
