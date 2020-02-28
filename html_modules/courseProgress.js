@@ -1,8 +1,9 @@
- var userId; 
+    var userId; 
     var courseId; 
     var weekNumber; 
     var weekId; 
     var devShowTreatment = false; 
+    var postsArray = {};
 
     var SERVER_URL = "https://guarded-mesa-27479.herokuapp.com";
 
@@ -127,19 +128,10 @@
     function getWeekPosts() {
         var email = analytics._user._getTraits().email; 
 
-        // The activity database stores a different format of course ID so we need to convert ours. 
-        // Ex: Convert ColumbiaX+CSMM.104x+3T2019 to CSMM104
-        var shortCourseId = courseId.split("+")[1]; 
-        shortCourseId = shortCourseId.substring(0, shortCourseId.length - 1);    
-        var finalCourseId = shortCourseId.replace(".", "");  
-
-        // Get the current date in Unix timestamp. 
-        var currentDate = new Date(); 
-        var currentDateTimestamp = currentDate.getTime() / 1000; 
-
-        
-        var start = getKeyByValue(courseDates, weekNumber);
+        var start = getKeyByValue(courseDates, 1);
         var startDate = new Date(start);
+        
+
         var startDateTimestamp = (startDate.getTime() / 1000) - 300; // minius some margin
         var endDateTimestamp = startDateTimestamp + 86400*7 + 600; // get the timestamp one weeks later + some margin
 
@@ -151,7 +143,7 @@
         var settings = {
             "async": true,
             "crossDomain": true,
-            "url": SERVER_URL + "/api/posts",
+            "url": SERVER_URL + "/api/posts/course",
             "method": "GET",
             "headers": {
                 'x-access-token': accessToken
@@ -159,101 +151,71 @@
             "data": 
             {
                 "email": email,
-                "courseNumber": courseNumber,
-                "startTime": startDateTimestamp,
-                "endTime": endDateTimestamp
+                "courseNumber": courseNumber
             }
         };
 
-
         $.ajax(settings).done(function (response) {
+
            var result = response.data;
+
            if (result != null)
            {
-               var view1 = 0; 
-               var posts1 = 0; 
-               var view2 = 0; 
-               var posts2 = 0;
                result.sort(sortByTimestamp);
-               resultNum = result.length;
 
-               var index = -1; 
+               var tempWeekView = 0; 
+               var tempWeekPosts = 0; 
 
-               for (var i = 0; i < resultNum; i++) 
+               var cummulativeViews = 0; 
+               var cummulativePosts = 0; 
+
+               var week = 1; 
+               var weekDate = getKeyByValue(courseDates, week);
+
+               var weekDateObj = new Date(weekDate);
+               var weekDateTimestamp = (weekDateObj.getTime() / 1000) - 300;
+
+               var tempArray = {};
+               var postsPerWeek = {}; 
+               
+               for (var i = 0; i < result.length; i++) 
                {
-                    if (result[i].Timestamp >= startDateTimestamp)
+                    // Get views/posts for previous weeks 
+                    if (result[i].Timestamp < weekDateTimestamp)
                     {
-                        view1 = result[i].Views;
-                        posts1 = result[i]['Aggregated post'];
-                        index = i; 
-                        break;
+                        // Since edstem does cummulative data, we have to subtract the total of the previous weeks
+                        tempWeekView = result[i].Views - cummulativeViews; 
+                        tempWeekPosts = result[i]['Aggregated post'] - cummulativePosts;
+                    }
+                    else
+                    {
+                        // Record views/posts for the previous week and increment the week number 
+                        // Save the amount for the past week 
+                        tempArray = {"Views": tempWeekView, "Posts": tempWeekPosts};
+                        
+                        postsPerWeek[week] = tempArray; 
+
+                        //Begin recording the new week 
+                        week++; 
+                        weekDate = getKeyByValue(courseDates, week);
+                        weekDateObj = new Date(weekDate);
+                        weekDateTimestamp = (weekDateObj.getTime() / 1000) - 300;
+
+                        cummulativeViews += tempWeekView; 
+                        cummulativePosts += tempWeekPosts; 
+
+                        tempWeekView = result[i].Views - cummulativeViews;
+                        tempWeekPosts = result[i]['Aggregated post'] - cummulativePosts;
                     }
                }
 
-               for (var k = resultNum - 1; k >= 0; k--) 
-               {
-                    if (result[k].Timestamp <= endDateTimestamp && k != index)
-                    {
-                        view2 = result[k].Views;
-                        posts2 = result[k]['Aggregated post'];
-                        break;
-                    }
-               }
+               // This should be the current week
+               tempArray = {"Views": tempWeekView, "Posts": tempWeekPosts};
+               postsPerWeek[week] = tempArray; 
 
-               var views = view2 - view1;
-               var posts = posts2 - posts1;
-
-               if (view2 == 0)
-               {
-                    views = view1; 
-               }
-
-               if (posts2 == 0) 
-               {
-                    posts = posts1; 
-               }
-
-               logWeekPosts(views, posts);
+               postsArray = postsPerWeek; 
            }
        });
-    }
-
-    // Save the discussion activity in this week's event record
-    function logWeekPosts(views, posts)
-    {
-        var email = analytics._user._getTraits().email; 
-
-        var group = "Control"; 
-
-        if (userId % 2 != 0)
-        {
-            group = "Treatment"; 
-        }
-
-        var settings = {
-            "async": true,
-            "crossDomain": true,
-            "url": SERVER_URL + "/api/events2",
-            "method": "POST",
-            "headers": {
-                'x-access-token': accessToken
-            },
-            "data": {
-                "userId": userId,
-                "email": email,
-                "group": group,
-                "courseId": courseId,
-                "weekNumber": weekNumber,
-                "weekId": weekId, 
-                "event": "Posts", 
-                "postsCreated": posts,
-                "postsViewed": views,
-                "contentId": "N/a"
-            }
-        }; 
-        
-        $.ajax(settings).done(function (response) {
-        }); 
     }
 
     // Create the table of selected goals
@@ -342,65 +304,54 @@
 
         if (pastWeekNumber > 0)
         {
+            // Send GET request for to get activity for specific user/course/week number. 
+            var settings = {
+                "async": true,
+                "crossDomain": true,
+                "url": SERVER_URL + "/api/events2/week",
+                "method": "GET",
+                "headers": {
+                    'x-access-token': accessToken
+                },
+                "data": {
+                    "userId": userId,
+                    "courseId": courseId, 
+                    "weekNumber": pastWeekNumber,
+                    "email": email
+                }
+            };
 
-        // Send GET request for to get activity for specific user/course/week number. 
-        var settings = {
-            "async": true,
-            "crossDomain": true,
-            "url": SERVER_URL + "/api/events2/week",
-            "method": "GET",
-            "headers": {
-                'x-access-token': accessToken
-            },
-            "data": {
-                "userId": userId,
-                "courseId": courseId, 
-                "weekNumber": pastWeekNumber,
-                "email": email
-            }
-        };
+            $.ajax(settings).done(function (response) {
 
-        $.ajax(settings).done(function (response) {
+                var weekResult = response.data; 
 
-            var weekResult = response.data; 
+                var videos = 0; 
+                var questions = 0; 
 
-            var videos = 0; 
-            var questions = 0; 
-            var views = 0; 
-            var posts = 0; 
-
-            if (weekResult != null && weekResult.length > 0)
-            {
-                for (var i = 0; i < weekResult.length; i++)
+                if (weekResult != null && weekResult.length > 0)
                 {
-                    if (weekResult[i].event.includes("video"))
+                    for (var i = 0; i < weekResult.length; i++)
                     {
-                        videos++; 
-                    }
-                    else if (weekResult[i].event.includes("questions"))
-                    {
-                        questions += weekResult[i].numQuestions; 
-                    }
-                    else if (weekResult[i].event.includes("Posts"))
-                    {
-                        if (views != undefined && views != null)
+                        if (weekResult[i].event.includes("video"))
                         {
-                            views = weekResult[i].postsViewed; 
+                            videos++; 
                         }
-
-                        if (posts != undefined && posts != null)
+                        else if (weekResult[i].event.includes("questions"))
                         {
-                            posts = weekResult[i].postsCreated; 
+                            questions += weekResult[i].numQuestions; 
                         }
                     }
                 }
-            }
 
-            document.getElementById("videosWatched").innerHTML = videos; 
-            document.getElementById("questionsAnswered").innerHTML = questions; 
-            document.getElementById("postsViewed").innerHTML = views; 
-            document.getElementById("postsCreated").innerHTML = posts; 
-        });
+                document.getElementById("videosWatched").innerHTML = videos; 
+                document.getElementById("questionsAnswered").innerHTML = questions; 
+
+                if (postsArray[pastWeekNumber] != undefined)
+                {
+                    document.getElementById("postsViewed").innerHTML = postsArray[pastWeekNumber].Views; 
+                    document.getElementById("postsCreated").innerHTML = postsArray[pastWeekNumber].Posts; 
+                }
+            });
         }          
     };
 
@@ -434,7 +385,7 @@
             var result = response.data; 
             result.sort(sortByWeekNumber);
 
-            if (result.length != 0)
+            if (result.length != 0 || postsArray.length != 0)
             {
                 document.getElementById("noDataText").style.display = "none"; 
             }
@@ -442,13 +393,10 @@
             var week = 1; 
             var videos = 0; 
             var questions = 0; 
-            var views = 0; 
-            var posts = 0; 
 
             // Set data points for line chart
             for (var i = 0; i < result.length; i++)
             {
-
                 if (result[i]!= null && result[i].weekNumber == week)
                 {
                     if (result[i].event.includes("video"))
@@ -459,18 +407,6 @@
                     {
                         questions += result[i].numQuestions; 
                     }
-                    else if (result[i].event.includes("Posts"))
-                    {
-                        if (views != undefined && views != null)
-                        {
-                            views = result[i].postsViewed; 
-                        }
-
-                        if (posts != undefined && posts != null)
-                        {
-                            posts = result[i].postsCreated; 
-                        }
-                    }
                 } 
                 else
                 {
@@ -478,19 +414,20 @@
                     var startDate = getKeyByValue(courseDates, week); 
 
                     var dates = startDate.split("-");
-
                     var weekString = "Week " + week + " (" + dates[1] + "/" + dates[2] + ")"; 
         
                     aggVideosWatched.push({label: weekString, y: videos});
                     aggQuestionsAnswered.push({label: weekString, y: questions});
-                    aggPostsCreated.push({label: weekString, y: views});
-                    aggPostsViewed.push({label: weekString, y: posts});
 
+                    if (postsArray[week] != undefined)
+                    {
+                        aggPostsCreated.push({label: weekString, y: postsArray[week].Posts});
+                        aggPostsViewed.push({label: weekString, y: postsArray[week].Views});
+                    }
+
+                    // Start recording the first of the new week 
                     videos = 0; 
                     questions = 0; 
-                    views = 0; 
-                    posts = 0; 
-
 
                     if (result[i].event.includes("video"))
                     {
@@ -499,18 +436,6 @@
                     else if (result[i].event.includes("questions"))
                     {
                         questions += result[i].numQuestions; 
-                    }
-                    else if (result[i].event.includes("Posts"))
-                    {
-                        if (views != undefined && views != null)
-                        {
-                            views = weekResult[i].postsViewed; 
-                        }
-
-                        if (posts != undefined && posts != null)
-                        {
-                            posts = weekResult[i].postsCreated; 
-                        }
                     }
 
                     week++; 
@@ -526,8 +451,12 @@
 
             aggVideosWatched.push({label: weekString, y: videos});
             aggQuestionsAnswered.push({label: weekString, y: questions});
-            aggPostsCreated.push({label: weekString, y: views});
-            aggPostsViewed.push({label: weekString, y: posts});
+
+            if (postsArray[week] != undefined)
+            {
+                aggPostsCreated.push({label: weekString, y: postsArray[week].Posts});
+                aggPostsViewed.push({label: weekString, y: postsArray[week].Views});
+            }
 
             // Create chart 
             var chart = new CanvasJS.Chart("chartContainer", {
@@ -701,12 +630,12 @@
     {
         if (record1.Timestamp > record2.Timestamp)
         {
-            return -1; 
+            return 1; 
         }
 
         if (record1.Timestamp < record2.Timestamp)
         {
-            return 1; 
+            return -1; 
         }
 
         return 0; 
