@@ -158,7 +158,7 @@
         $.ajax(settings).done(function (response) {
 
            var result = response.data;
-
+           
            if (result != null)
            {
                result.sort(sortByTimestamp);
@@ -405,7 +405,7 @@
             var videos = 0; 
             var questions = 0; 
 
-            // Set data points for line chart
+            // Set Video and Question data points for line chart
             for (var i = 0; i < result.length; i++)
             {
                 if (result[i]!= null && result[i].weekNumber == week)
@@ -429,12 +429,6 @@
         
                     aggVideosWatched.push({label: weekString, y: videos});
                     aggQuestionsAnswered.push({label: weekString, y: questions});
-
-                    if (postsArray[week] != undefined)
-                    {
-                        aggPostsCreated.push({label: weekString, y: postsArray[week].Posts});
-                        aggPostsViewed.push({label: weekString, y: postsArray[week].Views});
-                    }
 
                     // Start recording the first of the new week 
                     videos = 0; 
@@ -463,10 +457,23 @@
             aggVideosWatched.push({label: weekString, y: videos});
             aggQuestionsAnswered.push({label: weekString, y: questions});
 
-            if (postsArray[week] != undefined)
+            // Collect posts/views data points
+            week = 1; 
+
+            for (var i = 0; i < Object.keys(postsArray).length; i++)
             {
-                aggPostsCreated.push({label: weekString, y: postsArray[week].Posts});
-                aggPostsViewed.push({label: weekString, y: postsArray[week].Views});
+                var startDate = getKeyByValue(courseDates, week); 
+
+                var dates = startDate.split("-");
+                var weekString = "Week " + week + " (" + dates[1] + "/" + dates[2] + ")"; 
+
+                if (postsArray[week] != undefined)
+                {
+                    aggPostsCreated.push({label: weekString, y: postsArray[week].Posts});
+                    aggPostsViewed.push({label: weekString, y: postsArray[week].Views});
+                }
+
+                week++; 
             }
 
             // Create chart 
