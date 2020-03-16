@@ -58,6 +58,14 @@ exports.new = async function (req, res) {
     var emailText1 = "Hello, here is your reminder to begin the following task in ";
     var emailText2 = " minutes: \n\n";
 
+    if (reminder.task1 != null || 
+        reminder.task2 != null ||
+        reminder.task3 != null ||
+        reminder.task4 != null ||
+        reminder.task5 != null ||
+        reminder.task6 != null ||
+        reminder.task7 != null ||)
+    {
     // save the reminder and check for errors
     await reminder.save(function (err) {
         if (err) {
@@ -68,7 +76,7 @@ exports.new = async function (req, res) {
             data: reminder
         });
     }); 
-
+    }
     // Schedule tasks via agenda 
 
     if (reminder.date1 != null && reminder.task1 != null)
