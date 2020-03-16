@@ -64,7 +64,7 @@ exports.new = async function (req, res) {
         reminder.task4 != null ||
         reminder.task5 != null ||
         reminder.task6 != null ||
-        reminder.task7 != null ||)
+        reminder.task7 != null)
     {
     // save the reminder and check for errors
     await reminder.save(function (err) {
