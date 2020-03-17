@@ -69,6 +69,7 @@ exports.new = async function (req, res) {
     // save the reminder and check for errors
     await reminder.save(function (err) {
         if (err) {
+            console.log(err);
             res.json(err);
         }
         res.json({
