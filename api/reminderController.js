@@ -66,88 +66,88 @@ exports.new = async function (req, res) {
         reminder.task6 != null ||
         reminder.task7 != null)
     {
-    // save the reminder and check for errors
-    await reminder.save(function (err) {
-        if (err) {
-            console.log(err);
-            res.json(err);
-        }
-        res.json({
-            message: 'New reminder created!',
-            data: reminder
+        // save the reminder and check for errors
+        await reminder.save(function (err) {
+            if (err) {
+                console.log(err);
+                res.json(err);
+            }
+            res.json({
+                message: 'New reminder created!',
+                data: reminder
+            });
         });
-    }); 
-    }
-    // Schedule tasks via agenda 
 
-    if (reminder.date1 != null && reminder.task1 != null)
-    {
-        var date = new Date(reminder.date1);
+        // Schedule tasks via agenda 
+        if (reminder.date1 != null && reminder.task1 != null)
+        {
+            var date = new Date(reminder.date1);
 
-        data["v:offset"] = reminder.offset1;
-        data["v:task"] = reminder.task1;
+            data["v:offset"] = reminder.offset1;
+            data["v:task"] = reminder.task1;
 
-        await agenda.schedule(date, 'email task', data);
-    }
+            await agenda.schedule(date, 'email task', data);
+        }
 
-    if (reminder.date2 != null && reminder.task2 != null)
-    {
-        var date = new Date(reminder.date2);
+        if (reminder.date2 != null && reminder.task2 != null)
+        {
+            var date = new Date(reminder.date2);
 
-        data["v:offset"] = reminder.offset2;
-        data["v:task"] = reminder.task2;
+            data["v:offset"] = reminder.offset2;
+            data["v:task"] = reminder.task2;
 
-        await agenda.schedule(date, 'email task', data);
-    }
+            await agenda.schedule(date, 'email task', data);
+        }
 
-    if (reminder.date3 != null && reminder.task3 != null)
-    {
-        var date = new Date(reminder.date3);
+        if (reminder.date3 != null && reminder.task3 != null)
+        {
+            var date = new Date(reminder.date3);
 
-        data["v:offset"] = reminder.offset3;
-        data["v:task"] = reminder.task3;
+            data["v:offset"] = reminder.offset3;
+            data["v:task"] = reminder.task3;
 
-        await agenda.schedule(date, 'email task', data);
-    }
+            await agenda.schedule(date, 'email task', data);
+        }
 
-    if (reminder.date4 != null && reminder.task4 != null)
-    {
-        var date = new Date(reminder.date4);
+        if (reminder.date4 != null && reminder.task4 != null)
+        {
+            var date = new Date(reminder.date4);
 
-        data["v:offset"] = reminder.offset4;
-        data["v:task"] = reminder.task4;
+            data["v:offset"] = reminder.offset4;
+            data["v:task"] = reminder.task4;
 
-        await agenda.schedule(date, 'email task', data);
-    }
+            await agenda.schedule(date, 'email task', data);
+        }
 
-    if (reminder.date5 != null && reminder.task5 != null)
-    {
-        var date = new Date(reminder.date5);
+        if (reminder.date5 != null && reminder.task5 != null)
+        {
+            var date = new Date(reminder.date5);
 
-        data["v:offset"] = reminder.offset5;
-        data["v:task"] = reminder.task5;
+            data["v:offset"] = reminder.offset5;
+            data["v:task"] = reminder.task5;
 
-        await agenda.schedule(date, 'email task', data);
-    }
+            await agenda.schedule(date, 'email task', data);
+        }
 
-    if (reminder.date6 != null && reminder.task6 != null)
-    {
-        var date = new Date(reminder.date6);
+        if (reminder.date6 != null && reminder.task6 != null)
+        {
+            var date = new Date(reminder.date6);
 
-        data["v:offset"] = reminder.offset6;
-        data["v:task"] = reminder.task6;
+            data["v:offset"] = reminder.offset6;
+            data["v:task"] = reminder.task6;
 
-        await agenda.schedule(date, 'email task', data);
-    }
+            await agenda.schedule(date, 'email task', data);
+        }
 
-        if (reminder.date7 != null && reminder.task7 != null)
-    {
-        var date = new Date(reminder.date7);
+            if (reminder.date7 != null && reminder.task7 != null)
+        {
+            var date = new Date(reminder.date7);
 
-        data["v:offset"] = reminder.offset7;
-        data["v:task"] = reminder.task7;
+            data["v:offset"] = reminder.offset7;
+            data["v:task"] = reminder.task7;
 
-        await agenda.schedule(date, 'email task', data);
+            await agenda.schedule(date, 'email task', data);
+        } 
     }
 };
 
