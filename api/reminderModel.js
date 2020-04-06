@@ -4,23 +4,18 @@ var mongoose = require('mongoose');
 var reminderSchema = mongoose.Schema({
     userId: {
         type: String,
-        required: true
     },
     courseId: {
         type: String, 
-        required: true
     },
     weekId: {
         type: String, 
-        required: true
     },
     weekNumber: {
         type: Number,
-        required: true
     },
     email: {
         type: String,
-        required: true
     },
     url: {
         type: String,
