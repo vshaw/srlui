@@ -22,30 +22,34 @@ var goalSchema = mongoose.Schema({
         type: Number, 
         required: true
     },
-    goal1: {
-        type: String, 
-        default: ''     
+    videoGoal: {
+        type: Number, 
+        default: 0    
     },
-    goal2: {
-        type: String, 
-        default: ''          
+    quizGoal: {
+        type: Number, 
+        default: 0
     },
-    goal3: {
-        type: String, 
-        default: ''          
+    assignmentGoal: {
+        type: Number, 
+        default: 0
     },
-    goal4: {
-        type: String, 
-        default: ''          
+    estimatedTimeGoal: {
+        type: String
     },
-    createDate: {
-        type: Date,
-        default: Date.now
-    }
+    content: {
+        type: [String]
+    },
+    additionalGoal: {
+        type: String
+    },
+},
+{
+timestamps: true
 });
 
 // Export goals model
-var Goal = module.exports = mongoose.model('goal', goalSchema);
+var Goal = module.exports = mongoose.model('goal', goal2Schema);
 module.exports.get = function (callback, limit) {
     Goal.find(callback).limit(limit);
 }

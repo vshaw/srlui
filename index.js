@@ -25,7 +25,6 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 
-
 // Connect to Mongoose and set connection variable
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true});
 var db = mongoose.connection;

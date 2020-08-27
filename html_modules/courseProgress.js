@@ -5,7 +5,7 @@
     var devShowTreatment = false; 
     var postsArray = {};
 
-    var SERVER_URL = "https://guarded-mesa-27479.herokuapp.com";
+    var SERVER_URL = "https://columbiax-srlui.herokuapp.com";
 
 
     //////////////////////////////////////////////
@@ -71,7 +71,7 @@
                 var settings = {
                     "async": true,
                     "crossDomain": true,
-                    "url": SERVER_URL + "/api/goals2/weekByNum",
+                    "url": SERVER_URL + "/api/goals/weekByNum",
                     "method": "GET",
                     "headers": {
                         'x-access-token': accessToken

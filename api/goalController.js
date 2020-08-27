@@ -14,12 +14,15 @@ exports.new = function (req, res) {
 
     update = 
     {
-        goal1: req.body.goal1, 
-        goal2: req.body.goal2,
-        goal3: req.body.goal3,
-        goal4: req.body.goal4
-    }
-
+        videoGoal: req.body.videoGoal, 
+        quizGoal: req.body.quizGoal,
+        assignmentGoal: req.body.assignmentGoal,
+        estimatedTimeGoal: req.body.estimatedTimeGoal,
+        content: req.body.content, 
+        additionalGoal: req.body.additionalGoal,
+        createDate: req.body.createDate,
+        weekNumber: req.body.weekNumber
+    };
 
     // save or update the goal and check for errors
     Goal.findOneAndUpdate(query, update, {upsert:true, setDefaultsOnInsert:true}, function (err, goal) {
@@ -59,6 +62,7 @@ exports.viewWeek = function (req, res) {
 
     Goal.findOne(query, function (err, goals) {
         if (err) {
+            console.log(err); 
             res.json({
                 status: "error",
                 message: err,
@@ -71,6 +75,33 @@ exports.viewWeek = function (req, res) {
         });
     });
 };
+
+exports.viewWeekByNum = function (req, res) {
+
+    var query = {
+        'userId': req.query.userId, 
+        'email': req.query.email, 
+        'courseId': req.query.courseId, 
+        'weekNumber': req.query.weekNumber
+    };
+
+    Goal.findOne(query, function (err, goals) {
+        if (err) {
+            console.log(err); 
+            res.json({
+                status: "error",
+                message: err,
+            });
+        }
+        res.json({
+            status: "success",
+            message: "Goals retrieved successfully",
+            data: goals
+        });
+    });
+};
+
+
 
 // Handle delete reminder
 exports.delete = function (req, res) {
