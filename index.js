@@ -28,8 +28,8 @@ app.use(bodyParser.json());
 
 // Connect to Mongoose and set connection variable
 
-mongoose.connect("mongodb+srv://admin:srlui2020!@cluster0.qi0wr.azure.mongodb.net/srlui2020?retryWrites=true&w=majority", { useNewUrlParser: true});
-// mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true});
+// mongoose.connect("mongodb+srv://admin:srlui2020!@cluster0.qi0wr.azure.mongodb.net/srlui2020?retryWrites=true&w=majority", { useNewUrlParser: true});
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true});
 var db = mongoose.connection;
 
 // Added check for DB connection
@@ -55,7 +55,7 @@ app.get('/', (req, res) => res.send('SRLUI Hello World'));
 app.use('/api', apiRoutes);
 app.use("/api/users", usersRoute);
 
- app.use(timeout('100s'));
+app.use(timeout('100s'));
 
 
 // Launch app to listen to specified port
