@@ -10,7 +10,7 @@ exports.getUserActivity = function (req, res) {
         'courseId': req.query.courseId
     };
 
-    Activity.find(queryParams, function (err, activity) {
+    Activity.findOne(queryParams, function (err, activity) {
         if (err)
             res.send(err);
         res.json({

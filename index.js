@@ -25,8 +25,11 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 
+
 // Connect to Mongoose and set connection variable
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true});
+
+mongoose.connect("mongodb+srv://admin:srlui2020!@cluster0.qi0wr.azure.mongodb.net/srlui2020?retryWrites=true&w=majority", { useNewUrlParser: true});
+// mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true});
 var db = mongoose.connection;
 
 // Added check for DB connection

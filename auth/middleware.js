@@ -11,7 +11,7 @@ module.exports = (req, res, next) => {
   }
 
   if (token) {
-    jwt.verify(token, process.env.secret, (err, decoded) => {
+    jwt.verify(token, "cvnsrlui", (err, decoded) => {
       if (err) {
         return res.json({
           success: false,

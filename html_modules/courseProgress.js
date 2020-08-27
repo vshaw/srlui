@@ -5,8 +5,8 @@
     var devShowTreatment = false; 
     var postsArray = {};
 
-    var SERVER_URL = "https://columbiax-srlui.herokuapp.com";
-
+    //var SERVER_URL = "https://columbiax-srlui.herokuapp.com";
+    var SERVER_URL = "localhost:8080"
 
     //////////////////////////////////////////////
     //            PAGE LOAD FUNCTIONS           //
@@ -41,8 +41,6 @@
       userId = analytics.user()._getId();
 
       weekNumber = getWeekNumber(); 
-
-      getWeekPosts(); 
     }
 
     // Toggle between control/treatment displays
@@ -114,120 +112,11 @@
 
             getSavedRating(); 
         }
-
-        loadScript("https://canvasjs.com/assets/script/canvasjs.min.js", generateLineChart);
     }
 
     //////////////////////////////////////////////
     //         GET ACTIVITY DATA                //
     //////////////////////////////////////////////
-
-    // Get discussion activity data in order to update the week's record.
-    // Discussion activity is stored in a separate database that is updated by a web scraper python script. 
-    // The way this works is convoluted because the scraper is constantly inserting aggregated data (atm the only available format) to the db. So in order to get this week's data, we have to get the current amount and subtract the previous week's amount. 
-    function getWeekPosts() {
-        var email = analytics._user._getTraits().email; 
-
-        var start = getKeyByValue(courseDates, 1);
-        var startDate = new Date(start);
-        
-
-        var startDateTimestamp = (startDate.getTime() / 1000) - 300; // minius some margin
-        var endDateTimestamp = startDateTimestamp + 86400*7 + 600; // get the timestamp one weeks later + some margin
-
-        if (courseNumber == null)
-        {
-            courseNumber = ""; 
-        }
-
-        var settings = {
-            "async": true,
-            "crossDomain": true,
-            "url": SERVER_URL + "/api/posts/course",
-            "method": "GET",
-            "headers": {
-                'x-access-token': accessToken
-            },
-            "data": 
-            {
-                "email": email,
-                "courseNumber": courseNumber
-            }
-        };
-
-        $.ajax(settings).done(function (response) {
-
-           var result = response.data;
-           
-           if (result != null)
-           {
-               result.sort(sortByTimestamp);
-
-               var tempWeekView = 0; 
-               var tempWeekPosts = 0; 
-
-               var cummulativeViews = 0; 
-               var cummulativePosts = 0; 
-
-               var week = 1; 
-               var weekEndDate = getKeyByValue(courseDates, week + 1);
-
-               var weekEndDateObj = new Date(weekEndDate);
-               var weekEndDateTimestamp = (weekEndDateObj.getTime() / 1000) - 300;
-
-               var tempArray = {};
-               var postsPerWeek = {}; 
-               
-               for (var i = 0; i < result.length; i++) 
-               {
-                    // Get views/posts for previous weeks 
-                    if (result[i].Timestamp < weekEndDateTimestamp)
-                    {
-                        // Since edstem does cummulative data, we have to subtract the total of the previous weeks
-                        tempWeekView = result[i].Views - cummulativeViews; 
-                        tempWeekPosts = result[i]['Aggregated post'] - cummulativePosts;
-                    }
-                    else
-                    {
-                        // Record views/posts for the previous week and increment the week number 
-                        // Save the amount for the past week 
-                        tempArray = {"Views": tempWeekView, "Posts": tempWeekPosts};
-                        
-                        postsPerWeek[week] = tempArray; 
-
-                        //Begin recording the new week 
-                        week++; 
-
-                        if (week == 12)
-                        {
-                            weekEndDate = getKeyByValue(courseDates, 12);
-                            weekEndDateObj = new Date(weekEndDate);
-                            weekEndDateObj.setDate(weekEndDateObj.getDate() + 7);
-                        }
-                        else
-                        {
-                            weekEndDate = getKeyByValue(courseDates, week + 1);
-                            weekEndDateObj = new Date(weekEndDate);
-                        }
-
-                        weekEndDateTimestamp = (weekEndDateObj.getTime() / 1000) - 300;
-
-                        cummulativeViews += tempWeekView; 
-                        cummulativePosts += tempWeekPosts; 
-
-                        tempWeekView = result[i].Views - cummulativeViews;
-                        tempWeekPosts = result[i]['Aggregated post'] - cummulativePosts;
-                    }
-               }
-
-               // This should be the current week
-               tempArray = {"Views": tempWeekView, "Posts": tempWeekPosts};
-               postsPerWeek[week] = tempArray; 
-
-               postsArray = postsPerWeek; 
-           }
-       });
-    }
 
     // Create the table of selected goals
     function createSavedVideoTable(selectedVideos, additionalGoal)
@@ -290,15 +179,15 @@
     }
 
     // Get past week's numbers 
-    var generateNumbers = function() {
+    function generateNumbers() {
         getUserInfo();
 
         var email = analytics._user._getTraits().email;
 
         var pastWeekNumber = weekNumber - 1; 
 
-        var weekStartDate = new Date(getKeyByValue(courseDates, pastWeekNumber)); 
-        var weekEndDate = new Date(getKeyByValue(courseDates, weekNumber));
+        var weekStartDate = new Date(DATES[pastWeekNumber]); 
+        var weekEndDate = new Date(DATES[weekNumber]);
 
         // Set date string for past week      
         var startString = convertDateToString(weekStartDate); 
@@ -319,225 +208,88 @@
             var settings = {
                 "async": true,
                 "crossDomain": true,
-                "url": SERVER_URL + "/api/events2/week",
+                "url": SERVER_URL + "/api/activity",
                 "method": "GET",
                 "headers": {
                     'x-access-token': accessToken
                 },
                 "data": {
-                    "userId": userId,
                     "courseId": courseId, 
-                    "weekNumber": pastWeekNumber,
                     "email": email
                 }
             };
 
             $.ajax(settings).done(function (response) {
 
-                var weekResult = response.data; 
+                var resultArray = response.data; 
+                var result = resultArray[0];
 
-                var videos = 0; 
-                var questions = 0; 
+                // Past week numbers
+                document.getElementById("videosWatched").innerHTML = result.videos[pastWeekNumber]; 
+                document.getElementById("problemsCompleted").innerHTML = result.problems[pastWeekNumber]; 
+                document.getElementById("postsCreated").innerHTML = result.posts[pastWeekNumber]; 
 
-                if (weekResult != null && weekResult.length > 0)
-                {
-                    for (var i = 0; i < weekResult.length; i++)
+                //Generate line chart
+                var chart = new CanvasJS.Chart("chartContainer", {
+                    theme:"light2",
+                    animationEnabled: true,
+                    title:{
+                        text: "Class Progress"
+                    },
+                    axisY :{
+                        includeZero: true,
+                        title: "Number of Actions",
+                        suffix: ""
+                    },
+                    axisX: {
+                        title: "Week Number"
+                    },
+                    toolTip: {
+                        shared: "true"
+                    },
+                    legend:{
+                        cursor:"pointer",
+                        itemclick : toggleDataSeries
+                    },
+                    data: [{
+                        type: "spline", 
+                        showInLegend: true,
+                        yValueFormatString: "",
+                        name: "Videos Watched",
+                        dataPoints: result.videos
+                    },
                     {
-                        if (weekResult[i].event.includes("video"))
-                        {
-                            videos++; 
-                        }
-                        else if (weekResult[i].event.includes("questions"))
-                        {
-                            questions += weekResult[i].numQuestions; 
-                        }
-                    }
-                }
-
-                document.getElementById("videosWatched").innerHTML = videos; 
-                document.getElementById("questionsAnswered").innerHTML = questions; 
-
-                if (postsArray[pastWeekNumber] != undefined)
-                {
-                    document.getElementById("postsViewed").innerHTML = postsArray[pastWeekNumber].Views; 
-                    document.getElementById("postsCreated").innerHTML = postsArray[pastWeekNumber].Posts; 
-                }
+                        type: "spline", 
+                        showInLegend: true,
+                        yValueFormatString: "",
+                        name: "Posts Created",
+                        dataPoints: result.posts
+                    },
+                    {
+                        type: "spline", 
+                        showInLegend: true,
+                        yValueFormatString: "",
+                        name: "Questions Tried",
+                        dataPoints: result.problems
+                    } ]
+                });
+                chart.render();
             });
         }          
     };
 
-    // Generate the line chart 
-    var generateLineChart = function () {
+    // Allows you to select/unselect certain series in the legend
+    function toggleDataSeries(e) {
 
-        var aggVideosWatched = []; 
-        var aggQuestionsAnswered = []; 
-        var aggPostsCreated = []; 
-        var aggPostsViewed = []; 
-            
-        document.getElementById("noDataText").style.display = "block"; 
-        document.getElementById("chartContainer").style.display = "block"; 
-
-        // Send GET request for to get activity for specific user/course. 
-         var settings = {
-            "async": true,
-            "crossDomain": true,
-            "url": SERVER_URL + "/api/events2",
-            "headers": {
-                'x-access-token': accessToken
-            },
-            "method": "GET",
-            "data": {
-                "userId": userId,
-                "courseId": courseId
-            }
-        };
-
-        $.ajax(settings).done(function (response) {
-            var result = response.data; 
-            result.sort(sortByWeekNumber);
-
-            if (result.length != 0 || postsArray.length != 0)
-            {
-                document.getElementById("noDataText").style.display = "none"; 
-            }
-
-            var week = 1; 
-            var videos = 0; 
-            var questions = 0; 
-
-            // Set Video and Question data points for line chart
-            for (var i = 0; i < result.length; i++)
-            {
-                if (result[i]!= null && result[i].weekNumber == week)
-                {
-                    if (result[i].event.includes("video"))
-                    {
-                        videos++; 
-                    }
-                    else if (result[i].event.includes("questions"))
-                    {
-                        questions += result[i].numQuestions; 
-                    }
-                } 
-                else
-                {
-                    // Get the actual start date of the week and attach it to the chart label
-                    var startDate = getKeyByValue(courseDates, week); 
-
-                    var dates = startDate.split("-");
-                    var weekString = "Week " + week + " (" + dates[1] + "/" + dates[2] + ")"; 
-        
-                    aggVideosWatched.push({label: weekString, y: videos});
-                    aggQuestionsAnswered.push({label: weekString, y: questions});
-
-                    // Start recording the first of the new week 
-                    videos = 0; 
-                    questions = 0; 
-
-                    if (result[i].event.includes("video"))
-                    {
-                        videos++; 
-                    }
-                    else if (result[i].event.includes("questions"))
-                    {
-                        questions += result[i].numQuestions; 
-                    }
-
-                    week++; 
-                }
-            }
-
-            // Get the actual start date of the week and attach it to the chart label
-            var startDate = getKeyByValue(courseDates, week); 
-
-            var dates = startDate.split("-");
-
-            var weekString = "Week " + week + " (" + dates[1] + "/" + dates[2] + ")"; 
-
-            aggVideosWatched.push({label: weekString, y: videos});
-            aggQuestionsAnswered.push({label: weekString, y: questions});
-
-            // Collect posts/views data points
-            week = 1; 
-
-            for (var i = 0; i < Object.keys(postsArray).length; i++)
-            {
-                var startDate = getKeyByValue(courseDates, week); 
-
-                var dates = startDate.split("-");
-                var weekString = "Week " + week + " (" + dates[1] + "/" + dates[2] + ")"; 
-
-                if (postsArray[week] != undefined)
-                {
-                    aggPostsCreated.push({label: weekString, y: postsArray[week].Posts});
-                    aggPostsViewed.push({label: weekString, y: postsArray[week].Views});
-                }
-
-                week++; 
-            }
-
-            // Create chart 
-            var chart = new CanvasJS.Chart("chartContainer", {
-                theme:"light2",
-                animationEnabled: true,
-                title:{
-                    text: "Class Progress"
-                },
-                axisY :{
-                    includeZero: true,
-                    title: "Number of Actions",
-                    suffix: ""
-                },
-                toolTip: {
-                    shared: "true"
-                },
-                legend:{
-                    cursor:"pointer",
-                    itemclick : toggleDataSeries
-                },
-                data: [{
-                    type: "spline", 
-                    showInLegend: true,
-                    yValueFormatString: "",
-                    name: "Videos Watched",
-                    dataPoints: aggVideosWatched
-                },
-                {
-                    type: "spline", 
-                    showInLegend: true,
-                    yValueFormatString: "",
-                    name: "Posts Viewed",
-                    dataPoints: aggPostsViewed
-                },
-                {
-                    type: "spline", 
-                    showInLegend: true,
-                    yValueFormatString: "",
-                    name: "Posts Created",
-                    dataPoints: aggPostsCreated
-                },
-                {
-                    type: "spline", 
-                    showInLegend: true,
-                    yValueFormatString: "",
-                    name: "Questions Tried",
-                    dataPoints: aggQuestionsAnswered
-                } ]
-            });
+        if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible ){
+            e.dataSeries.visible = false;
+        } else {
+            e.dataSeries.visible = true;
+        }
             chart.render();
+    }
 
-            // Allows you to select/unselect certain series in the legend
-            function toggleDataSeries(e) {
-                if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible ){
-                    e.dataSeries.visible = false;
-                } else {
-                    e.dataSeries.visible = true;
-                }
-                chart.render();
-            }
-        });  
-    };
-
+   
     // Gets existing rating from database
     function getSavedRating() {
         
@@ -691,15 +443,16 @@
 
         var currentDate = new Date();
 
-        for(var key in courseDates) 
+        for(var week in DATES) 
         {
-            var tempDate = new Date(key);
+            var tempDate = new Date(DATES[week]);
 
-            if (currentDate > tempDate )
+            if (currentDate <= tempDate )
             {
-                weekNumber = courseDates[key];
+                weekNumber = week
             }
         }
+
         return weekNumber; 
     }
 

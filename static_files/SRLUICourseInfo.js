@@ -301,23 +301,22 @@ var videos = [
   [ 12, "K-Means clustering 3_Evaluating the model", "8:19"]
 ];
 
-var courseDates = {
+DATES = {
+    1 : '2020-05-25',
+    2 : '2020-06-01',
+    3 : '2020-06-08',
+    4 : '2020-06-15',
+    5 : '2020-06-22',
+    6 : '2020-06-29',
+    7 : '2020-07-06',
+    8 : '2020-07-13',
+    9 : '2020-07-20',
+    10: '2020-07-27',
+    11: '2020-08-03',
+    12: '2020-08-10',
+    13: '2020-08-17',
+    14: '2020-08-24',
+    15: '2020-08-31'
+}
 
-  "2020-02-10" : 1,
-  "2020-02-17" : 2,
-  "2020-02-24" : 3,
-  "2020-03-02" : 4,
-  "2020-03-09" : 5,
-  "2020-03-16" : 6,
-  "2020-03-23" : 7,
-  "2020-03-30" : 8,
-  "2020-04-06" : 9,
-  "2020-04-13" : 10,
-  "2020-04-20" : 11,
-  "2020-04-27" : 12,
-
-};
-
-var courseNumber = 283; 
-
-var accessToken = "";
+var accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZjQ3MjM5ZGMyZjRkZjQ1ZjhmNjQ4NzkiLCJpYXQiOjE1OTg0OTc2OTN9.-P4eMKapK61DaDmrZOEgZ3VDV_D5THRkPUSYMBJUN3U";

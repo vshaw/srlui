@@ -21,23 +21,23 @@ var activitySchema = mongoose.Schema({
     },
     videos: {
         type: Map,
-        of: Number  
+        of: Number,  
         required: true
     },
     posts: {
         type: Map,
-        of: Number  
+        of: Number,  
         required: true
     },
     problems: {
         type: Map,
-        of: Number  
+        of: Number,  
         required: true
     }
 });
 
 // Export event model
-var Activity = module.exports = mongoose.model('activity', activitySchema);
+var Activity = module.exports = mongoose.model('activity', activitySchema, 'activity');
 module.exports.get = function (callback, limit) {
     Activity.find(callback).limit(limit);
 }
