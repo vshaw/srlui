@@ -33,12 +33,12 @@ exports.saveGoals = function (req, res) {
 
     update = 
     {
-        fieldString + "videoGoal": req.body.videoGoal, 
-        fieldString + "quizGoal": req.body.quizGoal,
-        fieldString + "assignmentGoal": req.body.assignmentGoal,
-        fieldString + "estimatedTimeGoal": req.body.estimatedTimeGoal,
-        fieldString + "content": req.body.content, 
-        fieldString + "additionalGoal": req.body.additionalGoal,
+        fieldString.concat("videoGoal"): req.body.videoGoal, 
+        fieldString.concat("quizGoal"): req.body.quizGoal,
+        fieldString.concat("assignmentGoal"): req.body.assignmentGoal,
+        fieldString.concat("estimatedTimeGoal"): req.body.estimatedTimeGoal,
+        fieldString.concat("content"): req.body.content, 
+        fieldString.concat("additionalGoal"): req.body.additionalGoal,
     };
 
     console.log(update); 
