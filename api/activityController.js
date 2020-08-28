@@ -27,9 +27,8 @@ exports.saveGoals = function (req, res) {
         'courseId': req.query.courseId
     };
 
-    var weekNum = req.body.weekNum;
+    var weekNum = req.query.weekNum;
 
-    console.log(req.body);
     console.log(req.query);
     var videoField = "goals.$." + weekNum + "videoGoal"; 
     var quizField = "goals.$." + weekNum + "quizGoal"; 
@@ -41,7 +40,7 @@ exports.saveGoals = function (req, res) {
     var update = 
     {
         '$set': {
-           'goals.$[15].$.videoGoal': req.body.videoGoal, 
+           'goals.$[15].$.videoGoal': req.query.videoGoal, 
         }
     };
 
