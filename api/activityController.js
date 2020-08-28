@@ -29,6 +29,8 @@ exports.saveGoals = function (req, res) {
 
     var weekNum = req.body.weekNum;
 
+    console.log(req.body);
+    console.log(req.query);
     var videoField = "goals.$." + weekNum + "videoGoal"; 
     var quizField = "goals.$." + weekNum + "quizGoal"; 
     var assignmentField = "goals.$." + weekNum + "assignmentGoal"; 
