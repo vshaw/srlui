@@ -57,11 +57,11 @@ exports.saveGoals = function (req, res) {
 
 
     Activity.findOne(queryParams).then(doc => {
-      console.log(doc);
-      goals = doc.goals[weekNum];
+      console.log(doc.goals);
+      goals = doc.goals['15'];
       console.log(goals); 
 
-      goals[weekNum].videoGoal = req.query.videoGoal;
+      goals.videoGoal = req.query.videoGoal;
       doc.save();
 
       console.log("supposedly saved"); 
