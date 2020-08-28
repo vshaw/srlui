@@ -36,10 +36,10 @@ exports.saveGoals = function (req, res) {
     var estimatedTimeField = "goals.$." + weekNum + "estimatedTimeGoal"; 
     var additionalGoalField = "goals.$." + weekNum + "additionalGoal"; 
 
-   /* var update = 
+    var update = 
     {
         '$set': {
-           'videos.$.15': 2, 
+           'videos.15.videoGoal': 2, 
         }
     };
 
@@ -53,13 +53,13 @@ exports.saveGoals = function (req, res) {
             message: 'Activity details loading..',
             data: activity
         });
-    }); */
+    }); 
 
 
-    Activity.findOne(queryParams).then(doc => {
+ /*   Activity.findOne(queryParams).then(doc => {
       console.log(doc);
-      console.log(doc.goals);
-      
+      console.log(doc.goals.);
+
     
     //  goals = doc.goals['15'];
     //  console.log(goals); 
@@ -72,5 +72,5 @@ exports.saveGoals = function (req, res) {
     }).catch(err => {
       console.log('Oh! Dark')
     }); 
-
+ */
 }
