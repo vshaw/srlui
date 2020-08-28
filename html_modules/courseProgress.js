@@ -5,8 +5,7 @@
     var devShowTreatment = false; 
     var postsArray = {};
 
-    //var SERVER_URL = "https://columbiax-srlui.herokuapp.com";
-    var SERVER_URL = "localhost:8080"
+    var SERVER_URL = "https://columbiax-srlui.herokuapp.com";
 
     //////////////////////////////////////////////
     //            PAGE LOAD FUNCTIONS           //
@@ -184,26 +183,22 @@
 
         var email = analytics._user._getTraits().email;
 
-        var pastWeekNumber = weekNumber - 1; 
+        var pastWeekNumber = weekNumber - 2; 
 
-        var weekStartDate = new Date(DATES[pastWeekNumber]); 
-        var weekEndDate = new Date(DATES[weekNumber]);
+        var datestring = "In the past week of the course you have:"
 
-        // Set date string for past week      
-        var startString = convertDateToString(weekStartDate); 
-        var endString = convertDateToString(weekEndDate);
 
-        var dateString = "In the past week of the course (" + startString + " - " + endString + ") you have:";
-
-        if (startString.includes("NaN") || endString.includes("NaN"))
+        if (pastWeekNumber > 1)
         {
-            dateString = "In the past week of the course you have:"
-        } 
+            var weekStartDate = new Date(DATES[pastWeekNumber]); 
+            var weekEndDate = new Date(DATES[weekNumber - 1]);
 
-        document.getElementById("pastWeekHeader").innerHTML = dateString; 
+            // Set date string for past week      
+            var startString = convertDateToString(weekStartDate); 
+            var endString = convertDateToString(weekEndDate);
 
-        if (pastWeekNumber > 0)
-        {
+            dateString = "In the past week of the course (" + startString + " - " + endString + ") you have:";
+
             // Send GET request for to get activity for specific user/course/week number. 
             var settings = {
                 "async": true,
@@ -221,72 +216,92 @@
 
             $.ajax(settings).done(function (response) {
 
-                var resultArray = response.data; 
-                var result = resultArray[0];
+                var result = response.data; 
 
-                // Past week numbers
-                document.getElementById("videosWatched").innerHTML = result.videos[pastWeekNumber]; 
-                document.getElementById("problemsCompleted").innerHTML = result.problems[pastWeekNumber]; 
-                document.getElementById("postsCreated").innerHTML = result.posts[pastWeekNumber]; 
+                if (result != null)
+                {
 
-                //Generate line chart
-                var chart = new CanvasJS.Chart("chartContainer", {
-                    theme:"light2",
-                    animationEnabled: true,
-                    title:{
-                        text: "Class Progress"
-                    },
-                    axisY :{
-                        includeZero: true,
-                        title: "Number of Actions",
-                        suffix: ""
-                    },
-                    axisX: {
-                        title: "Week Number"
-                    },
-                    toolTip: {
-                        shared: "true"
-                    },
-                    legend:{
-                        cursor:"pointer",
-                        itemclick : toggleDataSeries
-                    },
-                    data: [{
-                        type: "spline", 
-                        showInLegend: true,
-                        yValueFormatString: "",
-                        name: "Videos Watched",
-                        dataPoints: result.videos
-                    },
+                    // Past week numbers
+                    document.getElementById("videosWatched").innerHTML = result.videos[pastWeekNumber]; 
+                    document.getElementById("problemsCompleted").innerHTML = result.problems[pastWeekNumber]; 
+                    document.getElementById("postsCreated").innerHTML = result.posts[pastWeekNumber]; 
+
+                    //Generate line chart
+                    var videoData = [];
+                    var postsData = [];
+                    var problemData = []; 
+
+                    var numWeeks = Object.keys(DATES).length;
+
+                    for (var i = 1; i < numWeeks + 1; i++)
                     {
-                        type: "spline", 
-                        showInLegend: true,
-                        yValueFormatString: "",
-                        name: "Posts Created",
-                        dataPoints: result.posts
-                    },
-                    {
-                        type: "spline", 
-                        showInLegend: true,
-                        yValueFormatString: "",
-                        name: "Questions Tried",
-                        dataPoints: result.problems
-                    } ]
-                });
-                chart.render();
+                        weekDate = convertDateToString(new Date(DATES[i]));
+
+                        videoData.push({label: "Week Ending in " + weekDate, y: result.videos[i]});
+                        postsData.push({label: "Week Ending in " + weekDate, y: result.posts[i]});
+                        problemData.push({label: "Week Ending in " + weekDate, y: result.problems[i]});
+                    }
+
+                    var chart = new CanvasJS.Chart("chartContainer", {
+                        theme:"light2",
+                        animationEnabled: true,
+                        title:{
+                            text: "Class Progress"
+                        },
+                        axisY: {
+                            includeZero: true,
+                            title: "Number of Actions",
+                            suffix: ""
+                        },
+                        axisX: {
+                            title: "Week Number",
+                            labelFormatter: function (e) {
+                                return e.value + 1;
+                            }
+                        },
+                        toolTip: {
+                            shared: "true"
+                        },
+                        legend:{
+                            cursor:"pointer",
+                            itemclick : function (e) {
+                                if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                                    e.dataSeries.visible = false;
+                                } else {
+                                    e.dataSeries.visible = true;
+                                }
+                                e.chart.render();
+                            }
+                        },
+                        data: [{
+                            type: "spline", 
+                            showInLegend: true,
+                            yValueFormatString: "",
+                            name: "Videos Watched",
+                            dataPoints: videoData
+                        },
+                        {
+                            type: "spline", 
+                            showInLegend: true,
+                            yValueFormatString: "",
+                            name: "Posts Created",
+                            dataPoints: postsData
+                        },
+                        {
+                            type: "spline", 
+                            showInLegend: true,
+                            yValueFormatString: "",
+                            name: "Problems Completed",
+                            dataPoints: problemData
+                        } ]
+                    });
+                    chart.render();
+                }
             });
-        }          
-    };
-
-    // Allows you to select/unselect certain series in the legend
-    function toggleDataSeries(e) {
-
-        if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible ){
-            e.dataSeries.visible = false;
-        } else {
-            e.dataSeries.visible = true;
         }
-            chart.render();
+
+        document.getElementById("pastWeekHeader").innerHTML = dateString; 
+        
     }
 
    

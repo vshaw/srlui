@@ -11,7 +11,7 @@
     var additionalGoal = ""; 
 
     var devShowTreatment = false; 
-    var SERVER_URL = "https://guarded-mesa-27479.herokuapp.com";
+    var SERVER_URL = "https://columbiax-srlui.herokuapp.com";
 
     //////////////////////////////////////////////
     //            PAGE LOAD FUNCTIONS         //
@@ -66,17 +66,7 @@
         userId = analytics.user()._getId();
         email = analytics._user._getTraits().email;
 
-        var currentDate = new Date();
-
-        for(var key in courseDates) {
-
-            var tempDate = new Date(key);
-
-            if (currentDate > tempDate)
-            {
-                weekNumber = courseDates[key];
-            }
-        }
+        weekNumber = getWeekNumber(); 
     }
 
     //////////////////////////////////////////////
@@ -88,24 +78,33 @@
     {
         var goals = {}; 
 
-        var url = window.location.href;
-        var split = url.split("/");
-        var week = split[6];
+        var array = document.getElementsByClassName("nav-item nav-item-chapter");
+        var weekInfo; 
 
-        // Read goals from SRLUICourseInfo.js static file
-        for (var i=0; i < mappedInfo.length; i++) {
-            if(mappedInfo[i][0] == week) {
-                goals = mappedInfo[i][1];
+        if (array != null && array.length > 0)
+        {
+            var chapterId = array[0].outerText; 
+
+            // If the week name is of the form "Week 1: Algorithms", just use the number mapping
+            if (chapterId.includes("Week"))
+            {
+                var week = chapterId.split(" ")[1];
+                var weekNum = week.split(":")[0];
+                weekInfo = mappedInfo[weekNum];
             }
-        }
+            // Otherwise check if chapter string exists explicitly in the course info js file
+            else if (mappedInfo[chapterId] != null) 
+            {
+                weekInfo = mappedInfo[chapterId];
+            }
 
-        // Add html text element per goal
-        for (var j=0; j < goals.length; j++) {
-            var goal = goals[j];
-            var textNode = document.createElement("P");
-            textNode.innerHTML = goal;
-            textNode.className = "header1";
-            document.getElementById("controlGoals").appendChild(textNode);
+            // Read goals from SRLUICourseInfo.js static file
+            for (var i=0; i < weekInfo.topics.length; i++) {
+                var textNode = document.createElement("P");
+                textNode.innerHTML = weekInfo.topics[i];
+                textNode.className = "header1";
+                document.getElementById("controlGoals").appendChild(textNode);            
+            }
         }
     };
 
@@ -738,6 +737,26 @@
 
         return finalDate; 
     }
+
+    // Get the week number based on the current date and the start date of each week recorded in SRLUICourseInfo.js
+    function getWeekNumber()
+    {
+        var weekNumber;
+
+        var currentDate = new Date();
+
+        for(var week in DATES) 
+        {
+            var tempDate = new Date(DATES[week]);
+
+            if (currentDate <= tempDate )
+            {
+                weekNumber = week
+            }
+        }
+
+        return weekNumber; 
+    }    
 
     // Checks if date can be parsed
     function isValidDate(d) {

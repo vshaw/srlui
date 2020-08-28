@@ -1,6 +1,12 @@
 // discussionPostsModel.js
 var mongoose = require('mongoose');
 
+var goalsSchema = mongoose.Schema({
+    weeklyGoals: {
+        type: [String]
+    }
+});
+
 // Setup schema
 var activitySchema = mongoose.Schema({
     username: {
@@ -33,6 +39,10 @@ var activitySchema = mongoose.Schema({
         type: Map,
         of: Number,  
         required: true
+    },
+    goals: {
+        type: Map, 
+        of: goalsSchema
     }
 });
 
