@@ -29,7 +29,6 @@ exports.saveGoals = function (req, res) {
 
     var weekNum = req.query.weekNum;
 
-    console.log(req.query);
     var videoField = "goals.$." + weekNum + "videoGoal"; 
     var quizField = "goals.$." + weekNum + "quizGoal"; 
     var assignmentField = "goals.$." + weekNum + "assignmentGoal"; 
@@ -37,7 +36,7 @@ exports.saveGoals = function (req, res) {
     var estimatedTimeField = "goals.$." + weekNum + "estimatedTimeGoal"; 
     var additionalGoalField = "goals.$." + weekNum + "additionalGoal"; 
 
-    var update = 
+/*    var update = 
     {
         '$set': {
            'goals.$[15].$.videoGoal': req.query.videoGoal, 
@@ -54,6 +53,20 @@ exports.saveGoals = function (req, res) {
             message: 'Activity details loading..',
             data: activity
         });
-    }); 
+    }); */
+
+
+    Activity.findOne(queryParams).then(doc => {
+      goals = doc.goals[weekNum];
+      console.log(goals); 
+
+      goals[weekNum].videoGoal = req.query.videoGoal;
+      doc.save();
+
+      console.log("supposedly saved"); 
+      //sent respnse to client
+    }).catch(err => {
+      console.log('Oh! Dark')
+    });
 
 }
