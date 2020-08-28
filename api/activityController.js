@@ -55,19 +55,4 @@ exports.saveGoals = function (req, res) {
         });
     }); 
 
-    const itemId = 2;
-    const query = {
-      item._id: itemId 
-    };
-    Activity.findOne(queryParams).then(doc => {
-      goals = doc.goals[weekNum];
-      goals.["name"] = "new name";
-      item["value"] = "new value";
-      doc.save();
-
-      //sent respnse to client
-    }).catch(err => {
-      console.log('Oh! Dark')
-    });
-
 }
