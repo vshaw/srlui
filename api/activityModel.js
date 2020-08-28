@@ -4,6 +4,9 @@ var mongoose = require('mongoose');
 var goalsSchema = mongoose.Schema({
     weeklyGoals: {
         type: [String]
+    },
+    rating: {
+        type: String
     }
 });
 
