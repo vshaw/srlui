@@ -36,14 +36,9 @@ exports.saveGoals = function (req, res) {
     var estimatedTimeField = "goals.$." + weekNum + "estimatedTimeGoal"; 
     var additionalGoalField = "goals.$." + weekNum + "additionalGoal"; 
 
-    update = 
+    var update = 
     {
-        videoField: req.body.videoGoal, 
-        quizField: req.body.quizGoal,
-        assignmentField: req.body.assignmentGoal,
-        estimatedTimeField: req.body.estimatedTimeGoal,
-        contentField: req.body.content, 
-        additionalGoalField: req.body.additionalGoal,
+        'goals.$.15.videoGoal': req.body.videoGoal, 
     };
 
     console.log(update); 
