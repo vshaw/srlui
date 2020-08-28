@@ -57,8 +57,9 @@ exports.saveGoals = function (req, res) {
 
 
     Activity.findOne(queryParams).then(doc => {
+      console.log(doc);
       console.log(doc.goals);
-      console.log(doc.goals[15]);
+      
     
     //  goals = doc.goals['15'];
     //  console.log(goals); 
