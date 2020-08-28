@@ -29,16 +29,23 @@ exports.saveGoals = function (req, res) {
 
     var weekNum = req.query.weekNum;
 
-    var videoField = "goals.$." + weekNum + "videoGoal"; 
-    var quizField = "goals.$." + weekNum + "quizGoal"; 
-    var assignmentField = "goals.$." + weekNum + "assignmentGoal"; 
-    var contentField = "goals.$." + weekNum + "content"; 
-    var estimatedTimeField = "goals.$." + weekNum + "estimatedTimeGoal"; 
-    var additionalGoalField = "goals.$." + weekNum + "additionalGoal"; 
+    var fieldString = "goals." + weekNum; 
+
+    var videoField = fieldString + ".videoGoal"; 
+    var quizField = fieldString + ".quizGoal"; 
+    var assignmentField = fieldString + ".assignmentGoal"; 
+    var contentField = fieldString + ".content"; 
+    var estimatedTimeField = fieldString + ".estimatedTimeGoal"; 
+    var additionalGoalField = fieldString + ".additionalGoal"; 
 
     var update = 
     {
-        "goals.15.videoGoal": req.query.videoGoal 
+        [videoField]: req.query.videoGoal,
+        [quizField]: req.query.quizGoal, 
+        [assignmentField]: req.query.assignmentGoal,
+        [contentField]: req.query.content,
+        [estimatedTimeField]: req.query.estimatedTimeGoal, 
+        [additionalGoalField]: req.query.additionalGoal
     };
 
 
@@ -52,23 +59,4 @@ exports.saveGoals = function (req, res) {
             data: activity
         });
     }); 
-
-
- /*   Activity.findOne(queryParams).then(doc => {
-      console.log(doc);
-      console.log(doc.goals.);
-
-    
-    //  goals = doc.goals['15'];
-    //  console.log(goals); 
-
-      doc.goals[15].videoGoal = req.query.videoGoal;
-      doc.save();
-
-      console.log("supposedly saved"); 
-      //sent respnse to client
-    }).catch(err => {
-      console.log('Oh! Dark')
-    }); 
- */
 }
