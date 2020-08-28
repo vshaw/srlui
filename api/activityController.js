@@ -23,11 +23,11 @@ exports.getUserActivity = function (req, res) {
 exports.saveGoals = function (req, res) {
 
     var queryParams = {
-        'email': req.query.email, 
-        'courseId': req.query.courseId
+        'email': req.body.email, 
+        'courseId': req.body.courseId
     };
 
-    var weekNum = req.query.weekNumber;
+    var weekNum = req.body.weekNumber;
 
     var fieldString = "goals." + weekNum; 
 
@@ -40,15 +40,15 @@ exports.saveGoals = function (req, res) {
 
     var update = 
     {
-        [videoField]: req.query.videoGoal,
-        [quizField]: req.query.quizGoal, 
-        [assignmentField]: req.query.assignmentGoal,
-        [contentField]: req.query.content,
-        [estimatedTimeField]: req.query.estimatedTimeGoal, 
-        [additionalGoalField]: req.query.additionalGoal
+        [videoField]: req.body.videoGoal,
+        [quizField]: req.body.quizGoal, 
+        [assignmentField]: req.body.assignmentGoal,
+        [contentField]: req.body.content,
+        [estimatedTimeField]: req.body.estimatedTimeGoal, 
+        [additionalGoalField]: req.body.additionalGoal
     };
 
-
+    console.log(queryParams);
     console.log(update); 
 
     Activity.findOneAndUpdate(queryParams, update, function (err, activity) {
