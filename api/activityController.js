@@ -38,9 +38,7 @@ exports.saveGoals = function (req, res) {
 
     var update = 
     {
-        '$set': {
-           'videos.15.videoGoal': 2, 
-        }
+        "videos.15.videoGoal": req.query.videoGoal 
     };
 
 
