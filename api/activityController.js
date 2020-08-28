@@ -57,6 +57,7 @@ exports.saveGoals = function (req, res) {
 
 
     Activity.findOne(queryParams).then(doc => {
+      console.log(doc);
       goals = doc.goals[weekNum];
       console.log(goals); 
 
