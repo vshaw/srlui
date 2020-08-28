@@ -2,26 +2,6 @@ var mongoose = require('mongoose');
 
 // Setup schema
 var goalSchema = mongoose.Schema({
-    userId: {
-        type: String,
-        required: true
-    },
-    email: {
-        type: String,
-        required: true
-    },
-    courseId: {
-        type: String, 
-        required: true
-    },
-    weekId: {
-        type: String, 
-        required:true
-    },
-    weekNumber: {
-        type: Number, 
-        required: true
-    },
     videoGoal: {
         type: Number, 
         default: 0    
@@ -49,7 +29,7 @@ timestamps: true
 });
 
 // Export goals model
-var Goal = module.exports = mongoose.model('goal', goal2Schema);
+var Goal = module.exports = mongoose.model('goal', goalSchema);
 module.exports.get = function (callback, limit) {
     Goal.find(callback).limit(limit);
 }
