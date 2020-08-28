@@ -27,7 +27,7 @@ exports.saveGoals = function (req, res) {
         'courseId': req.query.courseId
     };
 
-    var weekNum = req.query.weekNum;
+    var weekNum = req.query.weekNumber;
 
     var fieldString = "goals." + weekNum; 
 
