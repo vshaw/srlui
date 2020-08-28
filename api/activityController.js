@@ -29,16 +29,21 @@ exports.saveGoals = function (req, res) {
 
     var weekNum = req.body.weekNum;
 
-    var fieldString = "goals.$." + weekNum; 
+    var videoField = "goals.$." + weekNum + "videoGoal"; 
+    var quizField = "goals.$." + weekNum + "quizGoal"; 
+    var assignmentField = "goals.$." + weekNum + "assignmentGoal"; 
+    var contentField = "goals.$." + weekNum + "content"; 
+    var estimatedTimeField = "goals.$." + weekNum + "estimatedTimeGoal"; 
+    var additionalGoalField = "goals.$." + weekNum + "additionalGoal"; 
 
     update = 
     {
-        fieldString.concat("videoGoal"): req.body.videoGoal, 
-        fieldString.concat("quizGoal"): req.body.quizGoal,
-        fieldString.concat("assignmentGoal"): req.body.assignmentGoal,
-        fieldString.concat("estimatedTimeGoal"): req.body.estimatedTimeGoal,
-        fieldString.concat("content"): req.body.content, 
-        fieldString.concat("additionalGoal"): req.body.additionalGoal,
+        videoField: req.body.videoGoal, 
+        quizField: req.body.quizGoal,
+        assignmentField: req.body.assignmentGoal,
+        estimatedTimeField: req.body.estimatedTimeGoal,
+        contentField: req.body.content, 
+        additionalGoalField: req.body.additionalGoal,
     };
 
     console.log(update); 
