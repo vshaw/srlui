@@ -38,8 +38,11 @@ exports.saveGoals = function (req, res) {
 
     var update = 
     {
-        'goals.$.15.videoGoal': req.body.videoGoal, 
+        '$set': {
+           'goals.$[15].$.videoGoal': req.body.videoGoal, 
+        }
     };
+
 
     console.log(update); 
 
@@ -51,4 +54,20 @@ exports.saveGoals = function (req, res) {
             data: activity
         });
     }); 
+
+    const itemId = 2;
+    const query = {
+      item._id: itemId 
+    };
+    Activity.findOne(queryParams).then(doc => {
+      goals = doc.goals[weekNum];
+      goals.["name"] = "new name";
+      item["value"] = "new value";
+      doc.save();
+
+      //sent respnse to client
+    }).catch(err => {
+      console.log('Oh! Dark')
+    });
+
 }
