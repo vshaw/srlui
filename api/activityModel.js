@@ -2,8 +2,26 @@
 var mongoose = require('mongoose');
 
 var goalsSchema = mongoose.Schema({
-    weeklyGoals: {
+    videoGoal: {
+        type: Number, 
+        default: 0    
+    },
+    quizGoal: {
+        type: Number, 
+        default: 0
+    },
+    assignmentGoal: {
+        type: Number, 
+        default: 0
+    },
+    estimatedTimeGoal: {
+        type: String
+    },
+    content: {
         type: [String]
+    },
+    additionalGoal: {
+        type: String
     },
     rating: {
         type: String
