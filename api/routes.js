@@ -15,6 +15,9 @@ router.route('/activity')
 router.route('/activity/goals')
     .post(auth, activityController.saveGoals)
 
+router.route('/activity/rating')
+    .post(auth, activityController.saveRating)
+
 /* var reminderController = require('./reminderController');
 var ratingController = require('./RatingController');
 var discussionPostsController = require('./discussionPostsController');

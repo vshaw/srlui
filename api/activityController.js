@@ -60,3 +60,32 @@ exports.saveGoals = function (req, res) {
         });
     }); 
 }
+
+exports.saveRating = function (req, res) {
+
+    var queryParams = {
+        'email': req.body.email, 
+        'courseId': req.body.courseId
+    };
+
+    var weekNum = req.body.weekNumber;
+    var rating = req.body.rating
+
+    var fieldString = "goals." + weekNum; 
+
+    var ratingField = fieldString + ".rating"; 
+
+    var update = 
+    {
+        [ratingField]: rating
+    };
+
+    Activity.findOneAndUpdate(queryParams, update, function (err, activity) {
+        if (err)
+            res.send(err);
+        res.json({
+            message: 'Activity details loading..',
+            data: activity
+        });
+    }); 
+}
