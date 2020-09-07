@@ -80,6 +80,9 @@ exports.saveRating = function (req, res) {
         [ratingField]: rating
     };
 
+    console.log(query); 
+    console.log(update); 
+
     Activity.findOneAndUpdate(queryParams, update, function (err, activity) {
         if (err)
             res.send(err);
