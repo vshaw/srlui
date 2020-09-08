@@ -10,6 +10,8 @@ exports.getUserActivity = function (req, res) {
         'courseId': req.query.courseId
     };
 
+    console.log(req);
+
     Activity.findOne(queryParams, function (err, activity) {
         if (err)
             res.send(err);
@@ -79,9 +81,6 @@ exports.saveRating = function (req, res) {
     {
         [ratingField]: rating
     };
-
-    console.log(queryParams); 
-    console.log(update); 
 
     Activity.findOneAndUpdate(queryParams, update, function (err, activity) {
         if (err)
