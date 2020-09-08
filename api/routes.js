@@ -7,6 +7,7 @@ const auth = require("../auth/middleware");
 
 // Import controllers
 var activityController = require('./activityController');
+var reminderController = require('./reminderController');
 
 // Routes
 router.route('/activity')
@@ -17,6 +18,11 @@ router.route('/activity/goals')
 
 router.route('/activity/rating')
     .post(auth, activityController.saveRating)
+
+router.route('/tasks')
+    .post(auth, reminderController.new)
+    .get(auth, reminderController.index)
+    .delete(auth, reminderController.delete)
 
 /* var reminderController = require('./reminderController');
 var ratingController = require('./RatingController');
