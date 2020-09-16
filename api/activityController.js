@@ -28,32 +28,21 @@ exports.saveGoals = function (req, res) {
         'email': req.body.email, 
         'courseId': req.body.courseId
     };
-
-    var weekNum = req.body.weekNumber;
-
-    var fieldString = "goals." + weekNum; 
-
-    var videoField = fieldString + ".videoGoal"; 
-    var quizField = fieldString + ".quizGoal"; 
-    var assignmentField = fieldString + ".assignmentGoal"; 
-    var contentField = fieldString + ".content"; 
-    var estimatedTimeField = fieldString + ".estimatedTimeGoal"; 
-    var additionalGoalField = fieldString + ".additionalGoal"; 
-
+    
     var update = 
     {
-        [videoField]: req.body.videoGoal,
-        [quizField]: req.body.quizGoal, 
-        [assignmentField]: req.body.assignmentGoal,
-        [contentField]: req.body.content,
-        [estimatedTimeField]: req.body.estimatedTimeGoal, 
-        [additionalGoalField]: req.body.additionalGoal
+        videoGoal: req.body.videoGoal,
+        quizGoal: req.body.quizGoal, 
+        assignmentGoal: req.body.assignmentGoal,
+        content: req.body.content,
+        estimatedTimeGoal: req.body.estimatedTimeGoal, 
+        additionalGoal: req.body.additionalGoal
     };
 
     console.log(queryParams);
     console.log(update); 
 
-    Activity.findOneAndUpdate(queryParams, update, function (err, activity) {
+    Activity.findOneAndUpdate(queryParams, {$push: {goals: update}}, function (err, activity) {
         if (err)
             res.send(err);
         res.json({
