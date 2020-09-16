@@ -10,8 +10,6 @@ exports.getUserActivity = function (req, res) {
         'courseId': req.query.courseId
     };
 
-    console.log(req);
-
     Activity.findOne(queryParams, function (err, activity) {
         if (err)
             res.send(err);
@@ -28,7 +26,7 @@ exports.saveGoals = function (req, res) {
         'email': req.body.email, 
         'courseId': req.body.courseId
     };
-    
+
     var update = 
     {
         videoGoal: req.body.videoGoal,
@@ -42,7 +40,7 @@ exports.saveGoals = function (req, res) {
     console.log(queryParams);
     console.log(update); 
 
-    Activity.findOneAndUpdate(queryParams, {$push: {goals: update}}, function (err, activity) {
+    Activity.findOneAndUpdate(queryParams, {"$push": {"goals": update}}, function (err, activity) {
         if (err)
             res.send(err);
         res.json({
