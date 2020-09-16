@@ -25,7 +25,7 @@ var goalsSchema = mongoose.Schema({
     },
     goalCreateDate: {
         type: String
-    }
+    },
     rating: {
         type: Number
     },
