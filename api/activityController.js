@@ -34,11 +34,9 @@ exports.saveGoals = function (req, res) {
         assignmentGoal: req.body.assignmentGoal,
         content: req.body.content,
         estimatedTimeGoal: req.body.estimatedTimeGoal, 
-        additionalGoal: req.body.additionalGoal
+        additionalGoal: req.body.additionalGoal,
+        goalCreateDate: req.body.goalCreateDate
     };
-
-    console.log(queryParams);
-    console.log(update); 
 
     Activity.findOneAndUpdate(queryParams, {"$push": {"goals": update}}, function (err, activity) {
         if (err)

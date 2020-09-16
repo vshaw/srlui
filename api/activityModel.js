@@ -23,8 +23,14 @@ var goalsSchema = mongoose.Schema({
     additionalGoal: {
         type: String
     },
+    goalCreateDate: {
+        type: String
+    }
     rating: {
         type: Number
+    },
+    ratingDate: {
+        type: String
     }
 });
 
