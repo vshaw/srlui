@@ -62,7 +62,7 @@ var activitySchema = mongoose.Schema({
         required: true
     },
     goals: {
-        type: Map, 
+        type: Array, 
         of: goalsSchema
     }
 });
