@@ -61,7 +61,7 @@ exports.saveRating = function (req, res) {
         }
     };
 
-    console.log(query); 
+    console.log(queryParams); 
 
     var update = {
         "$set": {
