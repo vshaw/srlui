@@ -61,11 +61,15 @@ exports.saveRating = function (req, res) {
         }
     };
 
+    console.log(query); 
+
     var update = {
         "$set": {
             "goals.$.rating": req.body.rating
         }
     };
+
+    console.log(update); 
 
     Activity.findOneAndUpdate(queryParams, update, function (err, activity) {
         if (err)
