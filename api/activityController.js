@@ -52,19 +52,19 @@ exports.saveRating = function (req, res) {
 
     var queryParams = {
         'email': req.body.email, 
-        'courseId': req.body.courseId
+        'courseId': req.body.courseId,
+        'goals': {
+            "$elemMatch": {
+                "content": req.body.content,
+                "goalCreateDate": req.body.goalCreateDate
+            }
+        }
     };
 
-    var weekNum = req.body.weekNumber;
-    var rating = req.body.rating
-
-    var fieldString = "goals." + weekNum; 
-
-    var ratingField = fieldString + ".rating"; 
-
-    var update = 
-    {
-        [ratingField]: rating
+    var update = {
+        "$set": {
+            "goals.$.rating": req.body.rating
+        }
     };
 
     Activity.findOneAndUpdate(queryParams, update, function (err, activity) {
