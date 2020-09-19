@@ -29,6 +29,9 @@ var reminderSchema = mongoose.Schema({
     offset1: {
         type: Number, 
     },
+    plainDate1: {
+        type: String,
+    },
     task2: {
         type: String, 
     },
@@ -37,6 +40,9 @@ var reminderSchema = mongoose.Schema({
     },
     offset2: {
         type: Number, 
+    },
+    plainDate2: {
+        type: String,
     },
     task3: {
         type: String, 
@@ -47,6 +53,9 @@ var reminderSchema = mongoose.Schema({
     offset3: {
         type: Number, 
     },
+    plainDate3: {
+        type: String,
+    },
     task4: {
         type: String, 
     },
@@ -55,6 +64,9 @@ var reminderSchema = mongoose.Schema({
     },
     offset4: {
         type: Number, 
+    },
+    plainDate4: {
+        type: String,
     },
     task5: {
         type: String, 
@@ -65,6 +77,9 @@ var reminderSchema = mongoose.Schema({
     offset5: {
         type: Number, 
     },
+    plainDate5: {
+        type: String,
+    },
     task6: {
         type: String, 
     },
@@ -74,6 +89,9 @@ var reminderSchema = mongoose.Schema({
     offset6: {
         type: Number, 
     },
+    plainDate6: {
+        type: String,
+    },
     task7: {
         type: String, 
     },
@@ -82,6 +100,9 @@ var reminderSchema = mongoose.Schema({
     },
     offset7: {
         type: Number, 
+    },
+    plainDate7: {
+        type: String,
     },
     content: {
         type: [String]

@@ -19,7 +19,7 @@ exports.new = async function (req, res) {
     reminder.task1 = req.body.task1 ? req.body.task1 : null;
     reminder.date1 = req.body.date1 ? req.body.date1 : null;
     reminder.offset1 = req.body.offset1 ? req.body.offset1 : null;
-    reminder.plainDate1 = req.body.plainDate1 ? req.body.plainDate1 : null; 
+    reminder.plainDate1 = req.body.plainDate1 ? req.body.plainDate1 : null;
 
     reminder.task2 = req.body.task2 ? req.body.task2 : null;
     reminder.date2 = req.body.date2 ? req.body.date2 : null;
