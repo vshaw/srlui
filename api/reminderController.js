@@ -5,7 +5,6 @@ let agenda = require('../jobs/agenda');
 Reminder = require('./reminderModel');
 
 // Handle create contact actions
-// Handle create contact actions
 exports.new = async function (req, res) {
 
     var reminder = new Reminder();
@@ -20,30 +19,37 @@ exports.new = async function (req, res) {
     reminder.task1 = req.body.task1 ? req.body.task1 : null;
     reminder.date1 = req.body.date1 ? req.body.date1 : null;
     reminder.offset1 = req.body.offset1 ? req.body.offset1 : null;
+    reminder.plainDate1 = req.body.plainDate1 ? req.body.plainDate1 : null; 
 
     reminder.task2 = req.body.task2 ? req.body.task2 : null;
     reminder.date2 = req.body.date2 ? req.body.date2 : null;
     reminder.offset2 = req.body.offset2 ? req.body.offset2 : null;
+    reminder.plainDate2 = req.body.plainDate2 ? req.body.plainDate2 : null; 
 
     reminder.task3 = req.body.task3 ? req.body.task3 : null;
     reminder.date3 = req.body.date3 ? req.body.date3 : null;
     reminder.offset3 = req.body.offset3 ? req.body.offset3 : null;
+    reminder.plainDate3 = req.body.plainDate3 ? req.body.plainDate3 : null; 
 
     reminder.task4 = req.body.task4 ? req.body.task4 : null;
     reminder.date4 = req.body.date4 ? req.body.date4 : null;
     reminder.offset4 = req.body.offset4 ? req.body.offset4 : null;
+    reminder.plainDate4 = req.body.plainDate4 ? req.body.plainDate4 : null; 
 
     reminder.task5 = req.body.task5 ? req.body.task5 : null;
     reminder.date5 = req.body.date5 ? req.body.date5 : null;
     reminder.offset5 = req.body.offset5 ? req.body.offset5 : null;
+    reminder.plainDate5 = req.body.plainDate5 ? req.body.plainDate5 : null; 
 
     reminder.task6 = req.body.task6 ? req.body.task6 : null;
     reminder.date6 = req.body.date6 ? req.body.date6 : null;
     reminder.offset6 = req.body.offset6 ? req.body.offset6 : null;
+    reminder.plainDate6 = req.body.plainDate6 ? req.body.plainDate6 : null; 
 
     reminder.task7 = req.body.task7 ? req.body.task7 : null;
     reminder.date7 = req.body.date7 ? req.body.date7 : null;
     reminder.offset7 = req.body.offset7 ? req.body.offset7 : null;
+    reminder.plainDate7 = req.body.plainDate7 ? req.body.plainDate7 : null; 
 
     console.log(reminder); 
         
