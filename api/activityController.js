@@ -78,7 +78,7 @@ exports.editActivity = function (req, res) {
         update = 
         {
             "$inc": {
-                "problems." + weekNumber: increment
+                ["problems." + weekNumber]: increment
             },
             "$setOnInsert": {
                 "userId": req.body.userId
