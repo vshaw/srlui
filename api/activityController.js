@@ -48,6 +48,37 @@ exports.saveGoals = function (req, res) {
     }); 
 }
 
+exports.editActivity = function (req, res) {
+
+    var queryParams = {
+        'email': req.body.email, 
+        'courseId': req.body.courseId
+    };
+ 
+    var weekNumber = req.body.weekNumber; 
+
+    var event = req.body.event; 
+
+    var increment = 1; 
+    var index = "videos." + weekNumber;
+
+    if (event == "Answered questions") {
+        increment = req.body.numQuestions; 
+        index = "problems." + weekNumber; 
+    } 
+
+    Activity.findOneAndUpdate(queryParams, {"$inc": {index: increment}}, function (err, activity) {
+        if (err)
+            res.send(err);
+        res.json({
+            message: 'Activity details loading..',
+            data: activity
+        });
+    }); 
+
+
+}
+
 exports.saveRating = function (req, res) {
 
     var queryParams = {
@@ -66,9 +97,6 @@ exports.saveRating = function (req, res) {
             "goals.$.rating": req.body.rating
         }
     };
-    
-    console.log(queryParams); 
-    console.log(update); 
 
     Activity.findOneAndUpdate(queryParams, update, function (err, activity) {
         if (err)
