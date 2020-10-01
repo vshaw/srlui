@@ -65,9 +65,19 @@ exports.editActivity = function (req, res) {
     if (event == "Answered questions") {
         increment = req.body.numQuestions; 
         index = "problems." + weekNumber; 
+    }
+
+    var update = 
+    {
+        "$inc": {
+            index: increment
+        },
+        "$setOnInsert": {
+            "userId": req.body.email
+        }  
     } 
 
-    Activity.findOneAndUpdate(queryParams, {"$inc": {index: increment}}, function (err, activity) {
+    Activity.findOneAndUpdate(queryParams, {"$inc": update, {upsert: true}, function (err, activity) {
         if (err)
             res.send(err);
         res.json({
