@@ -8,6 +8,7 @@ const auth = require("../auth/middleware");
 // Import controllers
 var activityController = require('./activityController');
 var reminderController = require('./reminderController');
+var eventController = require('./eventController');
 
 // Routes
 router.route('/activity')
