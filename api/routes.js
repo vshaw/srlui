@@ -20,6 +20,9 @@ router.route('/activity/goals')
 router.route('/activity/rating')
     .post(auth, activityController.saveRating)
 
+router.route('/activity/edit')
+    .post(auth, activityController.editActivity)
+
 router.route('/tasks')
     .post(auth, reminderController.new)
     .get(auth, reminderController.index)
@@ -28,8 +31,7 @@ router.route('/tasks')
 
 router.route('/events')
     .post(auth, eventController.create)
-router.route('/events/edit')
-    .post(auth, eventController.editActivity)
+
 
 /* var reminderController = require('./reminderController');
 var ratingController = require('./RatingController');
