@@ -1,20 +1,7 @@
 // eventModel.js
 var mongoose = require('mongoose');
 
-// Setup schema
-var eventSchema = mongoose.Schema({
-    userId: {
-        type: String
-    },
-    email: {
-        type: String 
-    },
-    group: {
-        type: String
-    },
-    courseId: {
-        type: String
-    },
+var activitySchema = mongoose.Schema({
     weekNumber: {
         type: Number
     },
@@ -32,10 +19,31 @@ var eventSchema = mongoose.Schema({
     },
     postsCreated: {
         type: Number
-    }
+    },
 },
 {
-timestamps: true
+    timestmaps: true
+});
+
+
+// Setup schema
+var eventSchema = mongoose.Schema({
+    userId: {
+        type: String
+    },
+    email: {
+        type: String 
+    },
+    group: {
+        type: String
+    },
+    courseId: {
+        type: String
+    },
+    activity: {
+        type: [activitySchema],
+        required: true
+    }
 });
 
 

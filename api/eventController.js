@@ -6,27 +6,34 @@ Event = require('./eventModel');
 // Handle update event info, create if no match found 
 exports.create = async function (req, res) {
 
-    var event = new Event();
+    var activity = {
+        weekNumber: req.body.weekNumber,
+        event: req.body.event, 
+        contentId: req.body.contentId,
+        numQuestions: req.body.numQuestions, 
+    };
 
-    event.userId = req.body.userId;
-    event.courseId = req.body.courseId; 
-    event.email = req.body.email;
-    event.weekNumber = req.body.weekNumber;
-    event.group = req.body.group;
-    event.event = req.body.event; 
-    event.contentId = req.body.contentId; 
-    event.numQuestions = req.body.numQuestions;
-    event.postsViewed = req.body.postsViewed; 
-    event.postsCreated = req.body.postsCreated; 
+    var queryParams = {
+        'email': req.body.email, 
+        'courseId': req.body.courseId
+    };
 
-    event.save(function (err) {
-        if (err) {
-            console.log(err); 
-            res.json(err);
+    var update = {
+        "$set": {
+            "userId": req.body.userId,
+            "group": req.body.group
+        },
+        "$push": {
+            "activity": activity
         }
+    };
+
+    Event.findOneAndUpdate(queryParams, update, {upsert: true}, function (err, activity) {
+        if (err)
+            res.send(err);
         res.json({
-            message: 'New event created!',
-            data: event
+            message: 'Activity details loading..',
+            data: activity
         });
     }); 
 };
