@@ -28,7 +28,8 @@ router.route('/tasks')
 
 router.route('/events')
     .post(auth, eventController.create)
-
+router.route('/events/edit')
+    .post(auth, eventController.editActivity)
 
 /* var reminderController = require('./reminderController');
 var ratingController = require('./RatingController');
