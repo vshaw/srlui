@@ -24,6 +24,11 @@ router.route('/tasks')
     .get(auth, reminderController.index)
     .delete(auth, reminderController.delete)
 
+
+router.route('/events')
+    .post(auth, eventController.create)
+
+
 /* var reminderController = require('./reminderController');
 var ratingController = require('./RatingController');
 var discussionPostsController = require('./discussionPostsController');
