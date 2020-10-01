@@ -73,9 +73,11 @@ exports.editActivity = function (req, res) {
             index: increment
         },
         "$setOnInsert": {
-            "userId": req.body.email
+            "userId": req.body.userId
         }  
-    } 
+    }; 
+
+    console.log(update);
 
     Activity.findOneAndUpdate(queryParams, update, {upsert: true}, function (err, activity) {
         if (err)
