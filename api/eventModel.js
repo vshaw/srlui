@@ -22,7 +22,7 @@ var activitySchema = mongoose.Schema({
     },
 },
 {
-    timestmaps: true
+    timestamps: true
 });
 
 
