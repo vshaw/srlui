@@ -39,8 +39,6 @@ timestamps: true
 });
 
 
-eventSchema.index({"userId": 1, "email": 1, "courseId": 1, "weekNumber": 1}, { unique: true });
-
 // Export event model
 var Event = module.exports = mongoose.model('event', eventSchema);
 module.exports.get = function (callback, limit) {
