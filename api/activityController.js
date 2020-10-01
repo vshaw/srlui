@@ -62,20 +62,30 @@ exports.editActivity = function (req, res) {
     var increment = 1; 
     var index = "videos." + weekNumber;
 
-    if (event == "Answered questions") {
-        increment = req.body.numQuestions; 
-        index = "problems." + weekNumber; 
-    }
-
     var update = 
     {
         "$inc": {
-            index: increment
+            "videos." + weekNumber: increment
         },
         "$setOnInsert": {
             "userId": req.body.userId
         }  
     }; 
+
+    if (event == "Answered questions") {
+        increment = req.body.numQuestions; 
+
+        update = 
+        {
+            "$inc": {
+                "problems." + weekNumber: increment
+            },
+            "$setOnInsert": {
+                "userId": req.body.userId
+            }  
+        }; 
+    }
+
 
     console.log(update);
 
