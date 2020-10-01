@@ -77,7 +77,7 @@ exports.editActivity = function (req, res) {
         }  
     } 
 
-    Activity.findOneAndUpdate(queryParams, {"$inc": update, {upsert: true}, function (err, activity) {
+    Activity.findOneAndUpdate(queryParams, update, {upsert: true}, function (err, activity) {
         if (err)
             res.send(err);
         res.json({
