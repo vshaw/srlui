@@ -124,10 +124,11 @@ exports.editActivity = function (req, res) {
 
     if (event == "Watched video") 
     {
+
+        newVariableUpdate["videos"][weekNumber] = increment; 
+
         update =     
         {
-            newVariableUpdate["videos"][weekNumber] = increment; 
-
             "$inc": {
                 ["videos." + weekNumber]: increment
             },
