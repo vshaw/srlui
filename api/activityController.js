@@ -150,6 +150,9 @@ exports.editActivity = function (req, res) {
     console.log(update);
 
     Activity.findOneAndUpdate(queryParams, update, function (err, activity) {
+
+        console.log("is this happening twice");
+
         res.json({
             message: 'Activity details loading..',
             data: activity
