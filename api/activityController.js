@@ -59,7 +59,7 @@ exports.editActivity = function (req, res) {
 
     var event = req.body.event; 
 
-    var increment = 2; 
+    var increment = 1; 
     var index = "videos." + weekNumber;
 
     var videosMap = {
@@ -157,7 +157,7 @@ exports.editActivity = function (req, res) {
             message: 'Activity details loading..',
             data: activity
         });
-    }).then(function (doc) {
+    }); /*.then(function (doc) {
         if (doc == null)
         {
             Activity.create(newVariableUpdate, function (err, activity) {
@@ -165,7 +165,7 @@ exports.editActivity = function (req, res) {
                     res.send(err);
             });
         }
-    }); 
+    }); */
 
 
 }
