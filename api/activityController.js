@@ -65,7 +65,7 @@ exports.editActivity = function (req, res) {
     var update = 
     {
         "$inc": {
-            "videos." + weekNumber: increment
+            ["videos." + weekNumber]: increment
         },
         "$setOnInsert": {
             "userId": req.body.userId
