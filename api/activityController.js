@@ -126,30 +126,32 @@ exports.editActivity = function (req, res) {
     {
         update =     
         {
+            newVariableUpdate["videos"][weekNumber] = increment; 
+
             "$inc": {
                 ["videos." + weekNumber]: increment
             },
+            "$setOnInsert": newVariableUpdate
         };
-
-        newVariableUpdate["videos"][weekNumber] = increment; 
     }
     else if (event == "Answered questions") {
         increment = req.body.numQuestions; 
+        newVariableUpdate["problems"][weekNumber] = increment; 
 
         update = 
         {
             "$inc": {
                 ["problems." + weekNumber]: increment
-            }
+            },
+            "$setOnInsert": newVariableUpdate
         }; 
 
-        newVariableUpdate["problems"][weekNumber] = increment; 
     }
 
 
     console.log(update);
 
-    Activity.findOneAndUpdate(queryParams, update, function (err, activity) {
+    Activity.findOneAndUpdate(queryParams, update, {upsert: true}, function (err, activity) {
 
         console.log("is this happening twice");
 
