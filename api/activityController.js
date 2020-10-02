@@ -135,6 +135,7 @@ exports.editActivity = function (req, res) {
                 "courseId": req.body.courseId,
                 "userId": req.body.userId,
                 "problems": problemsMap,
+                "videos": videosMap,
                 "posts": postsMap,
                 "goals": []            
             }
