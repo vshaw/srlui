@@ -124,27 +124,42 @@ exports.editActivity = function (req, res) {
 
     if (event == "Watched video") 
     {
-
-        newVariableUpdate["videos"][weekNumber] = increment; 
+        videosMap[weekNumber] = increment; 
 
         update =     
         {
             "$inc": {
                 ["videos." + weekNumber]: increment
             },
-            "$setOnInsert": newVariableUpdate
+            "$setOnInsert": {
+                "email": req.body.email,
+                "courseId": req.body.courseId,
+                "userId": req.body.userId,
+                "videos": videosMap,
+                "problems": problemsMap,
+                "posts": postsMap,
+                "goals": []            
+            }
         };
     }
     else if (event == "Answered questions") {
         increment = req.body.numQuestions; 
-        newVariableUpdate["problems"][weekNumber] = increment; 
+        problemsMap[weekNumber] = increment; 
 
         update = 
         {
             "$inc": {
                 ["problems." + weekNumber]: increment
             },
-            "$setOnInsert": newVariableUpdate
+            "$setOnInsert": {
+                "email": req.body.email,
+                "courseId": req.body.courseId,
+                "userId": req.body.userId,
+                "videos": videosMap,
+                "problems": problemsMap,
+                "posts": postsMap,
+                "goals": []            
+            }        
         }; 
 
     }
