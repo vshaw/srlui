@@ -147,7 +147,7 @@ exports.editActivity = function (req, res) {
     }
 
 
-    console.log(updates);
+    console.log(update);
 
     Activity.findOneAndUpdate(queryParams, update, function (err, activity) {
         res.json({
