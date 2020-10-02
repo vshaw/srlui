@@ -149,8 +149,6 @@ exports.editActivity = function (req, res) {
 
 
     Activity.findOneAndUpdate(queryParams, update, function (err, activity) {
-        if (err)
-            res.send(err);
         res.json({
             message: 'Activity details loading..',
             data: activity
@@ -163,10 +161,8 @@ exports.editActivity = function (req, res) {
             console.log(newVariableUpdate);
 
             Activity.create(newVariableUpdate, function (err, activity) {
-                res.json({
-                    message: 'Activity details loading..',
-                    data: activity
-                });
+                if (err)
+                    res.send(err);
             });
         }
     }); 
