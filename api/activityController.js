@@ -62,7 +62,7 @@ exports.editActivity = function (req, res) {
     var increment = 1; 
     var index = "videos." + weekNumber;
 
-    var activity_map = {
+    var videosMap = {
         "1" : 0,
         "2" : 0,
         "3" : 0,
@@ -75,7 +75,37 @@ exports.editActivity = function (req, res) {
         "10": 0,
         "11": 0,
         "12": 0,
-    }
+    };
+
+    var problemsMap = {
+        "1" : 0,
+        "2" : 0,
+        "3" : 0,
+        "4" : 0,
+        "5" : 0,
+        "6" : 0,
+        "7" : 0,
+        "8" : 0,
+        "9" : 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+    };
+
+    var postsMap = {
+        "1" : 0,
+        "2" : 0,
+        "3" : 0,
+        "4" : 0,
+        "5" : 0,
+        "6" : 0,
+        "7" : 0,
+        "8" : 0,
+        "9" : 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+    };
 
     var goal_map = [];
 
@@ -84,9 +114,9 @@ exports.editActivity = function (req, res) {
         "email": req.body.email,
         "courseId": req.body.courseId,
         "userId": req.body.userId,
-        "videos": activity_map,
-        "problems": activity_map,
-        "posts": activity_map,
+        "videos": videosMap,
+        "problems": problemsMap,
+        "posts": postsMap,
         "goals": []       
     }
 
@@ -100,7 +130,6 @@ exports.editActivity = function (req, res) {
                 ["videos." + weekNumber]: increment
             },
         };
-
 
         newVariableUpdate["videos"][weekNumber] = increment; 
     }
