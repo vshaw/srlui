@@ -65,7 +65,9 @@ exports.editActivity = function (req, res) {
     var weekNumberArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
     var index = weekNumberArray.indexOf(weekNumber);
-    array.splice(index, 1);
+    weekNumberArray.splice(index, 1);
+
+    console.log(weekNumberArray);
 
     var videosMap = {
         "1" : 0,
