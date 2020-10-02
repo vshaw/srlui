@@ -123,8 +123,6 @@ exports.editActivity = function (req, res) {
 
     if (event == "Watched video") 
     {
-        videosMap[weekNumber] = increment; 
-
         update =     
         {
             "$inc": {
@@ -143,7 +141,7 @@ exports.editActivity = function (req, res) {
     }
     else if (event == "Answered questions") {
         increment = req.body.numQuestions; 
-        problemsMap[weekNumber] = increment; 
+    //    problemsMap[weekNumber] = increment; 
 
         update = 
         {
