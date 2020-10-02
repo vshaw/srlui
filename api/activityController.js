@@ -164,6 +164,7 @@ exports.editActivity = function (req, res) {
 
             Activity.create(newVariableUpdate, function (err, activity) {
                 if (err)
+                    console.log(err);
                     res.send(err);
                 res.json({
                     message: 'Activity details loading..',
