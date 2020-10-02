@@ -62,14 +62,36 @@ exports.editActivity = function (req, res) {
     var increment = 1; 
     var index = "videos." + weekNumber;
 
+    var activity_map = {
+        "1" : 0,
+        "2" : 0,
+        "3" : 0,
+        "4" : 0,
+        "5" : 0,
+        "6" : 0,
+        "7" : 0,
+        "8" : 0,
+        "9" : 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+    }
+
+    var goal_map = [];
+
     var update = 
     {
+        "$setOnInsert": {
+            "userId": req.body.userId,
+            "username": req.body.username,
+            "videos": activity_map,
+            "problems": activity_map,
+            "posts": activity_map,
+            "goals": []
+        },
         "$inc": {
             ["videos." + weekNumber]: increment
         },
-        "$setOnInsert": {
-            "userId": req.body.userId
-        }  
     }; 
 
     if (event == "Answered questions") {
@@ -81,8 +103,13 @@ exports.editActivity = function (req, res) {
                 ["problems." + weekNumber]: increment
             },
             "$setOnInsert": {
-                "userId": req.body.userId
-            }  
+                "userId": req.body.userId,
+                "username": req.body.username,
+                "videos": activity_map,
+                "problems": activity_map,
+                "posts": activity_map,
+                "goals": []
+            },
         }; 
     }
 
