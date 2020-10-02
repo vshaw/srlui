@@ -62,15 +62,11 @@ exports.editActivity = function (req, res) {
     var increment = 1; 
 
     // This is so hacky but I'm desparate
-    var weekNumberArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+    var weekNumberArray = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
 
-    console.log(weekNumberArray); 
     var index = weekNumberArray.indexOf(weekNumber);
 
-    console.log("index: " + index); 
     weekNumberArray.splice(index, 1);
-
-    console.log(weekNumberArray);
 
     var videosMap = {
         "1" : 0,
