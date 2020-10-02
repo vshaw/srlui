@@ -133,8 +133,7 @@ exports.editActivity = function (req, res) {
 
         newVariableUpdate["videos"][weekNumber] = increment; 
     }
-
-    if (event == "Answered questions") {
+    else if (event == "Answered questions") {
         increment = req.body.numQuestions; 
 
         update = 
@@ -148,6 +147,8 @@ exports.editActivity = function (req, res) {
     }
 
 
+    console.log(updates);
+
     Activity.findOneAndUpdate(queryParams, update, function (err, activity) {
         res.json({
             message: 'Activity details loading..',
@@ -156,10 +157,6 @@ exports.editActivity = function (req, res) {
     }).then(function (doc) {
         if (doc == null)
         {
-            console.log("no record was found, creating..")
-
-            console.log(newVariableUpdate);
-
             Activity.create(newVariableUpdate, function (err, activity) {
                 if (err)
                     res.send(err);
