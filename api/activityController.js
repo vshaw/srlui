@@ -119,9 +119,6 @@ exports.editActivity = function (req, res) {
     }
 
 
-
-    console.log(update);
-
     Activity.findOneAndUpdate(queryParams, update, function (err, activity) {
         if (err)
             res.send(err);
@@ -133,6 +130,8 @@ exports.editActivity = function (req, res) {
         if (doc == null)
         {
             console.log("no record was found, creating..")
+
+            console.log(newVariableUpdate);
 
             Activity.create(newVariableUpdate, function (err, activity) {
                 if (err)
