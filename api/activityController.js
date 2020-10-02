@@ -79,19 +79,31 @@ exports.editActivity = function (req, res) {
 
     var goal_map = [];
 
-    var update = 
+    var newVariableUpdate = 
     {
-        "$setOnInsert": {
-            "userId": req.body.userId,
-            "videos": activity_map,
-            "problems": activity_map,
-            "posts": activity_map,
-            "goals": []
-        },
-        "$inc": {
-            ["videos." + weekNumber]: increment
-        },
-    }; 
+        "email": req.body.email,
+        "courseId": req.body.courseId,
+        "userId": req.body.userId,
+        "videos": activity_map,
+        "problems": activity_map,
+        "posts": activity_map,
+        "goals": []       
+    }
+
+    var update;
+
+    if (event == "Watched video") 
+    {
+        update =     
+        {
+            "$inc": {
+                ["videos." + weekNumber]: increment
+            },
+        };
+
+
+        newVariableUpdate["videos"][weekNumber] = increment; 
+    }
 
     if (event == "Answered questions") {
         increment = req.body.numQuestions; 
@@ -100,27 +112,37 @@ exports.editActivity = function (req, res) {
         {
             "$inc": {
                 ["problems." + weekNumber]: increment
-            },
-            "$setOnInsert": {
-                "userId": req.body.userId,
-                "videos": activity_map,
-                "problems": activity_map,
-                "posts": activity_map,
-                "goals": []
-            },
+            }
         }; 
+
+        newVariableUpdate["problems"][weekNumber] = increment; 
     }
+
 
 
     console.log(update);
 
-    Activity.findOneAndUpdate(queryParams, update, {upsert: true}, function (err, activity) {
+    Activity.findOneAndUpdate(queryParams, update, function (err, activity) {
         if (err)
             res.send(err);
         res.json({
             message: 'Activity details loading..',
             data: activity
         });
+    }).then(function (doc) {
+        if (doc == null)
+        {
+            console.log("no record was found, creating..")
+
+            Activity.create(newVariableUpdate, function (err, activity) {
+                if (err)
+                    res.send(err);
+                res.json({
+                    message: 'Activity details loading..',
+                    data: activity
+                });
+            });
+        }
     }); 
 
 
