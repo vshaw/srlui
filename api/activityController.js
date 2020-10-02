@@ -60,10 +60,16 @@ exports.editActivity = function (req, res) {
     var event = req.body.event; 
 
     var increment = 1; 
-    var index = "videos." + weekNumber;
+
+    // This is so hacky but I'm desparate
+    var weekNumberArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+
+    var index = weekNumberArray.indexOf(weekNumber);
+    array.splice(index, 1);
 
     var videosMap = {
         "1" : 0,
+        "2" : 0,
         "3" : 0,
         "4" : 0,
         "5" : 0,
@@ -106,19 +112,6 @@ exports.editActivity = function (req, res) {
         "12": 0,
     };
 
-    var goal_map = [];
-
-    var newVariableUpdate = 
-    {
-        "email": req.body.email,
-        "courseId": req.body.courseId,
-        "userId": req.body.userId,
-        "videos": videosMap,
-        "problems": problemsMap,
-        "posts": postsMap,
-        "goals": []       
-    }
-
     var update;
 
     if (event == "Watched video") 
@@ -126,6 +119,17 @@ exports.editActivity = function (req, res) {
         update =     
         {
             "$inc": {
+                ["videos." + weekNumberArray[0]]: 0,
+                ["videos." + weekNumberArray[1]]: 0,
+                ["videos." + weekNumberArray[2]]: 0,
+                ["videos." + weekNumberArray[3]]: 0,
+                ["videos." + weekNumberArray[4]]: 0,
+                ["videos." + weekNumberArray[5]]: 0,
+                ["videos." + weekNumberArray[6]]: 0,
+                ["videos." + weekNumberArray[7]]: 0,
+                ["videos." + weekNumberArray[8]]: 0,
+                ["videos." + weekNumberArray[9]]: 0,
+                ["videos." + weekNumberArray[10]]: 0,
                 ["videos." + weekNumber]: increment
             },
             "$setOnInsert": {
@@ -133,7 +137,6 @@ exports.editActivity = function (req, res) {
                 "courseId": req.body.courseId,
                 "userId": req.body.userId,
                 "problems": problemsMap,
-                "videos": videosMap,
                 "posts": postsMap,
                 "goals": []            
             }
@@ -141,11 +144,21 @@ exports.editActivity = function (req, res) {
     }
     else if (event == "Answered questions") {
         increment = req.body.numQuestions; 
-    //    problemsMap[weekNumber] = increment; 
 
         update = 
         {
             "$inc": {
+                ["problems." + weekNumberArray[0]]: 0,
+                ["problems." + weekNumberArray[1]]: 0,
+                ["problems." + weekNumberArray[2]]: 0,
+                ["problems." + weekNumberArray[3]]: 0,
+                ["problems." + weekNumberArray[4]]: 0,
+                ["problems." + weekNumberArray[5]]: 0,
+                ["problems." + weekNumberArray[6]]: 0,
+                ["problems." + weekNumberArray[7]]: 0,
+                ["problems." + weekNumberArray[8]]: 0,
+                ["problems." + weekNumberArray[9]]: 0,
+                ["problems." + weekNumberArray[10]]: 0,
                 ["problems." + weekNumber]: increment
             },
             "$setOnInsert": {
@@ -153,12 +166,10 @@ exports.editActivity = function (req, res) {
                 "courseId": req.body.courseId,
                 "userId": req.body.userId,
                 "videos": videosMap,
-                "problems": problemsMap,
                 "posts": postsMap,
                 "goals": []            
             }        
         }; 
-
     }
 
 
@@ -173,17 +184,7 @@ exports.editActivity = function (req, res) {
             message: 'Activity details loading..',
             data: activity
         });
-    }); /*.then(function (doc) {
-        if (doc == null)
-        {
-            Activity.create(newVariableUpdate, function (err, activity) {
-                if (err)
-                    res.send(err);
-            });
-        }
-    }); */
-
-
+    }); 
 }
 
 exports.saveRating = function (req, res) {
