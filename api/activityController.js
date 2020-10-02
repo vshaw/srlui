@@ -59,7 +59,7 @@ exports.editActivity = function (req, res) {
 
     var event = req.body.event; 
 
-    var increment = 1; 
+    var increment = 2; 
     var index = "videos." + weekNumber;
 
     var videosMap = {
