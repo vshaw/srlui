@@ -83,7 +83,6 @@ exports.editActivity = function (req, res) {
     {
         "$setOnInsert": {
             "userId": req.body.userId,
-            "username": req.body.username,
             "videos": activity_map,
             "problems": activity_map,
             "posts": activity_map,
@@ -104,7 +103,6 @@ exports.editActivity = function (req, res) {
             },
             "$setOnInsert": {
                 "userId": req.body.userId,
-                "username": req.body.username,
                 "videos": activity_map,
                 "problems": activity_map,
                 "posts": activity_map,
