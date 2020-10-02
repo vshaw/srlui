@@ -38,7 +38,6 @@ var goalsSchema = mongoose.Schema({
 var activitySchema = mongoose.Schema({
     username: {
         type: String,
-        required: true
     },
     courseId: {
         type: String, 
