@@ -173,12 +173,7 @@ exports.editActivity = function (req, res) {
         }; 
     }
 
-
-    console.log(update);
-
     Activity.findOneAndUpdate(queryParams, update, {upsert: true}, function (err, activity) {
-
-        console.log("is this happening twice");
         if (err)
             res.send(err);
         res.json({
