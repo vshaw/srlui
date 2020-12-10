@@ -1,3 +1,9 @@
+/* THIS IS A SAMPLE DATA FILE
+
+The data here should be replaced with course specific information, in the same format.
+
+*/
+
 var mappedInfo = {
 
     0 : {
@@ -360,4 +366,4 @@ DATES = {
     13: '2020-12-20'
 }; 
 
-var accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZDkwYzYxODllOGU3MzAwMDQ2NDUxMTMiLCJpYXQiOjE1Njk3Njg5ODV9.B0667naGxkMGg3y0n1RSxQh8ucVEKkeLcgIXkuY3r6M";
+var accessToken = "";
