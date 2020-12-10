@@ -1,6 +1,16 @@
-<!-- WeeklyGoals.html
-    On this page users in the control group can see weekly goals loaded from a static file. 
-    Users in the treatment group will be able to set their own goals, and setup email reminders for study plans --> 
+<!-- 
+
+WeeklyGoals.html
+    
+On this page users in the control group can see weekly goals loaded from a static file. 
+Users in the treatment group will be able to set their own goals, and setup email reminders for study plans
+
+IMPORTANT! 
+
+Before publishing to edX you MUST enter the week identifier at the bottom of this file with the corresponding edX content week. This ensures SRLUI can identify which content the weekly reflection is associated with. 
+
+--> 
+
 
 <head>
 
@@ -213,6 +223,7 @@
 <body>
 
     <script>
+        var weekIdentifier = 1;
         getUserInfo();
     </script>
 
