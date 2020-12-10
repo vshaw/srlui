@@ -19,7 +19,7 @@ exports.create = async function (req, res) {
     };
 
     var update = {
-        "$set": {
+        "$setOnInsert": {
             "userId": req.body.userId,
             "group": req.body.group
         },
@@ -27,6 +27,9 @@ exports.create = async function (req, res) {
             "activity": activity
         }
     };
+
+    // Print writes for sanity checks
+    console.log(update);
 
     Event.findOneAndUpdate(queryParams, update, {upsert: true}, function (err, activity) {
         if (err)

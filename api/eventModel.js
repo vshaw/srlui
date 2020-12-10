@@ -1,6 +1,8 @@
 // eventModel.js
+// This entry is meant to save user activities at a more granular level for later analysis
 var mongoose = require('mongoose');
 
+// Activity schema
 var activitySchema = mongoose.Schema({
     weekNumber: {
         type: Number

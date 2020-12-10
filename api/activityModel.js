@@ -1,4 +1,5 @@
-// discussionPostsModel.js
+// activityModel.js
+// This entry is meant for edX module data viewing and posting
 var mongoose = require('mongoose');
 
 var goalsSchema = mongoose.Schema({

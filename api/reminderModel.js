@@ -1,5 +1,6 @@
 // reminderModel.js
 var mongoose = require('mongoose');
+
 // Setup schema
 var reminderSchema = mongoose.Schema({
     userId: {
