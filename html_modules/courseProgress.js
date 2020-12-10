@@ -4,29 +4,21 @@
     var weekId; 
     var devShowTreatment = false; 
     var postsArray = {};
+    var goalContent = [];
+    var goalCreateDate = ""; 
 
     var SERVER_URL = "https://columbiax-srlui.herokuapp.com";
 
-    //////////////////////////////////////////////
-    //            PAGE LOAD FUNCTIONS           //
-    //////////////////////////////////////////////
-
-    // Callback to load external scripts
-    function loadScript(url, callback)
-    {
-        // Adding the script tag to the head as suggested before
-        var head = document.head;
-        var script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = url;
-
-        // Then bind the event to the callback function.
-        // There are several events for cross browser compatibility.
-        script.onreadystatechange = callback;
-        script.onload = callback;
-
-        // Fire the loading
-        head.appendChild(script);
+    // Analytics property has to load...
+    function waitForElement(){
+        if(typeof(analytics) != undefined 
+            && typeof(analytics.user) === typeof(Function)) {
+                userId = analytics.user()._getId();  
+                generateNumbers();       
+        }
+        else{
+            setTimeout(waitForElement, 250);
+        }
     }
 
     // Set user info global variables
@@ -37,9 +29,11 @@
       courseId = split[4].split(":")[1];
       weekId = split[6];
 
-      userId = analytics.user()._getId();
+      if (courseId.includes("type")){
+        courseId = courseId.split("+type")[0]; 
+      }
 
-      weekNumber = getWeekNumber(); 
+      waitForElement();
     }
 
     // Toggle between control/treatment displays
@@ -47,7 +41,7 @@
     {
         getUserInfo(); 
       
-        // Only do any of this if the user is in the treatment group
+        // Only show goal section if the user is in the treatment group
         if (userId % 2 != 0 || devShowTreatment)
         {
             var saveGoalsButton = document.getElementById("saveGoalsButton");
@@ -56,60 +50,7 @@
             var goalsElement = document.getElementById("weekGoals");
             var goalsContainer = document.getElementById("goalsContainer"); 
 
-            var weekNumber = getWeekNumber() - 1;
-
-            var email = analytics._user._getTraits().email;
-
             goalsElement.style.display = "block"; 
-
-            if (weekNumber > 0)
-            {
-                
-                var settings = {
-                    "async": true,
-                    "crossDomain": true,
-                    "url": SERVER_URL + "/api/goals/weekByNum",
-                    "method": "GET",
-                    "headers": {
-                        'x-access-token': accessToken
-                    },
-                    "data": {
-                        "userId": userId,
-                        'email': email,
-                        "courseId": courseId,
-                        "weekNumber": weekNumber
-                    }
-                };
-
-                $.ajax(settings).done(function (response) {
-                    var weekResult = response.data; 
-
-                    if (weekResult != null)
-                    {
-                        document.getElementById("savedThree").style.display = "flex"; 
-
-                        document.getElementById("savedVideos").innerHTML = weekResult.videoGoal; 
-                        document.getElementById("savedQuizzes").innerHTML = weekResult.quizGoal; 
-                        document.getElementById("savedAssignments").innerHTML = weekResult.assignmentGoal; 
-                        document.getElementById("savedEstimatedTime").innerHTML = weekResult.estimatedTimeGoal; 
-
-                        createSavedVideoTable(weekResult.content, weekResult.additionalGoal);
-
-                    }
-                    else
-                    {
-                        var textNode = createGoalTextNode("You didn't set any goals last week."); 
-                        goalsContainer.appendChild(textNode);
-                    }
-                });
-            }
-            else
-            {
-                var textNode = createGoalTextNode("You didn't set any goals last week."); 
-                goalsContainer.appendChild(textNode);             
-            }
-
-            getSavedRating(); 
         }
     }
 
@@ -118,9 +59,8 @@
     //////////////////////////////////////////////
 
     // Create the table of selected goals
-    function createSavedVideoTable(selectedVideos, additionalGoal)
+    function createSavedVideoTable(selectedVideos)
     {
-        document.getElementById("savedAdditionalGoal").innerHTML = additionalGoal;
         document.getElementById("savedVideoTableDiv").innerHTML = "";
 
         if (selectedVideos != null)
@@ -131,7 +71,7 @@
 
             var headRow = document.createElement("tr");
 
-            ["Week", "Content", "Time (hh:mm:ss)"].forEach(function(el) {
+            ["Week", "Learning Content", "Time (hh:mm:ss)"].forEach(function(el) {
                 var th=document.createElement("th");
                 th.style.textAlign = "center"; 
                 th.appendChild(document.createTextNode(el));
@@ -147,26 +87,29 @@
                 var tr = document.createElement("tr");
                 var contentArray = selectedVideos[j].split("_");
 
-
                 var weekTd = document.createElement("td");
                 weekTd.style.textAlign = "center"; 
                 weekTd.appendChild(document.createTextNode(contentArray[0]));
 
-                contentArray.splice(0, 1);
+                var contentTd = document.createElement("td");
+                contentTd.style.textAlign = "center"; 
+
+                if (contentArray[3] != null) 
+                {
+                    contentTd.appendChild(document.createTextNode(contentArray[1] + " (" + contentArray[3] + " problems)"));
+                }
+                else
+                {
+                    contentTd.appendChild(document.createTextNode(contentArray[1]));          
+                }
 
                 var timeTd = document.createElement("td");
                 timeTd.style.textAlign = "center"; 
-                timeTd.appendChild(document.createTextNode(contentArray[contentArray.length - 1]));
-
-                contentArray.splice(contentArray.length - 1, 1);
-
-                var contentTd = document.createElement("td");
-                contentTd.style.textAlign = "center"; 
-                contentTd.appendChild(document.createTextNode(contentArray.join(' ')));
+                timeTd.appendChild(document.createTextNode(contentArray[2]));
 
                 tr.appendChild(weekTd); 
-                tr.appendChild(timeTd); 
                 tr.appendChild(contentTd); 
+                tr.appendChild(timeTd); 
 
                 tbody.appendChild(tr);
             }
@@ -179,19 +122,17 @@
 
     // Get past week's numbers 
     function generateNumbers() {
-        getUserInfo();
 
         var email = analytics._user._getTraits().email;
 
-        var pastWeekNumber = weekNumber - 2; 
+        var weekNumber = getWeekNumber() - 1;
 
         var datestring = "In the past week of the course you have:"
 
-
-        if (pastWeekNumber > 1)
+        if (weekNumber > 1)
         {
-            var weekStartDate = new Date(DATES[pastWeekNumber]); 
-            var weekEndDate = new Date(DATES[weekNumber - 1]);
+            var weekStartDate = new Date(DATES[weekNumber - 1]); 
+            var weekEndDate = new Date(DATES[weekNumber]);
 
             // Set date string for past week      
             var startString = convertDateToString(weekStartDate); 
@@ -220,26 +161,86 @@
 
                 if (result != null)
                 {
+                    // FILL OUT GOAL SECTION
+                    var goalArray = result.goals; 
 
-                    // Past week numbers
-                    document.getElementById("videosWatched").innerHTML = result.videos[pastWeekNumber]; 
-                    document.getElementById("problemsCompleted").innerHTML = result.problems[pastWeekNumber]; 
-                    document.getElementById("postsCreated").innerHTML = result.posts[pastWeekNumber]; 
+                    if (goalArray.length > 0) 
+                    {
+                        var goalResult = goalArray[goalArray.length - 1];
+
+                        document.getElementById("goalsHeaderText").innerHTML = "As a reminder, these were the last goals you set for yourself on " + goalResult.goalCreateDate;
+                        document.getElementById("savedThree").style.display = "flex"; 
+
+                        document.getElementById("savedVideos").innerHTML = goalResult.videoGoal; 
+                        document.getElementById("savedQuizzes").innerHTML = goalResult.quizGoal; 
+                        document.getElementById("savedAssignments").innerHTML = goalResult.assignmentGoal; 
+                        document.getElementById("savedEstimatedTime").innerHTML = goalResult.estimatedTimeGoal; 
+
+                        document.getElementById("savedAdditionalGoal").innerHTML = "<b>Additional Goals: </b>" + goalResult.additionalGoal;
+
+                        goalCreateDate = goalResult.goalCreateDate; 
+
+                        if (goalResult.content.length > 0) {
+                            goalContent = goalResult.content; 
+                            createSavedVideoTable(goalResult.content);
+                        }
+
+                        if (goalResult.rating != null)
+                        {
+                            updateRating(goalResult.rating);
+                            activateButton(); 
+                        }
+                        else
+                        {
+                            // Disable 'next' buttons until slider bar progress is submitted. 
+                            if (!wereGoalsMadeSameDay(goalResult.goalCreateDate)) {
+                                toggleNextButtonDisabled(true);        
+                            }
+                        }
+                    }
+
+                    // FILL NUMBERS AND CHART
+                    document.getElementById("videosWatched").innerHTML = result.videos[weekNumber]; 
+                    document.getElementById("problemsCompleted").innerHTML = result.problems[weekNumber]; 
+                    document.getElementById("postsCreated").innerHTML = result.posts[weekNumber]; 
 
                     //Generate line chart
                     var videoData = [];
                     var postsData = [];
                     var problemData = []; 
+                    var goalVideoData = [];
+                    var goalProblemData = []; 
 
                     var numWeeks = Object.keys(DATES).length;
+                    var goalIndex = 0; 
+                    var currentGoalDate = goalArray[goalIndex].goalCreateDate; 
 
                     for (var i = 1; i < numWeeks + 1; i++)
                     {
-                        weekDate = convertDateToString(new Date(DATES[i]));
+                        var videoGoalCounter = 0; 
+                        var problemGoalCounter = 0; 
+
+                        weekDate = DATES[i];
 
                         videoData.push({label: "Week Ending in " + weekDate, y: result.videos[i]});
                         postsData.push({label: "Week Ending in " + weekDate, y: result.posts[i]});
                         problemData.push({label: "Week Ending in " + weekDate, y: result.problems[i]});
+
+                        while (goalIndex < goalArray.length && 
+                            new Date(currentGoalDate).getTime() <= new Date(weekDate).getTime())
+                        {
+                            videoGoalCounter += goalArray[goalIndex].videoGoal; 
+                            problemGoalCounter += goalArray[goalIndex].quizGoal; 
+                            goalIndex++; 
+
+                            if (goalIndex < goalArray.length)
+                            {
+                                currentGoalDate = goalArray[goalIndex].goalCreateDate;
+                            } 
+                        }
+
+                        goalVideoData.push({label: "Week Ending in " + weekDate, y: videoGoalCounter}); 
+                        goalProblemData.push({label: "Week Ending in " + weekDate, y: problemGoalCounter}); 
                     }
 
                     var chart = new CanvasJS.Chart("chartContainer", {
@@ -278,123 +279,86 @@
                             showInLegend: true,
                             yValueFormatString: "",
                             name: "Videos Watched",
+                            color: "#094D8F",
+                            lineThickness: 3,
                             dataPoints: videoData
                         },
                         {
                             type: "spline", 
                             showInLegend: true,
                             yValueFormatString: "",
-                            name: "Posts Created",
-                            dataPoints: postsData
+                            name: "Problems Completed",
+                            color: "#1E9121",
+                            lineThickness: 3,
+                            dataPoints: problemData
                         },
                         {
                             type: "spline", 
                             showInLegend: true,
                             yValueFormatString: "",
-                            name: "Problems Completed",
-                            dataPoints: problemData
-                        } ]
+                            name: "Videos Watched Goal",
+                            color: "#637CCE",
+                            lineDashType: "dash",
+                            lineThickness: 1,
+                            dataPoints: goalVideoData,
+                        },
+                        {
+                            type: "spline", 
+                            showInLegend: true,
+                            yValueFormatString: "",
+                            name: "Problems Completed Goal",
+                            color: "#66B954",
+                            lineDashType: "dash",
+                            lineThickness: 1,
+                            dataPoints: goalProblemData,
+                        },
+                        {
+                            type: "spline", 
+                            showInLegend: true,
+                            yValueFormatString: "",
+                            name: "Posts Created",
+                            dataPoints: postsData,
+                        }]
                     });
                     chart.render();
+                }
+                else
+                {
+                    var textNode = createGoalTextNode("You didn't set any goals last week."); 
+                    goalsContainer.appendChild(textNode);
                 }
             });
         }
 
         document.getElementById("pastWeekHeader").innerHTML = dateString; 
-        
     }
 
-   
-    // Gets existing rating from database
-    function getSavedRating() {
-        
-        var responseText = document.getElementById("responseText");
-
-        var email = analytics._user._getTraits().email;
-
-        var settings = {
-            "async": true,
-            "crossDomain": true,
-            "url": SERVER_URL + "/api/rating",
-            "method": "GET",
-            "headers": {
-                'x-access-token': accessToken
-            },
-            "data": {
-                "userId": userId,
-                "courseId": courseId, 
-                "email": email,
-                "weekId": weekId, 
-            }
-        };
-
-        $.ajax(settings).done(function (response) {
-
-            var weekData = response.data; 
-
-            if (weekData != null)
-            {
-                updateRating(weekData.satisfied);
-                activateButton(); 
-            }
-            else
-            {
-                // Disable 'next' buttons until slider bar progress is submitted. 
-                toggleNextButtonDisabled(true); 
-            }
-        }); 
-    }
 
     // Saves the slider bar data
     function saveRating() {
         
         var email = analytics._user._getTraits().email;
 
-        var ratingValue; 
-        var veryUnhappy = document.getElementById("veryUnsatisfied");
-        var unhappy = document.getElementById("unsatisfied");
-        var neutral = document.getElementById("neutral");
-        var smiley = document.getElementById("happy");
-        var verySmiley = document.getElementById("veryHappy");
-
-        if (smiley.checked == true)
-        {
-            ratingValue = 1; 
-        }
-        else if (verySmiley.checked == true)
-        {
-            ratingValue = 2; 
-        }
-        else if (veryUnhappy.checked == true)
-        {
-            ratingValue = -2; 
-        }
-        else if (unhappy.checked == true)
-        {
-            ratingValue = -1
-        }
-        else
-        {
-            ratingValue = 0; 
-        }
-
         var responseText = document.getElementById("responseText");             
+
+        var ratingValue = document.getElementById("rangeValLabel").innerHTML;
+
+        var weekNumber = getWeekNumber() - 1; 
 
         var settings = {
             "async": true,
             "crossDomain": true,
-            "url": SERVER_URL + "/api/rating",
+            "url": SERVER_URL + "/api/activity/rating",
             "method": "POST",
             "headers": {
                 'x-access-token': accessToken
             },
             "data": {
-                "userId": userId,
                 "email": email,
                 "courseId": courseId, 
-                "weekId": weekId, 
-                "weekNumber": weekNumber, 
-                "satisfied": ratingValue 
+                "content": goalContent,
+                "goalCreateDate": goalCreateDate, 
+                "rating": ratingValue 
             }
         };
 
@@ -410,25 +374,18 @@
     //               HELPER FUNCTIONS           //
     //////////////////////////////////////////////
 
-    // Sort events by week number
-    function sortByTimestamp(record1, record2)
-    {
-        if (record1.Timestamp > record2.Timestamp)
-        {
-            return 1; 
+    function wereGoalsMadeSameDay(goalCreateDate){
+
+        var timeDiff = Math.abs(new Date().getTime() - Date.parse(goalCreateDate));
+        var daysDiff = timeDiff  / (1000 * 3600 * 24);
+
+        if (daysDiff <= 1) {
+            return true;
         }
-
-        if (record1.Timestamp < record2.Timestamp)
+        else
         {
-            return -1; 
+            return false; 
         }
-
-        return 0; 
-    } 
-
-    // Search dictionary for value and return key (e.g. week num to start date)
-    function getKeyByValue(object, value) {
-        return Object.keys(object).find(key => object[key] === value);
     }
 
     // Convert date object to readable string
@@ -464,28 +421,16 @@
 
             if (currentDate <= tempDate )
             {
-                weekNumber = week
+                weekNumber = week;
             }
+        }
+
+        if (weekNumber == undefined) {
+            weekNumber = week;
         }
 
         return weekNumber; 
     }
-
-    // Sort events by week number
-    function sortByWeekNumber(record1, record2)
-    {
-        if (record1.weekNumber > record2.weekNumber)
-        {
-            return 1; 
-        }
-
-        if (record1.weekNumber < record2.weekNumber)
-        {
-            return -1; 
-        }
-
-        return 0; 
-    } 
 
     // Create the text node used for goals
     function createGoalTextNode(text)
@@ -498,69 +443,54 @@
 
     // Updates rating
     function updateRating(val) {
-
-        if (val != undefined)
-        {
-           if (val == 1)
-           {
-                document.getElementById("veryUnsatisfied").checked = false;
-                document.getElementById("unsatisfied").checked = false;
-                document.getElementById("neutral").checked = false;
-                document.getElementById("happy").checked = true;
-                document.getElementById("veryHappy").checked = false;
-           }
-           else if (val == 0)
-           {
-                document.getElementById("veryUnsatisfied").checked = false;
-                document.getElementById("unsatisfied").checked = false;
-                document.getElementById("neutral").checked = true;
-                document.getElementById("happy").checked = false;
-                document.getElementById("veryHappy").checked = false;
-           }
-           else if (val == 2)
-           {
-                document.getElementById("veryUnsatisfied").checked = false;
-                document.getElementById("unsatisfied").checked = false;
-                document.getElementById("neutral").checked = false;
-                document.getElementById("happy").checked = false;
-                document.getElementById("veryHappy").checked = true;
-           }
-           else if (val == -1)
-           {
-                document.getElementById("veryUnsatisfied").checked = false;
-                document.getElementById("unsatisfied").checked = true;
-                document.getElementById("neutral").checked = false;
-                document.getElementById("happy").checked = false;
-                document.getElementById("veryHappy").checked = false;
-           }
-           else if (val == -2)
-           {
-                document.getElementById("veryUnsatisfied").checked = true;
-                document.getElementById("unsatisfied").checked = false;
-                document.getElementById("neutral").checked = false;
-                document.getElementById("happy").checked = false;
-                document.getElementById("veryHappy").checked = false;
-           }
-        }
+        document.getElementById("rangeValLabel").innerHTML = val;
+        document.getElementById("rangeVal").value = val;
     }
 
     // Toggle 'next' buttons disabled/enabled
     function toggleNextButtonDisabled(disabled)
     {
-        var nextButton = document.getElementsByClassName("sequence-nav-button button-next");
+        var buttons = document.getElementsByClassName("sequence-nav-button button-next"); 
 
-        for (var i = 0; i < nextButton.length; i++)
+        for (var i = 0; i < buttons.length; i++)
         {
-            nextButton[i].disabled = disabled; 
+            buttons[i].disabled = disabled; 
         }
 
-        var sectionButtons = document.getElementsByClassName("seq_other inactive nav-item tab");
+        buttons = document.getElementsByClassName("next-btn btn btn-link"); 
 
-        for (var i = 0; i < sectionButtons.length; i++)
+        for (var i = 0; i < buttons.length; i++)
         {
-            sectionButtons[i].disabled = disabled; 
-        }
+            buttons[i].disabled = disabled; 
+        }       
 
+        buttons = document.getElementsByClassName("seq_other inactive nav-item tab"); 
+
+        for (var i = 0; i < buttons.length; i++)
+        {
+            buttons[i].disabled = disabled; 
+        }       
+
+        buttons = document.getElementsByClassName("complete btn btn-link"); 
+
+        for (var i = 0; i < buttons.length; i++)
+        {
+            buttons[i].disabled = disabled; 
+        }       
+
+        buttons = document.getElementsByClassName("sequence-nav-button button-next"); 
+
+        for (var i = 0; i < buttons.length; i++)
+        {
+            buttons[i].disabled = disabled; 
+        }       
+
+        buttons = document.getElementsByClassName("next-button btn btn-outline-primary"); 
+
+        for (var i = 0; i < buttons.length; i++)
+        {
+            buttons[i].disabled = disabled; 
+        }        
     }
 
     // Activate submit button when an option is selected

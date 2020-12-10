@@ -1,5 +1,4 @@
- var userId; 
-    var email;
+    var userId; 
     var weekId;
     var weekNumber = 0;
     var selectedVideos = []; 
@@ -17,56 +16,46 @@
     //            PAGE LOAD FUNCTIONS         //
     //////////////////////////////////////////////
 
-    // Load external scripts, ie SRLUICourseInfo.js
-    function loadScript(url, callback)
-    {
-        // Adding the script tag to the head as suggested before
-        var head = document.head;
-        var script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = url;
+    // Analytics property has to load...
+    function waitForElement(){
 
-        // Then bind the event to the callback function.
-        // There are several events for cross browser compatibility.
-        script.onreadystatechange = callback;
-        script.onload = callback;
+        if(typeof(analytics) != undefined && typeof(analytics.user) === typeof(Function)) {
+            
+            userId = analytics.user()._getId();  
 
-        // Fire the loading
-        head.appendChild(script);
+            var controlElement = document.getElementById("controlWeeklyGoals");
+            var treatmentElement = document.getElementById("treatmentWeeklyGoals"); 
+
+            if (userId % 2 == 0 && !devShowTreatment)
+            {
+                getControlGoals(); 
+                controlElement.style.display = "block"; 
+                treatmentElement.style.display = "none"; 
+            }
+            else
+            {
+                getTreatmentGoals(); 
+            }        
+
+        }
+        else{
+            setTimeout(waitForElement, 250);
+        }
     }
 
-    // Toggle display between treatment/control experiences
-    var toggleGroupDisplay = function()
-    {
-        getUserInfo();
-      
-        var controlElement = document.getElementById("controlWeeklyGoals");
-        var treatmentElement = document.getElementById("treatmentWeeklyGoals"); 
-
-        if (userId % 2 == 0 && !devShowTreatment)
-        {
-            getControlGoals(); 
-            controlElement.style.display = "block"; 
-            treatmentElement.style.display = "none"; 
-        }
-        else
-        {
-            getTreatmentGoals(); 
-        }
-    };
-
-    // Get user info and set global variables
+    // Set user info global variables
     function getUserInfo()
     {
-        var url = window.location.href;
-        var split = url.split("/");
-        weekId = split[6];
-        courseId = split[4].split(":")[1];
+      var url = window.location.href;
+      var split = url.split("/");
+      courseId = split[4].split(":")[1];
+      weekId = split[6];
 
-        userId = analytics.user()._getId();
-        email = analytics._user._getTraits().email;
+      if (courseId.includes("type")){
+        courseId = courseId.split("+type")[0]; 
+      }
 
-        weekNumber = getWeekNumber(); 
+      waitForElement();
     }
 
     //////////////////////////////////////////////
@@ -121,19 +110,24 @@
         var scheduleGoals = document.getElementById("scheduleGoals");
         var treatmentElement = document.getElementById("treatmentWeeklyGoals"); 
 
+        var weekNumber = getWeekNumber() + 1;
+        var email = analytics._user._getTraits().email;
+       
+        if (DATES[weekNumber] == undefined) {
+            document.getElementById("saveGoalsButton").disabled = true;
+        }
+
         var settings = {
             "async": true,
             "crossDomain": true,
-            "url": SERVER_URL + "/api/goals2/week",
+            "url": SERVER_URL + "/api/activity",
             "headers": {
                 'x-access-token': accessToken
             },
             "method": "GET",
             "data": {
-                "userId": userId,
                 "email": email,
                 "courseId": courseId, 
-                "weekId": weekId
             }
         };
 
@@ -143,43 +137,60 @@
 
             // If we found goals already set, redirect to the calendar/goal view. Otherwise, show them 
             // the set goal page. 
-            if (result != null)
+            var goalObject = result.goals; 
+            if (goalObject != null)
             {
-                treatmentWeeklyGoals.style.display="none";
-                setDateTimePickers(); 
+                var latestGoals = goalObject[goalObject.length - 1];
 
-                selectedVideos = result.content; 
+                var timeDiff = Math.abs(new Date().getTime() - Date.parse(latestGoals.goalCreateDate));
+                var daysDiff = timeDiff  / (1000 * 3600 * 24);
 
-                goalVideos = result.videoGoal; 
-                goalQuizzes = result.quizGoal; 
-                goalAssignments = result.assignmentGoal; 
-                additionalGoal = result.additionalGoal; 
+                if (daysDiff < 3 && latestGoals.content.length > 0) {
 
-                createSavedVideoTable(additionalGoal); 
+                    treatmentWeeklyGoals.style.display="none";
+                    setDateTimePickers(); 
 
-                document.getElementById("savedVideos").innerHTML = result.videoGoal; 
-                document.getElementById("savedQuizzes").innerHTML = result.quizGoal; 
-                document.getElementById("savedAssignments").innerHTML = result.assignmentGoal; 
-                document.getElementById("savedEstimatedTime").innerHTML = result.estimatedTimeGoal; 
+                    selectedVideos = latestGoals.content; 
+
+                    goalVideos = latestGoals.videoGoal; 
+                    goalQuizzes = latestGoals.quizGoal; 
+                    goalAssignments = latestGoals.assignmentGoal; 
+                    additionalGoal = latestGoals.additionalGoal; 
+
+                    createSavedVideoTable(additionalGoal); 
+
+                    document.getElementById("savedAdditionalGoal").innerHTML = "<b>Additional Goals: </b>" + additionalGoal;
+
+                    document.getElementById("savedVideos").innerHTML = goalVideos; 
+                    document.getElementById("savedQuizzes").innerHTML = goalQuizzes; 
+                    document.getElementById("savedAssignments").innerHTML = goalAssignments; 
+                    document.getElementById("savedEstimatedTime").innerHTML = latestGoals.estimatedTimeGoal; 
 
 
-                document.getElementById("videos").innerHTML = result.videoGoal; 
-                document.getElementById("quizzes").innerHTML = result.quizGoal; 
-                document.getElementById("assignments").innerHTML = result.assignmentGoal; 
-                document.getElementById("estimatedTime").innerHTML = result.estimatedTimeGoal; 
+                    document.getElementById("videos").innerHTML = goalVideos; 
+                    document.getElementById("quizzes").innerHTML = goalQuizzes; 
+                    document.getElementById("assignments").innerHTML = goalAssignments; 
+                    document.getElementById("estimatedTime").innerHTML = latestGoals.estimatedTimeGoal; 
 
-                var timeArray = result.estimatedTimeGoal.split(":");
-                
-                if (timeArray.length == 3)
-                {
-                    goalTime.setHours(timeArray[0], timeArray[1], timeArray[2], 0);
+                    var timeArray = latestGoals.estimatedTimeGoal.split(":");
+                    
+                    if (timeArray.length == 3)
+                    {
+                        goalTime.setHours(timeArray[0], timeArray[1], timeArray[2], 0);
+                    }
+                    else
+                    {
+                        goalTime.setHours(0, timeArray[0], timeArray[1], 0);
+                    }
+                    
+                    scheduleGoals.style.display="block"; 
                 }
                 else
                 {
-                    goalTime.setHours(0, timeArray[0], timeArray[1], 0);
+                    treatmentWeeklyGoals.style.display="block";
+                    scheduleGoals.style.display="none";                    
                 }
-                
-                scheduleGoals.style.display="block"; 
+
             } 
             else
             {
@@ -230,7 +241,7 @@
                 tbody = document.createElement("tbody");
 
                 var headRow = document.createElement("tr");
-                var weekHeaderString = "Week " + weekNum + " Content";
+                var weekHeaderString = "Week " + weekNum + " Learning Content";
 
                 // Create table header checkbox 
                 var thCheckbox = document.createElement("th");
@@ -257,7 +268,7 @@
             // Create the table row
             var tr = document.createElement("tr");
 
-            for (var j=0; j < videos[i].length + 1; j++)
+            for (var j=0; j < 4; j++)
             {
                 var td = document.createElement("td");
                 td.style.textAlign = "center"; 
@@ -267,24 +278,39 @@
                     // For the # column, use an incrementing counter
                     td.appendChild(document.createTextNode(counter));
                 }
-                else if (j != videos[i].length)
+                else if (j == 1 || j == 2)
                 {
-                    td.appendChild(document.createTextNode(videos[i][j]));
+                    if (videos[i][j].toString().includes("Quiz")) {
+                        var problems = videos[i][3]; 
+                        td.appendChild(document.createTextNode(videos[i][j] + " (" + problems + " problems)"));
+                    }
+                    else
+                    {
+                        td.appendChild(document.createTextNode(videos[i][j]));
+                    }
                 }
                 else
                 {
                     // Lastly add the checkbox column
                     var cb = document.createElement("INPUT");
                     cb.setAttribute("type", "checkbox");
-                    cb.id = videos[i][0] + "_" + videos[i][1] + "_" + videos[i][2]; 
 
+                    if (videos[i].length == 4)
+                    {
+                        cb.id = videos[i][0] + "_" + videos[i][1] + "_" + videos[i][2] + "_"+videos[i][3]; 
+                    }
+                    else
+                    {
+                        cb.id = videos[i][0] + "_" + videos[i][1] + "_" + videos[i][2];        
+                    }
+                    
                     cb.onclick = function(e){ saveSelectedVideos(this.checked, this.id) };   
 
                     td.appendChild(cb); 
                 }
 
                 // Checkbox should be inserted at first position
-                if (j == videos[i].length)
+                if (j == 3)
                 {
                     tr.insertBefore(td, tr.firstChild)
                 }
@@ -309,14 +335,22 @@
     {
         var rowElements = videoRow.split("_");
 
+        var increment = 1; 
+
+        if (rowElements.length == 4 && rowElements[1].includes("Quiz"))
+        {
+            increment = parseInt(rowElements[3]);
+        }
+
         if (checked)
         {
             selectedVideos.push(videoRow);
-            incrementGoalNumbers(1, rowElements[1], rowElements[rowElements.length - 1]);
+
+            incrementGoalNumbers(increment, rowElements[1], rowElements[2]);
         }
         else
         {
-            incrementGoalNumbers(-1, rowElements[1], rowElements[rowElements.length - 1]);
+            incrementGoalNumbers((-1 * increment), rowElements[1], rowElements[2]);
     
             var index = selectedVideos.indexOf(videoRow)
 
@@ -332,6 +366,12 @@
         var tempDate = new Date(); 
         var timeBuckets = time.split(":");
 
+        var timeIncrement = 1; 
+
+        if (increment < 0) {
+            timeIncrement = -1; 
+        }
+
         if (timeBuckets.length == 3)
         {
             tempDate.setHours(timeBuckets[0], timeBuckets[1], timeBuckets[2], 0);
@@ -341,9 +381,9 @@
             tempDate.setHours(0, timeBuckets[0], timeBuckets[1], 0);
         }
 
-        goalTime.setHours(goalTime.getHours() + (tempDate.getHours() * increment)); 
-        goalTime.setMinutes(goalTime.getMinutes() + (tempDate.getMinutes() * increment)); 
-        goalTime.setSeconds(goalTime.getSeconds() + (tempDate.getSeconds() * increment)); 
+        goalTime.setHours(goalTime.getHours() + (tempDate.getHours() * timeIncrement)); 
+        goalTime.setMinutes(goalTime.getMinutes() + (tempDate.getMinutes() * timeIncrement)); 
+        goalTime.setSeconds(goalTime.getSeconds() + (tempDate.getSeconds() * timeIncrement)); 
 
         if (name.includes("Quiz"))
         {
@@ -454,7 +494,15 @@
         for(var i = 1; i < table.length; i++) {
 
             var nodes = table[i].children; 
+
             var tempId = week + "_" + nodes[2].innerHTML + "_" + nodes[3].innerHTML;
+
+            if (nodes[2].innerHTML.includes("Quiz"))
+            {
+                var tempSplit = nodes[2].innerHTML.split("(");
+                var problems = tempSplit[1][0]; 
+                tempId = week + "_" + tempSplit[0].trim() + "_" + nodes[3].innerHTML + "_" + problems;
+            }
 
             if (document.getElementById(tempId).checked != isChecked)
             {
@@ -468,29 +516,28 @@
     function saveGoals() {
 
         var additionalGoal = document.getElementById("additionalGoal").value;
-
         var estimatedTime = goalTime.getHours() + ":" + goalTime.getMinutes() + ":" + goalTime.getSeconds(); 
+        var email = analytics._user._getTraits().email;
+        var date = convertDateToString(new Date());
 
         var settings = {
             "async": true,
             "crossDomain": true,
-            "url": SERVER_URL + "/api/goals2",
+            "url": SERVER_URL + "/api/activity/goals",
             "method": "POST",
             "headers": {
                 'x-access-token': accessToken
             },
             "data": {
-                "userId": userId,
                 "email": email,
                 "courseId": courseId, 
-                "weekId": weekId, 
-                "weekNumber": weekNumber, 
                 "videoGoal": goalVideos,
                 "quizGoal": goalQuizzes,
                 "assignmentGoal": goalAssignments,
                 "estimatedTimeGoal": estimatedTime,
                 "additionalGoal": additionalGoal,
-                "content": selectedVideos
+                "content": selectedVideos,
+                "goalCreateDate": date
             }
         };
 
@@ -499,22 +546,23 @@
 
           treatmentWeeklyGoals.style.display="none";
 
-          createSavedVideoTable(additionalGoal); 
+          createSavedVideoTable(); 
 
           document.getElementById("savedVideos").innerHTML = goalVideos; 
           document.getElementById("savedQuizzes").innerHTML = goalQuizzes; 
           document.getElementById("savedAssignments").innerHTML = goalAssignments; 
           document.getElementById("savedEstimatedTime").innerHTML = estimatedTime; 
+          document.getElementById("savedAdditionalGoal").innerHTML = "<b>Additional Goals: </b>" + additionalGoal;
 
           setDateTimePickers(); 
           document.getElementById("scheduleGoals").style.display="block"; 
+          window.scrollTo(0, 0);
       });          
     }
 
     // Create the table of selected goals
-    function createSavedVideoTable(additionalGoal)
+    function createSavedVideoTable()
     {
-        document.getElementById("savedAdditionalGoal").innerHTML = additionalGoal;
         document.getElementById("savedVideoTableDiv").innerHTML = "";
 
         if (selectedVideos != null)
@@ -525,7 +573,7 @@
 
             var headRow = document.createElement("tr");
 
-            ["Week", "Content", "Time (hh:mm:ss)"].forEach(function(el) {
+            ["Week", "Learning Content", "Time (hh:mm:ss)"].forEach(function(el) {
                 var th=document.createElement("th");
                 th.style.textAlign = "center"; 
                 th.appendChild(document.createTextNode(el));
@@ -535,32 +583,37 @@
             thead.appendChild(headRow); 
             savedVideoTable.appendChild(thead); 
 
+            var taskList = [];
+
             // Create the table rows
             for (var j=0; j < selectedVideos.length; j++)
             {
                 var tr = document.createElement("tr");
                 var contentArray = selectedVideos[j].split("_");
 
-
                 var weekTd = document.createElement("td");
                 weekTd.style.textAlign = "center"; 
                 weekTd.appendChild(document.createTextNode(contentArray[0]));
 
-                contentArray.splice(0, 1);
+                var contentTd = document.createElement("td");
+                contentTd.style.textAlign = "center"; 
+                var contentTitle = contentArray[1]; 
+
+                if (contentArray[3] != null) 
+                {
+                    contentTitle = contentArray[1] + " (" + contentArray[3] + " problems)";
+                }
+
+                contentTd.appendChild(document.createTextNode(contentTitle)); 
+                taskList.push(contentTitle); 
 
                 var timeTd = document.createElement("td");
                 timeTd.style.textAlign = "center"; 
-                timeTd.appendChild(document.createTextNode(contentArray[contentArray.length - 1]));
-
-                contentArray.splice(contentArray.length - 1, 1);
-
-                var contentTd = document.createElement("td");
-                contentTd.style.textAlign = "center"; 
-                contentTd.appendChild(document.createTextNode(contentArray.join(' ')));
+                timeTd.appendChild(document.createTextNode(contentArray[2]));
 
                 tr.appendChild(weekTd); 
-                tr.appendChild(timeTd); 
                 tr.appendChild(contentTd); 
+                tr.appendChild(timeTd); 
 
                 tbody.appendChild(tr);
             }
@@ -568,6 +621,8 @@
             savedVideoTable.appendChild(tbody); 
 
             document.getElementById("savedVideoTableDiv").appendChild(savedVideoTable);
+
+            populateTaskList(taskList); 
         }
     }
 
@@ -587,12 +642,14 @@
 
     // Save calendar email reminders
     function saveReminders()
-    {      
+    {   
+        var email = analytics._user._getTraits().email;
+
         var date1 = document.getElementById("date1").value;
         var time1 = document.getElementById("time1").value;
         var task1 = document.getElementById("task1").value;
         var offset1 = getCheckedBox("reminder1", "reminder2", "reminder3");
-        
+
         var finalDate1 = getFinalSendDate(date1, time1, offset1);
 
         var date2 = document.getElementById("date2").value;
@@ -741,7 +798,7 @@
     // Get the week number based on the current date and the start date of each week recorded in SRLUICourseInfo.js
     function getWeekNumber()
     {
-        var weekNumber;
+    /*    var weekNumber;
 
         var currentDate = new Date();
 
@@ -751,12 +808,16 @@
 
             if (currentDate <= tempDate )
             {
-                weekNumber = week
+                weekNumber = week;
             }
         }
 
-        return weekNumber; 
-    }    
+        if (weekNumber == undefined) {
+            weekNumber = week;
+        } */
+
+        return 13; 
+    }
 
     // Checks if date can be parsed
     function isValidDate(d) {
@@ -766,75 +827,147 @@
     // Use jquery timepickers for cross browser compatability 
     function setDateTimePickers()
     {
+
         if ( $('#time1').prop('type') != 'time' ) 
         {
-            $('#time1').mdtimepicker();
-            $('#time1').attr('placeholder', "--:-- --");
+            $('#time1').mdtimepicker('setValue', '10:00 AM');
         }
 
         if ( $('#time2').prop('type') != 'time' ) {
-            $('#time2').mdtimepicker();
-            $('#time2').attr('placeholder', "--:-- --");        
+            $('#time2').mdtimepicker('setValue', '10:00 AM');
         }
 
         if ( $('#time3').prop('type') != 'time' ) {
-            $('#time3').mdtimepicker();
-            $('#time3').attr('placeholder', "--:-- --");        
+            $('#time3').mdtimepicker('setValue', '10:00 AM');
         }
                
         if ( $('#time4').prop('type') != 'time' ) {
-            $('#time4').mdtimepicker();
-            $('#time4').attr('placeholder', "--:-- --");        
+            $('#time4').mdtimepicker('setValue', '10:00 AM');
         }
 
         if ( $('#time5').prop('type') != 'time' ) {
-            $('#time5').mdtimepicker();
-            $('#time5').attr('placeholder', "--:-- --");        
+            $('#time5').mdtimepicker('setValue', '10:00 AM');
         }
 
         if ( $('#time6').prop('type') != 'time' ) {
-            $('#time6').mdtimepicker();
-            $('#time6').attr('placeholder', "--:-- --");        
+            $('#time6').mdtimepicker('setValue', '10:00 AM');
         }
 
         if ( $('#time7').prop('type') != 'time' ) {
-            $('#time7').mdtimepicker();
-            $('#time7').attr('placeholder', "--:-- --");        
+            $('#time7').mdtimepicker('setValue', '10:00 AM');
         }
 
         if ( $('#date1').prop('type') != 'date' ) {
             $('#date1').datepicker();
-            $('#date1').attr('placeholder', "mm/dd/yyyy");
-
+            $('#date1').datepicker("setDate", "+1d");
         }
+
         if ( $('#date2').prop('type') != 'date' ) {
             $('#date2').datepicker();
-            $('#date2').attr('placeholder', "mm/dd/yyyy");
+            $('#date2').datepicker("setDate", "+2d");
 
         }
 
         if ( $('#date3').prop('type') != 'date' ) {
             $('#date3').datepicker();
-            $('#date3').attr('placeholder', "mm/dd/yyyy");
+            $('#date3').datepicker("setDate", "+3d");
         } 
 
         if ( $('#date4').prop('type') != 'date' ) {
             $('#date4').datepicker();
-            $('#date4').attr('placeholder', "mm/dd/yyyy");
+            $('#date4').datepicker("setDate", "+4d");
         } 
 
         if ( $('#date5').prop('type') != 'date' ) {
             $('#date5').datepicker();
-            $('#date5').attr('placeholder', "mm/dd/yyyy");
+            $('#date5').datepicker("setDate", "+5d");
         } 
 
         if ( $('#date6').prop('type') != 'date' ) {
             $('#date6').datepicker();
-            $('#date6').attr('placeholder', "mm/dd/yyyy");
+            $('#date6').datepicker("setDate", "+6d");
         } 
 
         if ( $('#date7').prop('type') != 'date' ) {
             $('#date7').datepicker();
-            $('#date7').attr('placeholder', "mm/dd/yyyy");
+            $('#date7').datepicker("setDate", "+7d");
         } 
     }
+
+    // Add tasks to dropdown menu
+    function populateTaskList(taskList)
+    {
+        var dropdowns = document.getElementsByClassName("taskDropdown");
+
+        for (var i = 0; i < dropdowns.length; i++)
+        {
+            for(var j = 0; j < taskList.length; j++)
+            {
+                var option = document.createElement("option");
+                option.text = taskList[j];
+                dropdowns[i].appendChild(option);
+            }
+        }
+
+        dropdownGenerator(); 
+    }
+
+    // Convert date object to readable string
+    function convertDateToString(d)
+    {
+        var dd = d.getDate(); 
+        var mm = d.getMonth()+1; 
+        var yyyy = d.getFullYear();
+
+        if(dd<10) 
+        {
+            dd='0'+dd;
+        } 
+
+        if(mm<10) 
+        {
+            mm='0'+mm;
+        } 
+
+        return mm +'/'+ dd +'/'+ yyyy;
+    }
+
+    function dropdownGenerator() {
+        const separator = ',';
+        for (const input of document.getElementsByTagName("input")) {
+            if (!input.multiple) {
+                continue;
+            }
+            if (input.list instanceof HTMLDataListElement) {
+                const optionsValues = Array.from(input.list.options).map(opt => opt.value);
+                let valueCount = input.value.split(separator).length;
+                input.addEventListener("input", () => {
+                    const currentValueCount = input.value.split(separator).length;
+                    // Do not update list if the user doesn't add/remove a separator
+                    // Current value: "a, b, c"; New value: "a, b, cd" => Do not change the list
+                    // Current value: "a, b, c"; New value: "a, b, c," => Update the list
+                    // Current value: "a, b, c"; New value: "a, b" => Update the list
+                    if (valueCount !== currentValueCount) {
+                        const lsIndex = input.value.lastIndexOf(separator);
+                        const str = lsIndex !== -1 ? input.value.substr(0, lsIndex) + separator : "";
+                        filldatalist(input, optionsValues, str);
+                        valueCount = currentValueCount;
+                    }
+                });
+            }
+        }
+        function filldatalist(input, optionValues, optionPrefix) {
+            const list = input.list;
+            if (list && optionValues.length > 0) {
+                list.innerHTML = "";
+                const usedOptions = optionPrefix.split(separator).map(value => value.trim());
+                for (const optionsValue of optionValues) {
+                    if (usedOptions.indexOf(optionsValue) < 0) {
+                        const option = document.createElement("option");
+                        option.value = optionPrefix + optionsValue;
+                        list.append(option);
+                    }
+                }
+            }
+        }
+}

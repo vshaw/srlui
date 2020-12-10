@@ -6,9 +6,18 @@
     var courseId;
     var group; 
     var weekNumber;
-    var weekId;  
+    var newExperience = false;  
 
-    var SERVER_URL = "https://guarded-mesa-27479.herokuapp.com";
+    //Goal: log all data that is sent in xhr post requests to console before they are sent
+    //Code snippet inspired by: http://stackoverflow.com/questions/25335648/how-to-intercept-all-ajax-requests-made-by-different-js-libraries
+    var vidlog;
+    var finishedContentIds = []; 
+    var plays = [];
+    var pauses = [];
+    var durVid;
+    var vidSum = [];
+
+    var SERVER_URL = "https://columbiax-srlui.herokuapp.com";
 
     // Get user info on window load. 
     window.onload = function initSensor() {
@@ -18,35 +27,44 @@
     // Get user info to fill global variables need for api requests
     function getUserInfo()
     {
+
         var url = window.location.href;
         var split = url.split("/");
+        courseId = split[4].split(":")[1];    
 
-        userId = analytics.user()._getId();
-        courseId = split[4].split(":")[1];
-        weekId = split[6]; 
-
-        if (userId % 2 == 0) 
-        {
-            group = "Control";
-        }
-        else
-        {
-            group = "Treatment"; 
+        if (courseId.includes("type")){
+            courseId = courseId.split("+type")[0]; 
+            newExperience = true;
         }
 
-        // Get the week number based on courseDates stored in SRLUICourseInfo.js
-        var currentDate = new Date();
+        weekNumber = getWeekNumber();
 
-        for(var key in courseDates) 
-        {
-            var tempDate = new Date(key);
-
-            if (currentDate > tempDate)
-            {
-                weekNumber = courseDates[key];
-            }
-        } 
+        waitForElement();
     }
+
+    function waitForElement(){
+
+        if(typeof(analytics) != undefined && typeof(analytics.user) === typeof(Function)) {
+            
+            userId = analytics.user()._getId();  
+
+            if (userId % 2 == 0)
+            {
+                group = "Control";
+            }
+            else
+            {
+                group = "Treatment"; 
+            }
+
+            listen();
+
+        }
+        else{
+            setTimeout(waitForElement, 250);
+        }
+    }
+
 
     // Log events that occur. We store events per week, so a 'type' parameter indicates which event we are updating.
     function logVideoEvent(contentId) {
@@ -55,7 +73,7 @@
         var settings = {
             "async": true,
             "crossDomain": true,
-            "url": SERVER_URL + "/api/events2",
+            "url": SERVER_URL + "/api/events",
             "method": "POST",
             "headers": {
                 'x-access-token': accessToken
@@ -65,15 +83,36 @@
                 "email": email,
                 "group": group,
                 "courseId": courseId,
-                "weekNumber": weekNumber,
-                "weekId": weekId, 
                 "event": "Watched video", 
+                "weekNumber": weekNumber,
+                "contentId": contentId
+            }
+        }; 
+
+        var editSettings = {
+            "async": true,
+            "crossDomain": true,
+            "url": SERVER_URL + "/api/activity/edit",
+            "method": "POST",
+            "headers": {
+                'x-access-token': accessToken
+            },
+            "data": {
+                "userId": userId,
+                "email": email,
+                "group": group,
+                "courseId": courseId,
+                "event": "Watched video", 
+                "weekNumber": weekNumber,
                 "contentId": contentId
             }
         }; 
         
         $.ajax(settings).done(function (response) {
-       }); 
+        }); 
+
+        $.ajax(editSettings).done(function (response) {
+        }); 
     }
 
     function logQuestionEvent(contentId, numQuestions) {
@@ -82,7 +121,7 @@
         var settings = {
             "async": true,
             "crossDomain": true,
-            "url": SERVER_URL + "/api/events2",
+            "url": SERVER_URL + "/api/events",
             "method": "POST",
             "headers": {
                 'x-access-token': accessToken
@@ -92,16 +131,37 @@
                 "email": email,
                 "group": group,
                 "courseId": courseId,
-                "weekNumber": weekNumber,
-                "weekId": weekId, 
                 "event": "Answered questions", 
                 "contentId": contentId,
+                "weekNumber": weekNumber,
+                "numQuestions": numQuestions
+            }
+        }; 
+
+
+        var editSettings = {
+            "async": true,
+            "crossDomain": true,
+            "url": SERVER_URL + "/api/activity/edit",
+            "method": "POST",
+            "headers": {
+                'x-access-token': accessToken
+            },
+            "data": {
+                "userId": userId,
+                "email": email,
+                "group": group,
+                "courseId": courseId,
+                "event": "Answered questions", 
+                "contentId": contentId,
+                "weekNumber": weekNumber,
                 "numQuestions": numQuestions
             }
         }; 
         
-        $.ajax(settings).done(function (response) {
-       }); 
+        $.ajax(settings).done(function (response) {}); 
+
+        $.ajax(editSettings).done(function (response) {}); 
     }
 
     //////////////////////////////////////////////
@@ -109,26 +169,35 @@
     //////////////////////////////////////////////    
 
 
-    // Search dictionary for value and return key (e.g. week num to start date)
-    function getKeyByValue(object, value) {
-        return Object.keys(object).find(key => object[key] === value);
-    }
-
-    // Sort events by week number
-    function sortByTimestamp(record1, record2)
+    // Get the week number based on the current date and the start date of each week recorded in SRLUICourseInfo.js
+    function getWeekNumber()
     {
-        if (record1.Timestamp > record2.Timestamp)
+        weekNumber = 0; 
+
+        var currentDate = new Date();
+
+        for(var week in DATES) 
         {
-            return -1; 
+            var tempDate = new Date(DATES[week]);
+
+            if (currentDate > tempDate )
+            {
+                weekNumber = parseInt(week) + 1; 
+            }
         }
 
-        if (record1.Timestamp < record2.Timestamp)
+        if (weekNumber == 0)
         {
-            return 1; 
+            weekNumber = 1; // let's not be weird
         }
 
-        return 0; 
-    } 
+        if (weekNumber == undefined) 
+        {
+            weekNumber = week;
+        }
+
+        return weekNumber; 
+    }
 
     //////////////////////////////////////////////
     //               EVENT LISTENER             //
@@ -152,112 +221,112 @@
         return paramObject;
     }
 
-    //Goal: log all data that is sent in xhr post requests to console before they are sent
-    //Code snippet inspired by: http://stackoverflow.com/questions/25335648/how-to-intercept-all-ajax-requests-made-by-different-js-libraries
-    var vidlog;
-    var finishedContentIds = []; 
-    var plays = [];
-    var pauses = [];
-    var durVid;
-    var vidSum = [];
-    var url = document.URL;
+    // Sensor listener code 
+    function listen() {
 
-    // This will break studio if it runs inside of it, so this IF statement make it so the XHR intercept only fires if not in studio
-    if (intercepted == undefined)
-    {
-        var intercepted = false
-    }
-
-    if (url.includes('studio') === false && intercepted == false) 
-    {  
-        intercepted = true;
-        var origSend = XMLHttpRequest.prototype.send;
-
-        XMLHttpRequest.prototype.send = function(data) 
+        // This will break studio if it runs inside of it, so this IF statement make it so the XHR intercept only fires if not in studio
+        if (intercepted == undefined)
         {
-            vidlog = splitParamString(data);
-            vidlog.time = new Date();
-            var listening = true;
+            var intercepted = false
+        }
 
-            if (listening && vidlog.event_type === "play_video") 
+        if (document.URL.includes('studio') === false && intercepted == false) 
+        {  
+            intercepted = true;
+            var origSend = XMLHttpRequest.prototype.send;
+
+            XMLHttpRequest.prototype.send = function(data) 
             {
-                listening = false;
-                setTimeout(function () {
-                    listening = true
-                }, 2000);
+                vidlog = splitParamString(data);
+                vidlog.time = new Date();
+                var listening = true;
 
-                plays.push(vidlog.time);
-                addUp();
-            } 
-            else if (listening && vidlog.event_type === "pause_video") 
-            {
-                listening = false;
-                setTimeout(function () {
-                    listening = true
-                }, 2000);
-
-                pauses.push(vidlog.time);
-                addUp();
-            } 
-            else if (vidlog.event_type === "problem_check") 
-            {
-                // We need to look up how many questions are in each problem set, so we'll take the problem ID and match it to the html elements within the problem. 
-
-                // Get the problem ID
-                var problemSetId = vidlog.event.split("_")[1];
-
-                if (!finishedContentIds.includes(problemSetId))
+                if (listening && vidlog.event_type === "play_video") 
                 {
-                    // Get the array of problem set HTML elements
-                    var problemSets = document.getElementsByClassName("problem");
-                    
-                    var numProblems = 0;
+                    listening = false;
+                    setTimeout(function () {
+                        listening = true
+                    }, 2000);
 
-                    var problemNames = []; 
+                    plays.push(vidlog.time);
 
-                    // Loop through problem sets and look for child element with the problem id. Then we can count the number of problems that were answered. 
-                    for (var i = 0; i < problemSets.length; i++)
+                    addUp();
+                } 
+                else if (listening && vidlog.event_type === "pause_video") 
+                {
+                    listening = false;
+                    setTimeout(function () {
+                        listening = true
+                    }, 2000);
+
+                    pauses.push(vidlog.time);
+
+                    addUp();
+                } 
+                else if (vidlog.event_type === "problem_check") 
+                {
+                    // We need to look up how many questions are in each problem set, so we'll take the problem ID and match it to the html elements within the problem. 
+
+                    // Get the problem ID
+                    var problemSetId = vidlog.event.split("_")[1];
+
+                    if (!finishedContentIds.includes(problemSetId))
                     {
-                        var problems = problemSets[i].getElementsByClassName("wrapper-problem-response");
+                        // Get the array of problem set HTML elements
+                        var problemSets = document.getElementsByClassName("problem");
+                        
+                        var numProblems = 0;
 
-                        // We only need to look at the first problem, since all problems share the same id
-                        var problemHTML = problems[0].outerHTML;
+                        var problemNames = []; 
 
+                        var problemSetIndex = 0; 
 
-                        if (problemHTML.includes(problemSetId))
+                        // Loop through problem sets and look for child element with the problem id. Then we can count the number of problems that were answered. 
+                        for (var i = 0; i < problemSets.length; i++)
                         {
-                            for (var j = 0; j < problems.length; j++)
+                            var problems = problemSets[i].getElementsByClassName("wrapper-problem-response");
+
+                            // We only need to look at the first problem, since all problems share the same id
+                            var problemHTML = problems[0].outerHTML;
+
+                            problemSetIndex = i; 
+
+                            if (problemHTML.includes(problemSetId))
                             {
-                                var name = problems[j].innerText; 
-                                var nameArray = name.split("?");
+                                for (var j = 0; j < problems.length; j++)
+                                {
+                                    var name = problems[j].innerText; 
+                                    var nameArray = name.split("?");
 
-                                problemNames.push(nameArray[0] + "?");
-                            }
+                                    problemNames.push(nameArray[0] + "?");
+                                }
 
-                            numProblems = problems.length; 
-                            break;
-                        }    
-                    }
+                                numProblems = problems.length; 
+                                break;
+                            }    
+                        }
 
-                    var elements = document.getElementsByClassName("hd hd-2"); 
-                    var title = ""; 
+                        var elements = document.getElementsByClassName("hd hd-2"); 
 
-                    if (elements.length > 0)
-                    {
-                        title = elements[0].innerText+"_"+numProblems; 
-                    }
+                        var title = ""; 
 
-                    // Finally store the number of questions answered in the week's event record     
-                    logQuestionEvent(title + "- "+ problemNames.join(), numProblems);
+                        if (elements.length > 0)
+                        {
+                            title = elements[0].innerText+"_"+numProblems; 
+                        } 
 
-                    // Store problem ID so we won't store the same info if they retry the questions. 
-                    // Note this is not sticky, so if they refresh the page and answer the questions again it'll be recorded.
-                    finishedContentIds.push(problemSetId); 
-                }       
-            }
+                        // Finally store the number of questions answered in the week's event record     
+                        logQuestionEvent(title + "- "+ problemNames.join(), numProblems);
 
-            origSend.call(this,data);
-        };
+                        // Store problem ID so we won't store the same info if they retry the questions. 
+                        // Note this is not sticky, so if they refresh the page and answer the questions again it'll be recorded.
+                        finishedContentIds.push(problemSetId); 
+                    }       
+                }
+
+                origSend.call(this,data);
+            };
+        }
     }
 
     // Takes the Pauses and Plays arrays and finds total duration between play and pause events
@@ -271,7 +340,7 @@
         durVid = vidSum.reduce(add, 0) / 1000;
 
         // Somewhat arbitrary amount in seconds to mark the video as "watched". 
-        if (durVid >= 5) 
+        if (durVid >= 3) 
         {
             var vidId = vidlog.event.split("%")[5];
 

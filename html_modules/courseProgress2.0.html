@@ -28,6 +28,10 @@
             font-style: italic;
             font-size: 120%;
         }
+        #progressSubtitle {
+            font-style: italic;
+            font-size: 90%;
+        }
         #weekGoals
         {
             display: none;
@@ -152,13 +156,29 @@
             margin-bottom: 20px;
         }
 
+        #sliderContainer {
+            width: 100%;
+        }
+
+        input[type="range"]::-moz-range-track {
+            padding: 0 10px;
+            background: repeating-linear-gradient(to right, 
+            #ccc, 
+            #ccc 10%, 
+            #000 10%, 
+            #000 11%, 
+            #ccc 11%, 
+            #ccc 20%);
+        }
+
     </style>   
 
 </head>
 
 
 <script src="/static/courseProgress.js" onloadeddata=""></script> 
-
+<script src="/static/SRLUICourseInfo.js" onloadeddata=""></script> 
+<script src="/static/canvasjs.min.js" onloadeddata=""></script> 
 
 <body>
   
@@ -184,12 +204,27 @@
 
     <br>
     <br>
-  
+    
+    <p id="overallProgressHeader">Your overall course progress:</p>
+    <p id="progressSubtitle">(Click the legend to toggle each data series)</p>
+
+    <div id="noDataText">No data available yet.</div>
+    <br>
+    <br>
+
+   <div id="chartContainer" style="height: 300px; width: 100%;"></div>
+
+    <br>
+    <br>
+    <p id="footer">*User activity is updated once per day</p>
+
+    <br>
+    <br>
   
     <!-- Treatment group only section --> 
     <div id= "weekGoals">
         
-        <p id="goalsHeaderText" style="margin-top:15px">As a reminder, these were the goals you set for yourself last week:</p>
+        <p id="goalsHeaderText" style="margin-top:15px">As a reminder, these were the last goals you set for yourself</p>
 
         <div id="goalsContainer">
 
@@ -202,7 +237,7 @@
                 </div>
                 <div id="col2">
                     <div id="savedQuizzes" class="goalText">0</div>
-                    <div class="quizFeedback titel">Quizzes</div>
+                    <div class="quizFeedback titel">Problems</div>
                 </div>
                 <div id="col3">
                     <div id="savedAssignments" class="goalText">0</div>
@@ -217,39 +252,33 @@
             <p id="savedAdditionalGoal" style="text-align:center"></p>
 
         </div>
-        <p id="ratingSubtitle" style="text-align:center; font-size: 150%; color: darkred">How satisfied are you with last week's study goal completion?</p>
+        <p id="ratingSubtitle" style="text-align:center; font-size: 150%; color: darkred">How satisfied are you with your latest study goal completion? </p>
         <p id="ratingWarning" style="text-align:center;"> <b> IMPORTANT: You must complete this survey to move to the next module.</b> </p>
+        <p id="ratingWarning" style="text-align:center;"> (1 - very unsatisfied, 5 - very satisfied)</p>
         <form>
           <div id="rating">
-              
-            <div id="label">
-                <div id="satisfiedString">Unsatisfied</div>
-                <div id="satisfiedString">Satisfied</div>
-            </div>
+     
 
-              <div id="ratingElements">
-                
-                    <label for="unstatisfied" class='ratings'> &#x1F614 <br />
-                      <input type="radio" name = "rating" id="veryUnsatisfied" onclick="activateButton()">
-                    </label>
+            <fieldset>
+                <input type ="range" max="5" min="1"
+                    oninput="document.getElementById('rangeValLabel').innerHTML = this.value; activateButton();"
+                    step="1" name="rangeVal" id="rangeVal" value="3" list="steplist" style= "width:40%;"> 
+                </input>
+                <datalist id="steplist">
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                </datalist>
+                <em id="rangeValLabel" style="font-style: normal; padding-left: 20px; font-size: 30px">3</em>
+            </fieldset>
 
-                    <label for="unstatisfied" class='ratings'> &#x1F615 <br />
-                      <input type="radio" name ="rating" id="unsatisfied" onclick="activateButton()">
-                    </label>
-                
-                    <label for="unstatisfied" class='ratings'> &#x1F610 <br />
-                      <input type="radio" name = "rating" id="neutral" onclick="activateButton()">
-                    </label>    
+            <br>
+            <br>
 
-                    <label for="unstatisfied" class='ratings'> &#x1F642 <br />
-                      <input type="radio" name = "rating" id="happy" onclick="activateButton()">
-                    </label>
+              <div id="ratingElements"> 
 
-                    <label for="unstatisfied" class='ratings'> &#x1F600 <br />
-                      <input type="radio" name = "rating" id="veryHappy" onclick="activateButton()">
-                    </label>
-                
-                  <br/>
                   <p style="text-align:center">
                       <button type="button" id="saveGoalsButton" onclick="saveRating()">Submit</button>
                   </p>
@@ -261,28 +290,8 @@
       </form>
     </div>
 
-    <br>
-    <br>
-    
-    <p id="overallProgressHeader">Your overall course progress:</p>
-
-    <div id="noDataText">No data available yet.</div>
-    <br>
-    <br>
-
-   <div id="chartContainer" style="height: 300px; width: 100%;"> 
-        <script> 
-            loadScript("https://canvasjs.com/assets/script/canvasjs.min.js", generateNumbers);
-        </script>
-
-    </div>
-
-    <br>
-    <br>
-    <p id="footer">*User activity is updated once per day</p>
-
     <script>
-        loadScript("/static/SRLUICourseInfo.js", toggleGroupDisplay);
+        toggleGroupDisplay();
     </script>
 
     <br>

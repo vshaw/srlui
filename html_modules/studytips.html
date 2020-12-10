@@ -19,68 +19,13 @@
       }
   </style>
 
-  <script>
-
-        function loadScript(url, callback)
-        {
-                // Adding the script tag to the head as suggested before
-            var head = document.head;
-            var script = document.createElement('script');
-            script.type = 'text/javascript';
-            script.src = url;
-
-            // Then bind the event to the callback function.
-            // There are several events for cross browser compatibility.
-            script.onreadystatechange = callback;
-            script.onload = callback;
-
-            // Fire the loading
-            head.appendChild(script);
-        }
-
-        var getQuote = function () {
-
-            var fullQuote; 
-            var imgPath;
-
-            var url = window.location.href;
-            var split = url.split("/");
-            var week = split[6];
-
-          
-            console.log(week); 
-            console.log(mappedInfo); 
-            // Read goals from mapped.js static file
-            for (var i=0; i < mappedInfo.length; i++) {
-                if(mappedInfo[i][0] == week) {
-                    fullQuote = mappedInfo[i][2];
-                    imgPath = mappedInfo[i][3];
-                }
-            }
-
-            // Create goal text
-            var textNode = document.createElement("P");
-            textNode.innerHTML = fullQuote;
-            textNode.className = "quoteText";
-            textNode.setAttribute("id", "quoteText");
-            document.getElementById("inspirationalQuote").appendChild(textNode);
-            
-            // Load image
-            var pic = document.createElement("IMG");
-            pic.setAttribute("src", imgPath);
-            pic.setAttribute("height", "50%"); 
-            pic.setAttribute("width", "50%"); 
-            pic.setAttribute("alt", "Study Image");
-            document.getElementById("picture").appendChild(pic);
-        };
-
-    </script>
+<script src="/static/studytips.js" onloadeddata=""></script> 
 
 </head>
 
 <body>
     <script>
-        loadScript("/static/SRLUICourseInfo.js", getQuote);
+        getUserInfo();
     </script>
 
     <div id="inspirationalQuote">

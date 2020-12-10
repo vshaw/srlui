@@ -205,17 +205,15 @@
 
 <link rel="stylesheet" type="text/css" href="/static/mdtimepicker.css">
 <script type="text/javascript" src="/static/mdtimepicker.js"></script>
-
-
 <script src="/static/studyPlanning.js" onloadeddata=""></script> 
+<script src="/static/SRLUICourseInfo.js" onloadeddata=""></script> 
 
 </head>
 
 <body>
 
     <script>
-        loadScript("/static/SRLUICourseInfo.js", toggleGroupDisplay);
-
+        getUserInfo();
     </script>
 
     <!-- Show the static weekly goals for the control group !-->
@@ -251,7 +249,7 @@
             </div>
             <div id="col2">
                 <div id="quizzes" class="text">0</div>
-                <div class="quizFeedback titel">Quizzes</div>
+                <div class="quizFeedback titel">Problems</div>
             </div>
             <div id="col3">
                 <div id="assignments" class="text">0</div>
@@ -260,7 +258,7 @@
             <div id="col4">
                 <div id="estimatedTime" class="text">00:00:00</div>
                 <div class="timeFeedback titel">Total Estimated Time</div>
-            </div>
+            </div> 
         </div>
 
 
@@ -284,7 +282,7 @@
     <div id="scheduleGoals">
 
       <div id="savedGoals">
-            <p id="savedGoalsHeader">Great! Here are your goals for next week:</p>
+            <p id="savedGoalsHeader">Here are your upcoming goals:</p>
 
         <div id="savedVideoTableDiv"></div>
 
@@ -295,7 +293,7 @@
             </div>
             <div id="col2">
                 <div id="savedQuizzes" class="text">0</div>
-                <div class="quizFeedback titel">Quizzes</div>
+                <div class="quizFeedback titel">Problems</div>
             </div>
             <div id="col3">
                 <div id="savedAssignments" class="text">0</div>
@@ -323,7 +321,7 @@
         <li>Review the videos several times</li>
       </ul>
 
-      <p id="instruction">Use the form below to schedule email reminders for yourself.</p>
+      <p id="instruction">Use the form below to schedule email reminders for yourself. You can use commas to add multiple tasks from the list or come up with your own.</p>
 
       <div id="schedule">
         <table>
@@ -336,7 +334,8 @@
             <tr>
                 <td><input type="text" id="date1"></td>
                 <td><input type="text" id="time1"></td>
-                <td><input type="text" id="task1"></td>
+                <td><input type="text" id="task1" list="taskList1" multiple="multiple"></td>
+                    <datalist class="taskDropdown" id="taskList1">
                 <td><input type="checkbox" id="reminder1" value="10" checked>Ten minutes before<br>
                     <input type="checkbox" id="reminder2" value="60">One hour before<br>
                     <input type="checkbox" id="reminder3" value="120">Two hours before</td>
@@ -344,7 +343,8 @@
             <tr>
                 <td><input type="text" id="date2"></td>
                 <td><input type="text" id="time2"></td>
-                <td><input type="text" id="task2"></td>
+                <td><input type="text" id="task2" list="taskList2" multiple="multiple"></td>
+                    <datalist class="taskDropdown" id="taskList2">
                 <td><input type="checkbox" id="reminder4" value="10" checked>Ten minutes before<br>
                     <input type="checkbox" id="reminder5" value="60">One hour before<br>
                     <input type="checkbox" id="reminder6" value="120">Two hours before</td>
@@ -352,7 +352,8 @@
             <tr>
                 <td><input type="text" id="date3"></td>
                 <td><input type="text" id="time3"></td>
-                <td><input type="text" id="task3"></td>
+                <td><input type="text" id="task3" list="taskList3" multiple="multiple"></td>
+                    <datalist class="taskDropdown" id="taskList3">
                 <td><input type="checkbox" id="reminder7" value="10" checked>Ten minutes before<br>
                     <input type="checkbox" id="reminder8" value="60">One hour before<br>
                     <input type="checkbox" id="reminder9" value="120">Two hours before</td>
@@ -360,7 +361,8 @@
             <tr>
                 <td><input type="text" id="date4"></td>
                 <td><input type="text" id="time4"></td>
-                <td><input type="text" id="task4"></td>
+                <td><input type="text" id="task4" list="taskList4" multiple="multiple"></td>
+                    <datalist class="taskDropdown" id="taskList4">
                 <td><input type="checkbox" id="reminder10" value="10" checked>Ten minutes before<br>
                     <input type="checkbox" id="reminder11" value="60">One hour before<br>
                     <input type="checkbox" id="reminder12" value="120">Two hours before</td>
@@ -368,7 +370,8 @@
             <tr>
                 <td><input type="text" id="date5"></td>
                 <td><input type="text" id="time5"></td>
-                <td><input type="text" id="task5"></td>
+                <td><input type="text" id="task5" list="taskList5" multiple="multiple"></td>
+                    <datalist class="taskDropdown" id="taskList5">
                 <td><input type="checkbox" id="reminder13" value="10" checked>Ten minutes before<br>
                     <input type="checkbox" id="reminder14" value="60">One hour before<br>
                     <input type="checkbox" id="reminder15" value="120">Two hours before</td>
@@ -376,7 +379,8 @@
             <tr>
                 <td><input type="text" id="date6"></td>
                 <td><input type="text" id="time6"></td>
-                <td><input type="text" id="task6"></td>
+                <td><input type="text" id="task6" list="taskList6" multiple="multiple"></td>
+                    <datalist class="taskDropdown" id="taskList6">
                 <td><input type="checkbox" id="reminder16" value="10" checked>Ten minutes before<br>
                     <input type="checkbox" id="reminder17" value="60">One hour before<br>
                     <input type="checkbox" id="reminder18" value="120">Two hours before</td>
@@ -384,7 +388,8 @@
             <tr>
                 <td><input type="text" id="date7"></td>
                 <td><input type="text" id="time7"></td>
-                <td><input type="text" id="task7"></td>
+                <td><input type="text" id="task7" list="taskList7" multiple="multiple"></td>
+                    <datalist class="taskDropdown" id="taskList7">
                 <td><input type="checkbox" id="reminder19" value="10" checked>Ten minutes before<br>
                     <input type="checkbox" id="reminder20" value="60">One hour before<br>
                     <input type="checkbox" id="reminder21" value="120">Two hours before</td>
